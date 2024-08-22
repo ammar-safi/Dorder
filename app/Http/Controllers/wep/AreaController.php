@@ -269,7 +269,7 @@ class AreaController extends Controller
         $area = Area::find($request->id);
         // dd($area);
         if (!$area) {
-            return back()->with("error" , "حدث خطأ , حاول مرة اخرى");
+            return back()->with("error", "حدث خطأ , حاول مرة اخرى");
         }
 
         $monitors = User::leftJoin('monitors', 'users.id', '=', 'monitors.monitor_id')
@@ -278,14 +278,13 @@ class AreaController extends Controller
             ->select('users.*')
             ->get();
 
-        $delivers = User::where('type', 'deliver')
-            ->whereNotIn('id', function ($query) {
-                $query->select('id')
-                    ->from('monitors');
-            })
+        $delivers = User::leftJoin('delivers', 'users.id', '=', 'delivers.deliver_id')
+            ->whereNull('delivers.deliver_id')
+            ->where('users.type', 'deliver')
+            ->select('users.*')
             ->get();
         $flag = "show-areas";
-            return view("panel.dashboard.areas.addEmploys", compact("flag", "area", "monitors", "delivers"));
+        return view("panel.dashboard.areas.addEmploys", compact("flag", "area", "monitors", "delivers"));
     }
 
 
