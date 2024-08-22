@@ -12,11 +12,17 @@
             <style>
                 .table-container {
                     margin: 0px;
+                    width: 100%; /* يضمن أن الجدول يأخذ عرض الشاشة بالكامل */
                     border: 1px solid #ddd;
                     border-radius: 12px;
                     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
                     overflow: hidden;
                 }
+                .data-table {
+                    width: 100%; /* يجعل الجدول يأخذ عرض الشاشة بالكامل */
+                    border-collapse: collapse; /* إزالة الفراغات بين الخلايا */
+                }
+
 
                 .table-title {
                     background-color: #ffffff; /* لون خلفية العنوان */
@@ -122,7 +128,6 @@
                 <br><br>
             
             @endif
-
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
                 <div>
                     <h1 style="margin: 0;">المناطق المخدمة</h1>
@@ -132,66 +137,95 @@
             <br>
             <hr>
             <br>
-        <div class="table-container">
+            <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                <!-- نموذج البحث عن المدينة بالاسم -->
+                <form method="GET" action="{{ route('areas.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <input type="hidden" name="city_id" value="{{$selectedCityId}}">
+                    <div style="position: relative; display: flex; align-items: center; width: 200px;">
+                        <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم المدينة" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
+                        <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
+                    </div>
+                    @if ($searchName) 
+                    <button type="button" class="btn btn-primary rounded-button" style="padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;" onclick="document.getElementById('search_name').value=''; this.form.submit();">إلغاء</button>
+                    @endif
+                </form>
+                
+                <!-- نموذج اختيار المدينة -->
+                <form method="GET" action="{{ route('areas.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                    <input type="hidden" name="search_name" value="{{$searchName}}">
+                    <label for="city_id" style="margin: 0; font-size: 0.875rem;">حدد مدينة:</label>
+                    <select name="city_id" id="city_id" onchange="this.form.submit()" style="padding: 5px; width: 150px; font-size: 0.875rem; border-radius: 5px;">
+                        <option value="">حدد مدينة</option>
+                        @foreach ($cities as $city)
+                            <option value="{{ $city->id }}" {{ $selectedCityId == $city->id ? 'selected' : '' }}>
+                                {{ $city->title }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+                @foreach ($collection as $cities => $areas)
+                <div class="table-container">
+                    <h2 class="table-title">{{$cities}}</h2>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>المناطق</th>
+                                <th>عدد المشرفين</th>
+                                <th>عدد عمال التوصيل</th>
+                                <th>عدد المشتركين</th>
+                                <th>العمليات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($areas as $index)
+                                <tr>
+                                    <td>{{$index->title}}</td> 
+                                    <td>{{$index->count_of_monitors}}</td> 
+                                    <td>{{$index->count_of_delivers}}</td> 
+                                    <td>{{$index->count_of_clients}}</td> 
+                                    <td>
+                                        <div style="display: inline-block; margin-right: 10px;">
+                                            <form action="{{Route('areas.add.employs')}}" method="GET" style="display: inline;">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{$index->id}}">
+                                                <button type="submit" id="add-employs" style="background: none; border: none; color: rgb(0, 165, 0); cursor: pointer;">اضافة موظفين</button>
+                                            </form>
+                                        <span class="icon" onclick="edit()"><i class="fas fa-users"></i></span>
+
+                                        </div>
             
+                                        <div style="display: inline-block; margin-right: 10px;">
+                                            <form action="{{ route('areas.edit.area')}}" method="GET" style="display: inline;">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{$index->id}}">
+                                                <input type="hidden" name="route" value="edit.area">
+                                                <button type="submit" id="edit" style="background: none; border: none; color: rgb(35, 20, 172); cursor: pointer;">تعديل</button>
+                                            </form>
+                                        <span class="icon" onclick="edit()"><i class="fas fa-edit"></i></span>
+
+                                        </div>
+                                        
+                                        <div style="display: inline-block;">
+                                            <form id="delete-form-{{ $index->id }}" action="{{Route('areas.soft.delete')}}" method="POST" style="display: inline;">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{$index->id}}">
+                                                <button type="submit" id="delete" onclick="confirmDelete({{ $index->id }})" style="background: none; border: none; color: rgb(172, 21, 21); cursor: pointer;" >حذف</button>
+                                            </form>
+                                            <span class="icon" onclick="edit()"><i class="fas fa-trash"></i></span>
+                                        </div>
+                                        
+
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <br><br>
+                </div>
+            @endforeach
             
-
-
-
-    @foreach ($collection as $cities => $areas)
-    <h2 class="table-title" onclick="toggleTable('data-table-{{$cities}}', 'toggle-icon-{{$cities}}')">{{$cities}}<i id="toggle-icon-{{$cities}}" class="fas fa-chevron-down"></i></h2>
-    <table id="data-table-{{$cities}}" class="hidden">
-        <thead>
-            <tr>
-                <th>المناطق</th>
-                <th>عدد المشرفين</th>
-                <th>عدد عمال التوصيل</th>
-                <th>عدد المشتركين</th>
-                <th> العمليات</th>
-            </tr>
-        </thead>
-        @foreach ($areas as $index)
-        <tbody>
-            <tr>
-                <td>{{$index->title}}</td> 
-                <td>{{$index->count_of_monitors}}</td> 
-                <td>{{$index->count_of_delivers}}</td> 
-                <td>{{$index->count_of_clients}}</td> 
-                <td>
-                    <div style="display: inline-block;">
-                        <form action="{{Route("areas.add.employs")}}" method="GET" style="display: inline;">
-                            @csrf
-                            <input type="hidden" name="id" value="{{$index->id}}">
-                            <button type="submit" id="delete" style="background: none; border: none; color: rgb(82, 206, 119); cursor: pointer;">اضافة موظفين</button>
-                        </form>
-                        <span class="icon" onclick="deleteRow()"><i class="fas fa-user"></i></span>
-                    </div>
-
-                    <div style="display: inline-block; margin-right: 10px;">
-                        <form action="{{ route('areas.edit.area')}}" method="GET" style="display: inline;">
-                            @csrf
-                            <input type="hidden" name="id" value="{{$index->id}}">
-                            <input type="hidden" name="route" value="edit.area">
-                            <button type="submit" id="delete" style="background: none; border: none; color: rgb(59, 98, 206); cursor: pointer;">تعديل</button>
-                        </form>
-                        <span class="icon" onclick="edit()"><i class="fas fa-edit"></i></span>
-                    </div>
-                    
-                    <div style="display: inline-block;">
-                        <form action="{{Route("areas.soft.delete")}}" method="POST" style="display: inline;">
-                            @csrf
-                            <input type="hidden" name="id" value="{{$index->id}}">
-                            <button type="submit" id="delete" style="background: none; border: none; color: rgb(161, 17, 17); cursor: pointer;">حذف</button>
-                        </form>
-                        <span class="icon" onclick="deleteRow()"><i class="fas fa-trash"></i></span>
-                    </div>
-
-                </td>
-            </tr>
-        </tbody>
-        @endforeach
-        </table>
-        @endforeach
+        
+        
         </div>
             </div>
         </div>

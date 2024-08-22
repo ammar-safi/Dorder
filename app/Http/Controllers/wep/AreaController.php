@@ -25,25 +25,44 @@ class AreaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
             $flag = "show-areas";
+
+            $cities = City::all();
+
+            $query = Area::query();
+            // $cityQuery = City::query();             
             $collection = [];
+            $searchName = $request->input('search_name');
+            $selectedCityId = $request->input("city_id");
 
-            $areas = Area::distinct()->pluck("city_id");
+            if ($selectedCityId) {
+                $query->where("city_id", $selectedCityId);
+            }
 
-            foreach ($areas as $cityId) {
-                $city = City::find($cityId);
+            if ($searchName) {
+                $query->where("title", "LIKE", "%{$searchName}%");
+            }
 
-                if ($city) {
-                    $collection[$city->title] = Area::where("city_id", $cityId)->get();
+            if ($selectedCityId || $searchName) {
+
+
+                $areas = $query->distinct()->pluck("city_id");
+
+                foreach ($areas as $cityId) {
+                    $city = City::find($cityId);
+
+                    if ($city) {
+                        $collection[$city->title] = $query->get();
+                    }
                 }
             }
 
             // dd($collection);
 
-            return view("panel.dashboard.areas.areas", compact("flag", "collection"));
+            return view("panel.dashboard.areas.areas", compact("flag", "collection", "cities", "searchName", "selectedCityId"));
         } catch (Exception $e) {
             Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
@@ -130,7 +149,6 @@ class AreaController extends Controller
             $validate = Validator::make(["id" => $request->id], ['id' => "required"], ['id.required' => "حصل خطأ غير متوقع"]);
 
             if ($validate->fails()) {
-                // dd("ammar");/
                 return back()->withInput($request->all())->withErrors($validate);
             }
 
@@ -249,6 +267,11 @@ class AreaController extends Controller
         }
 
         $area = Area::find($request->id);
+        // dd($area);
+        if (!$area) {
+            return back()->with("error" , "حدث خطأ , حاول مرة اخرى");
+        }
+
         $monitors = User::leftJoin('monitors', 'users.id', '=', 'monitors.monitor_id')
             ->whereNull('monitors.monitor_id')
             ->where('users.type', 'monitor')
@@ -262,11 +285,7 @@ class AreaController extends Controller
             })
             ->get();
         $flag = "show-areas";
-        if ($area) {
             return view("panel.dashboard.areas.addEmploys", compact("flag", "area", "monitors", "delivers"));
-        } else {
-            return back()->with("error", "حصل خطأ غير معروف , الرجاء اعادة المحاولة");
-        }
     }
 
 

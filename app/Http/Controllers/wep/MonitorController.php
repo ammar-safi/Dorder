@@ -41,20 +41,25 @@ class MonitorController extends Controller
             $selectedCityId = $request->input("city_id");
             $selectedAreaId = $request->input("area_id");
             $areas = $selectedCityId ? Area::where('city_id', $selectedCityId)->get() : '';
-            
+
             if ($selectedAreaId) {
-                $query->where("area_id", $selectedAreaId) ;
+                $query->where("area_id", $selectedAreaId);
             } elseif ($selectedCityId) {
-                $query->whereIn("area_id",  ( Area::where("city_id", $selectedCityId)->pluck("id")->toArray()) ) ;
-            }
-            
-            if ($searchName) {
-                $query->whereIn('monitor_id' , User::where("type" , "monitor")->where("name" , 'LIKE' , "%{$searchName}%")->pluck('id')->toArray() );
+                $query->whereIn("area_id", (Area::where("city_id", $selectedCityId)->pluck("id")->toArray()));
             }
 
+            if ($searchName) {
+                $query->whereIn('monitor_id', User::where("type", "monitor")->where("name", 'LIKE', "%{$searchName}%")->pluck('id')->toArray());
+            }
+
+            if ($selectedCityId || $selectedAreaId || $searchName) {
+                $monitors = $query->get();
+            } else {
+                $monitors = null;
+            }
             // $monitors = $selectedAreaId?
-            $monitors = $query->get();
-            
+
+
             // dd($monitors);
             //     Monitor::where("area_id", $selectedAreaId)->get()
 
@@ -69,7 +74,7 @@ class MonitorController extends Controller
 
 
 
-            return view("panel.dashboard.monitors.monitors", compact("flag", "monitors", "cities", "areas", 'selectedCityId' , 'selectedAreaId' , 'searchName'));
+            return view("panel.dashboard.monitors.monitors", compact("flag", "monitors", "cities", "areas", 'selectedCityId', 'selectedAreaId', 'searchName'));
         } catch (Exception $e) {
             Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
