@@ -9,7 +9,6 @@
         <div class="content-body">
             <br><br>
             
-            <!-- Error Handling -->
             @if(session()->has('error'))
                 <br>
                 <div style="background-color: #f5caca; border-right: 6px solid #e72626; padding: 10px; border-radius: 10px;">
@@ -20,6 +19,31 @@
                 </div>
                 <br><br>
             @endif
+
+
+
+            <div>
+                <br><br>
+                <h3>
+                    تعيين مشرفين وعمال توصيل لمنطقة {{$area->title}} في مدينة {{$area->city->title}}
+                </h3>
+                <br>
+                
+                <h6>
+                    <li>
+
+                        يمكنك تعيين اكثر من مشرف واكثر من عامل توصيل في نفس الوقت
+                    </li>
+                    <li>
+
+                        ويمكنك تعيين مشرفين فقط او عمال توصيل فقط
+                    </li>
+                </h6>
+                <br>
+                <hr>
+                <br>
+            </div>
+
 
             <!-- Form to Assign Monitors and Delivers -->
             <form action="{{Route("areas.store.employs")}}" method="POST">
@@ -33,7 +57,7 @@
                     
                     <!-- Monitors Selection -->
                     <div style="flex: 1;">
-                        <label for="monitors"><h3>اختر المشرفين:</h3></label>
+                        <label for="monitors"><h3> المشرفين المتاحين:</h3></label>
                         <select id="monitors" name="monitors[]" multiple style="width: 100%; height: 150px;">
                             @foreach($monitors as $monitor)
                                 <option value="{{ $monitor->id }}">{{ $monitor->name }}</option>
@@ -43,7 +67,7 @@
 
                     <!-- Delivers Selection -->
                     <div style="flex: 1;">
-                        <label for="delivers"><h3>اختر عمال التوصيل:</h3></label>
+                        <label for="delivers"><h3> عمال التوصيل المتاحين:</h3></label>
                         <select id="delivers" name="delivers[]" multiple style="width: 100%; height: 150px;">
                             @foreach($delivers as $deliver)
                                 <option value="{{ $deliver->id }}">{{ $deliver->name }}</option>
@@ -52,6 +76,16 @@
                     </div>
                 </div>
 
+                <br>
+                @error('id')
+                    <div style="color: red;"> * {{ $message }}</div>
+                @enderror
+                @error('monitors.*')
+                    <div style="color: red;"> * {{ $message }}</div>
+                @enderror
+                @error('delivers.*')
+                    <div style="color: red;"> * {{ $message }}</div>
+                @enderror
                 <br>
 
                 <!-- Submit Button -->
@@ -63,13 +97,6 @@
 
             <br><br>
             <hr>
-            @error('title')
-                <div style="color: red;"> * {{ $message }}</div>
-            @enderror
-            @error('city_id')
-                <div style="color: red;"> * {{ $message }}</div>
-            @enderror
-            <br>
         </div>
     </div>
 </div>

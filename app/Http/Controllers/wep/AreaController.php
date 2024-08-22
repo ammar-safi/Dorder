@@ -8,6 +8,7 @@ use App\Models\City;
 use App\Models\Deliver;
 use App\Models\User;
 use Exception;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -248,8 +249,18 @@ class AreaController extends Controller
         }
 
         $area = Area::find($request->id);
-        $monitors = User::where('type', 'monitor')->get();
-        $delivers = User::where('type', 'deliver')->get();
+        $monitors = User::leftJoin('monitors', 'users.id', '=', 'monitors.monitor_id')
+            ->whereNull('monitors.monitor_id')
+            ->where('users.type', 'monitor')
+            ->select('users.*')
+            ->get();
+
+        $delivers = User::where('type', 'deliver')
+            ->whereNotIn('id', function ($query) {
+                $query->select('id')
+                    ->from('monitors');
+            })
+            ->get();
         $flag = "show-areas";
         if ($area) {
             return view("panel.dashboard.areas.addEmploys", compact("flag", "area", "monitors", "delivers"));
@@ -262,41 +273,77 @@ class AreaController extends Controller
     public function storeEmploys(Request $request)
     {
         try {
-            // التحقق من صحة البيانات الواردة
-            $validate = Validator::make($request->all(), [
-                'id' => 'required|exists:areas,id',
-                'monitors' => 'array',
-                'monitors.*' => 'exists:users,id',
-                'delivers' => 'array',
-                'delivers.*' => 'exists:users,id'
-            ], [
-                'id.required' => 'حصل خطأ غير معروف, الرجاء إعادة المحاولة',
-                'id.exists' => 'المنطقة المحددة غير موجودة',
-                'monitors.array' => 'بيانات المشرفين غير صحيحة',
-                'monitors.*.exists' => 'مشرف غير موجود',
-                'delivers.array' => 'بيانات عمال التوصيل غير صحيحة',
-                'delivers.*.exists' => 'عامل توصيل غير موجود',
-            ]);
 
-            if ($validate->fails()) {
-                return back()->withErrors($validate)->withInput();
-            }
 
-            $area = Area::find($request->id);
 
-            if ($area) {
+            if ($request->input('monitors') || $request->input("delivers")) :
 
-                $monitors = $request->input('monitors', []);
-                $delivers = $request->input('delivers', []);
-                // dd($monitors);
+                // التحقق من صحة البيانات الواردة
+                // dd($request->monitors);
+                $validate = Validator::make($request->all(), [
+                    'id' => 'required|exists:areas,id',
+                    'monitors' => 'array',
+                    'monitors.*' => [
+                        Rule::exists('users', 'id')->where(function (Builder $query) {
+                            return $query->where('type', 'monitor');
+                        }),
+                        Rule::unique('monitors', 'monitor_id')->where(function (Builder $query) use ($request) {
+                            return $query->where('area_id', $request->id);
+                        }),
+                    ],
 
-                $area->AreaMonitors()->sync($monitors); 
-                $area->AreaDelivers()->sync($delivers);  
 
-                return redirect()->route("areas.show")->with('success', 'تم التعيين بنجاح');
-            } else {
-                return back()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
-            }
+                    'delivers' => 'array',
+                    'delivers.*' => [
+                        Rule::exists('users', 'id')->where(function (Builder $query) {
+                            return $query->where('type', 'deliver');
+                        }),
+
+                        Rule::unique('delivers', 'deliver_id')
+                    ],
+
+
+                ], [
+                    'id.required' => 'حصل خطأ غير معروف, الرجاء إعادة المحاولة',
+                    'id.exists' => 'المنطقة المحددة غير موجودة',
+                    'monitors.array' => 'بيانات المشرفين غير صحيحة',
+                    'monitors.*.exists' => "هنالك خطأ , هذا المشرف غير موجود",
+                    'monitors.*.unique' => 'المشرف يعمل في هذه المنطقة بالفعل',
+                    'delivers.array' => 'بيانات عمال التوصيل غير صحيحة',
+                    'delivers.*.unique' => 'عامل التوصيل هذا غير متاح ',
+                    'delivers.*.exists' => '  هنالك خطأ , عامل توصيل غير موجود',
+                ]);
+
+                if ($validate->fails()) {
+                    // dd("a,,ar");
+                    return back()->withErrors($validate)->withInput();
+                }
+
+                $area = Area::find($request->id);
+
+                if ($area) {
+
+                    $monitors = $request->input('monitors', []);
+                    $delivers = $request->input('delivers', []);
+                    // dd($monitors);
+
+                    if (
+                        $area->AreaMonitors()->syncWithoutDetaching($monitors) ||
+                        $area->AreaDelivers()->syncWithoutDetaching($delivers)
+
+                    ) {
+                        return redirect()->route("areas.show")->with('success', 'تم التعيين بنجاح');
+                    } else {
+
+                        return back()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
+                    }
+                } else {
+                    return back()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
+                }
+
+            else :
+                return redirect()->route("areas.show");
+            endif;
         } catch (Exception $e) {
             Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");

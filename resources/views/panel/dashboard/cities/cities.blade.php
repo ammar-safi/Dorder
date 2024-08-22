@@ -100,13 +100,16 @@
 
 
                 <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-                    <!-- نموذج البحث عن المشرف بالاسم -->
-                    <form method="GET" action="{{ route('cities.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 0;">
+                    <form method="GET" action="{{ route('cities.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
                         <div style="position: relative; display: flex; align-items: center; width: 200px;">
-                            <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم المشرف" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
+                            <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم المدينة" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
                             <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
                         </div>
-                    </form>                    
+                        @if ($searchName) 
+                        <button type="button" class="btn btn-primary rounded-button" style="padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;" onclick="document.getElementById('search_name').value=''; this.form.submit();">إلغاء</button>
+                        @endif
+                    </form>
+                                       
                 <table>
                     <thead>
                         <tr>
