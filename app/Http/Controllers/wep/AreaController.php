@@ -10,6 +10,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -285,16 +286,34 @@ class AreaController extends Controller
         }
 
         $monitors = User::leftJoin('monitors', 'users.id', '=', 'monitors.monitor_id')
-            ->whereNull('monitors.monitor_id')
+            ->leftJoin('monitors as deleted_monitors', 'users.id', '=', 'deleted_monitors.monitor_id')
             ->where('users.type', 'monitor')
+            ->where(function ($query) {
+                $query->whereNull('monitors.monitor_id')
+                    ->orWhere(function ($query) {
+                        $query->whereNotNull('deleted_monitors.monitor_id')
+                            ->whereNotNull('deleted_monitors.deleted_at'); 
+                    });
+            })
+            ->distinct()
+            ->select('users.*')
+            ->get();
+        $delivers = User::leftJoin('delivers', 'users.id', '=', 'delivers.deliver_id')
+            ->leftJoin('delivers as deleted_delivers', 'users.id', '=', 'deleted_delivers.deliver_id')
+            ->where('users.type', 'deliver')
+            ->where(function ($query) {
+                $query->whereNull('delivers.deliver_id')
+                    ->orWhere(function ($query) {
+                        $query->whereNotNull('deleted_delivers.deliver_id')
+                            ->whereNotNull('deleted_delivers.deleted_at');
+                    });
+            })
+            ->distinct()
             ->select('users.*')
             ->get();
 
-        $delivers = User::leftJoin('delivers', 'users.id', '=', 'delivers.deliver_id')
-            ->whereNull('delivers.deliver_id')
-            ->where('users.type', 'deliver')
-            ->select('users.*')
-            ->get();
+
+
         $flag = "show-areas";
         return view("panel.dashboard.areas.addEmploys", compact("flag", "area", "monitors", "delivers"));
     }
@@ -303,9 +322,6 @@ class AreaController extends Controller
     public function storeEmploys(Request $request)
     {
         try {
-
-
-
             if ($request->input('monitors') || $request->input("delivers")) :
 
                 // التحقق من صحة البيانات الواردة
@@ -315,10 +331,10 @@ class AreaController extends Controller
                     'monitors' => 'array',
                     'monitors.*' => [
                         Rule::exists('users', 'id')->where(function (Builder $query) {
-                            return $query->where('type', 'monitor');
+                            return $query->where('type', 'monitor')->whereNull('deleted_at');
                         }),
                         Rule::unique('monitors', 'monitor_id')->where(function (Builder $query) use ($request) {
-                            return $query->where('area_id', $request->id);
+                            return $query->where('area_id', $request->id)->whereNull('deleted_at');
                         }),
                     ],
 
@@ -360,7 +376,6 @@ class AreaController extends Controller
                     if (
                         $area->AreaMonitors()->syncWithoutDetaching($monitors) ||
                         $area->AreaDelivers()->syncWithoutDetaching($delivers)
-
                     ) {
                         return redirect()->route("areas.show")->with('success', 'تم التعيين بنجاح');
                     } else {

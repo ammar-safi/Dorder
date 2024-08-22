@@ -18,7 +18,7 @@ class Monitor extends Model
     {
         return $this->belongsTo(Area::class);
     }
-    public function monitor()
+    public function user()
     {
         return $this->belongsTo(User::class , "monitor_id");
     }

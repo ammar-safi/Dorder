@@ -68,10 +68,10 @@
                 </div>                    
             @elseif(session()->has("success"))
             <br><br>
-                <div style="background-color: #ffb3b3; border-right: 6px solid #c20c0c; padding: 20px; border-radius: 10px;">
+                <div style="background-color: #c4f8d4; border-right: 6px solid #0d9135; padding: 20px; border-radius: 10px;">
                     <p style="font-size: 20px; margin: 0;">
                         <strong>
-                            {{session("ersuccessror")}}
+                            {{session("success")}}
                         </strong> 
                     </p>
                 </div>                    
@@ -90,7 +90,7 @@
                     <div>
 
                         <a href="{{ route('monitors.add') }}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة مشرف</a>
-                        <a href="{{Route("monitors.edit.area")}}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;"> تعديل المناطق</a>
+                        <a href="{{Route("areas.show")}}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;"> تعديل المناطق</a>
                     </div>
                 </div>
                 <br>
@@ -100,14 +100,16 @@
 
                 <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
                     <!-- نموذج البحث عن المشرف بالاسم -->
-                    <form method="GET" action="{{ route('monitors.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 0;">
+                    <form method="GET" action="{{ route('monitors.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
                         <div style="position: relative; display: flex; align-items: center; width: 200px;">
                             <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم المشرف" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
                             <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
                         </div>
+                        @if ($searchName) 
+                        <button type="button" class="btn btn-primary rounded-button" style="padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;" onclick="document.getElementById('search_name').value=''; this.form.submit();">إلغاء</button>
+                        @endif
                     </form>
                     
-                    <!-- نموذج اختيار المدينة -->
                     <form method="GET" action="{{ route('monitors.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
                         <input type="hidden" name="search_name" value="{{$searchName}}">
                         <label for="city_id" style="margin: 0; font-size: 0.875rem;">حدد مدينة:</label>
@@ -121,7 +123,6 @@
                         </select>
                     </form>
                     
-                    <!-- نموذج اختيار المنطقة (يظهر فقط إذا تم اختيار مدينة) -->
                     @if ($selectedCityId)
                         <form method="GET" action="{{ route('monitors.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
                             <input type="hidden" name="city_id" value="{{ $selectedCityId }}">
@@ -164,16 +165,16 @@
                         
                         @foreach ($monitors as $monitor)
                         {{-- @dd($Monitors) --}}
-                            {{-- @dd($monitor->monitor->name) --}}
+                            {{-- @dd($monitor->user->name) --}}
                             <tr>
-                                <td>{{$monitor->monitor->name}}</td>
+                                <td>{{$monitor->user->name}}</td>
                                 <td>{{$monitor->area->title}}</td>
                                 <td>{{$monitor->area->city()->withTrashed()->first('title')->title}}</td>
-                                <td>{{$monitor->monitor->email}}</td>
-                                <td>{{$monitor->monitor->mobile}}</td>
-                                {{-- <td>{{$monitor->monitor->created_at}}</td>
-                                <td>{{$monitor->monitor->updated_at}}</td> --}}
-                                {{-- <td style="text-align:right">{{  ['🔴 غير نشط','🟢 نشط']  [$monitor->monitor->active]}} </td> --}}
+                                <td>{{$monitor->user->email}}</td>
+                                <td>{{$monitor->user->mobile}}</td>
+                                {{-- <td>{{$monitor->user->created_at}}</td>
+                                <td>{{$monitor->user->updated_at}}</td> --}}
+                                {{-- <td style="text-align:right">{{  ['🔴 غير نشط','🟢 نشط']  [$monitor->user->active]}} </td> --}}
                                 <td style="font-size:2ch" >
                                     </div>
                                     @if (Auth::user()->type == "admin")
@@ -182,7 +183,7 @@
                                             @csrf
                                             <input type="hidden" name="id" value="{{$monitor->id}}">
                                             <input type="hidden" name="route" value="cities.show">
-                                            <button type="submit" id="delete" style="background: none; border: none; color: rgb(42, 101, 177); cursor: pointer;">تعديل</button>
+                                            <button type="submit" id="edit" style="background: none; border: none; color: rgb(42, 101, 177); cursor: pointer;">تعديل</button>
                                         </form>
                                         <span class="icon" onclick="deleteRow()"><i class="fas fa-edit"></i></span>
                                     </div>
@@ -191,9 +192,9 @@
                                             @csrf
                                             <input type="hidden" name="id" value="{{$monitor->id}}">
                                             <input type="hidden" name="route" value="cities.show">
-                                            <button type="submit" id="delete" style="background: none; border: none; color: rgb(161, 17, 17); cursor: pointer;">حذف</button>
+                                            <button type="submit" id="delete" style="background: none; border: none; color: rgb(161, 17, 17); cursor: pointer;">اقالة</button>
                                         </form>
-                                        <span class="icon" onclick="deleteRow()"><i class="fas fa-trash"></i></span>
+                                        <span class="icon" onclick="deleteRow()"><i class="fas fa-user-minus"></i></span>
                                     </div>
                                     @endif
                                 </td>
