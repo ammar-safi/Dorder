@@ -64,7 +64,9 @@ class AreaController extends Controller
 
             return view("panel.dashboard.areas.areas", compact("flag", "collection", "cities", "searchName", "selectedCityId"));
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -79,7 +81,9 @@ class AreaController extends Controller
             $cities = City::all();
             return view("panel.dashboard.areas.add", compact("flag", "cities"));
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -126,7 +130,9 @@ class AreaController extends Controller
                 return back()->with("error",  "حصل خطأ غير متوقع , تعد المحاولة لاحفا");
             }
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -161,7 +167,9 @@ class AreaController extends Controller
             $flag = "show-areas";
             return view("panel.dashboard.areas.edit", compact("cities", 'flag', "area"));
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -211,7 +219,9 @@ class AreaController extends Controller
                 return back()->with("error",  "حصل خطأ غير متوقع , تعد المحاولة لاحفا");
             }
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -249,7 +259,9 @@ class AreaController extends Controller
 
             return back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -363,7 +375,9 @@ class AreaController extends Controller
                 return redirect()->route("areas.show");
             endif;
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }

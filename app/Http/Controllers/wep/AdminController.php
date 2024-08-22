@@ -29,7 +29,9 @@ class AdminController extends Controller
             $admins = User::where("type", "admin")->get();
             return view("panel.dashboard.admins.admins", compact("flag", "admins"));
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -43,7 +45,9 @@ class AdminController extends Controller
             $flag = "add-admin";
             return view("panel.dashboard.admins.add", compact("flag"));
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -102,7 +106,9 @@ class AdminController extends Controller
                 return back()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
             }
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -137,7 +143,9 @@ class AdminController extends Controller
                 return back()->with("error", "حدث خطأ غير معروف , اعد المحاولة لاحقا");
             }
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
 
@@ -207,7 +215,9 @@ class AdminController extends Controller
                 return back()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
             }
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -237,7 +247,9 @@ class AdminController extends Controller
             }
             return back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }

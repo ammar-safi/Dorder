@@ -27,12 +27,14 @@ class CityController extends Controller
             $query = City::query();
             $searchName = $request->input('search_name');
             if ($searchName) {
-                $query->where("title" , "like" , "%{$searchName}%");
-            } 
+                $query->where("title", "like", "%{$searchName}%");
+            }
             $cities = $query->get();
-            return view("panel.dashboard.cities.cities", compact("flag", "cities" , 'searchName'));
+            return view("panel.dashboard.cities.cities", compact("flag", "cities", 'searchName'));
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -46,7 +48,9 @@ class CityController extends Controller
             $add = $request->add ? $request->add : Null;
             return view("panel.dashboard.cities.add", ["flag" => "add-city", 'add' => $add]);
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -80,7 +84,9 @@ class CityController extends Controller
             }
             return redirect()->route("cities.add", ['add' => false]);
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -116,7 +122,9 @@ class CityController extends Controller
             }
             return redirect()->Route($request->route)->with("error", "طلب خاطئ , حاول مرة اخرى 😢 ");
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -155,7 +163,9 @@ class CityController extends Controller
                 return back();
             }
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -193,7 +203,9 @@ class CityController extends Controller
             }
             return back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -230,7 +242,9 @@ class CityController extends Controller
             $is_exist = City::where("title", "LIKE", "%{$title}%")->orWhere("title", "LIKE", "{$title}%")->orWhere("title", "LIKE", "%{$title}")->first();
             return view("panel.dashboard.cities.addCity", ["flag" => "add-city", "request" => $request, 'is_exist' => $is_exist]);
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -241,7 +255,9 @@ class CityController extends Controller
             $cities = City::all();
             return view("panel.dashboard.cities.edit", compact('flag', 'cities'));
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }

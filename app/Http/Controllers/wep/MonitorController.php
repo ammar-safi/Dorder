@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-
+use Psy\CodeCleaner\ReturnTypePass;
 
 class MonitorController extends Controller
 {
@@ -76,7 +76,9 @@ class MonitorController extends Controller
 
             return view("panel.dashboard.monitors.monitors", compact("flag", "monitors", "cities", "areas", 'selectedCityId', 'selectedAreaId', 'searchName'));
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -104,7 +106,9 @@ class MonitorController extends Controller
 
             return view("panel.dashboard.monitors.add", compact("flag", "collection"));
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -179,7 +183,9 @@ class MonitorController extends Controller
                 return back()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
             }
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -198,8 +204,29 @@ class MonitorController extends Controller
     public function edit(Request $request)
     {
         try {
+            // dd(User::find(43));   
+            $validate = Validator::make(['id' => $request->id], ['id' => "required|exists:monitors,id"], [
+                'id.required' => "حصل خطأ غير متوقع",
+                'id.exist' => "حصل خطأ غير متوقع"
+            ]);
+
+            if ($validate->fails()) {
+                return back()->withInput($request->all())->withErrors($validate);
+            }
+
+            $monitor = Monitor::find($request->id);
+            if ($monitor) {
+
+            } else {
+                return back()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
+            }
+
+            $flag = 'monitors-show';
+            return view("panel.dashboard.monitors.edit" , compact('flag','monitor'));
         } catch (Exception $e) {
-            Log::error("حدث خطأ , يرجى المحاولة لاحقا", $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
         }
     }
@@ -237,7 +264,9 @@ class MonitorController extends Controller
             }
             return back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -261,7 +290,9 @@ class MonitorController extends Controller
                 return back()->with("error", "حدث خطأ غير معروف , اعد المحاولة لاحقا");
             }
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
@@ -274,7 +305,9 @@ class MonitorController extends Controller
             // $monitors = Monitor::
             // return view
         } catch (Exception $e) {
-            Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
