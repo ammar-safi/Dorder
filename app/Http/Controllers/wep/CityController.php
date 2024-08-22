@@ -147,7 +147,7 @@ class CityController extends Controller
 
                     "title.required" => "عليك اضافة اسم مدينة",
                     "title.string" => "الاسم الذي ادخلته غير صحيح",
-                    "title.regex" => "الاسم الذي ادخلته يجب ان يحنوي على حروف  باللغة العربية فقط",
+                    "title.regex" => "الاسم الذي ادخلته يجب ان يحتوي على حروف  باللغة العربية فقط",
                 ]
             );
             if ($validate->fails()) {
