@@ -49,7 +49,7 @@ class MonitorController extends Controller
             }
             
             if ($searchName) {
-                $query->whereIn('monitor_id' , User::where("type" , "monitor")->where("name" , $searchName)->pluck('id')->toArray() );
+                $query->whereIn('monitor_id' , User::where("type" , "monitor")->where("name" , 'LIKE' , "%{$searchName}%")->pluck('id')->toArray() );
             }
 
             // $monitors = $selectedAreaId?

@@ -1,0 +1,568 @@
+  * // <#>
+
+  * // <http://127.0.0.1:8000/monitors/app-email.html>
+  * // <http://127.0.0.1:8000/monitors/app-chat.html>
+  * // <http://127.0.0.1:8000/monitors/app-todo.html>
+  * // <http://127.0.0.1:8000/monitors/app-calendar.html>
+
+  * //
+    //
+
+  * //English <#>
+    /
+
+    / English <#>
+    /
+
+    / French <#>
+    /
+
+    / German <#>
+    /
+
+    / Portuguese <#>
+  * //
+  * //
+    //
+    //
+  * //5 <#>
+      o
+        7 new NotificationMark all as read
+      o
+        avatar
+
+
+                    Congratulate Socrates Itumay for work anniversaries
+
+        Mar 15 12:32pm
+        <javascript:void(0)>
+        avatar
+
+
+                    New Message received
+
+        You have 18 unread messages
+        avatar
+
+
+                    Updates Available
+
+        Sketch 50.2 is currently newly added
+
+
+                    Update
+
+
+                    Close
+
+        LD
+
+
+                    New customer is registered
+
+        1 hrs ago
+
+
+                    New Offers
+
+        /
+
+        /
+
+
+                    Application has been approved
+
+        6 hrs ago
+        avatar
+
+
+                    New file has been uploaded
+
+        4 hrs ago
+        /
+
+        /
+
+
+                    Finance report has been generated
+
+        25 hrs ago
+        avatar
+
+
+                    New customer comment recieved
+
+        2 days ago
+      o Read all notifications <javascript:void(0)>
+  *
+    ammarAvailable
+    avatar <#>
+    /
+
+    / Edit Profile <http://127.0.0.1:8000/monitors/page-user-profile.html>
+    /
+
+    / My Inbox <http://127.0.0.1:8000/monitors/app-email.html>
+    /
+
+    / Task <http://127.0.0.1:8000/monitors/app-todo.html>
+    /
+
+    / Chats <http://127.0.0.1:8000/monitors/app-chat.html>
+
+  *
+
+
+        Derrebni Order
+
+    <#>
+  * //
+    /
+
+    /
+
+  *
+  * الرئيسية
+  *
+    /
+
+    		
+
+    		
+    			
+    			
+    			
+    			
+    		
+
+    		
+    	
+    	
+    LivIcons Evolution
+
+    /الصفحة الرئيسية <http://127.0.0.1:8000/home>
+  *
+    /
+
+    		
+    			
+    				
+    				
+    				
+    				
+    				
+    				
+    				
+    				
+    				
+    				
+    				
+    			
+    		
+    	
+    	
+    LivIcons Evolution
+
+    /الاحصائيات <#>
+
+  * الخدمات
+  *
+    /
+
+    		
+    			
+
+    			
+    				
+    				
+    			
+    			
+    			
+    		
+    	
+    	
+    LivIcons Evolution
+
+    /المدن المخدمة<http://127.0.0.1:8000/html/rtl/vertical-menu-
+    template-semi-dark/index.html>
+      o
+        /
+
+        /ادارة المدن <http://127.0.0.1:8000/cities/show>
+      o
+        /
+
+        /اضافة مدينة <http://127.0.0.1:8000/cities/form/add> 
+
+  *
+    /
+
+    		
+
+    		
+    			
+    				
+    					
+    				
+    				
+    					
+    				
+    			
+    			
+    				
+    				
+    				
+    				
+    					
+    				
+    			
+    			
+    		
+
+    		
+    	
+    	
+    LivIcons Evolution
+
+    /المناطق المخدمة<http://127.0.0.1:8000/html/rtl/vertical-menu-
+    template-semi-dark/index.html>
+      o
+        /
+
+        /ادارة المناطق المخدمة <http://127.0.0.1:8000/areas/show>
+      o
+        /
+
+        /اضافة منطقة <http://127.0.0.1:8000/areas/form/add> 
+
+  *
+    /
+
+    		
+    			
+    		
+    	
+    	
+    LivIcons Evolution
+
+    /المدراء<http://127.0.0.1:8000/html/rtl/vertical-menu-template-semi-
+    dark/index.html>
+      o
+        /
+
+        /ادارة المدراء <http://127.0.0.1:8000/admins/show>
+      o
+        /
+
+        /اضافة مدير <http://127.0.0.1:8000/admins/form/add> 
+
+  *
+    /
+
+    		
+    			
+    				
+    					
+    				
+    			
+    			
+    				
+    				
+    				
+    					
+    					
+    					
+    				
+
+    				
+    					
+    					
+    					
+    				
+
+    				
+    			
+    		
+
+    		
+    	
+    	
+    LivIcons Evolution
+
+    /المشرفين<http://127.0.0.1:8000/html/rtl/vertical-menu-template-
+    semi-dark/index.html>
+      o
+        /
+
+        /ادارة المشرفين <http://127.0.0.1:8000/monitors/show>
+      o
+        /
+
+        /اضافة مشرف <http://127.0.0.1:8000/monitors/form/add> 
+
+  *
+    /
+
+    		
+    			
+    			
+    			
+    		
+    		
+    			
+    				
+    				
+    				
+    				
+    				
+    				
+    			
+    		
+
+    		
+    	
+    	
+    LivIcons Evolution
+
+    /عمال التوصيل<http://127.0.0.1:8000/html/rtl/vertical-menu-template-
+    semi-dark/index.html>
+      o
+        /
+
+        /ادارة عمال التوصيل <#>
+      o
+        /
+
+        /تعديل عامل توصيل <#>
+      o
+        /
+
+        /اضافة عامل توصيل <#> 
+
+  *
+    /
+
+    		
+    			
+    				
+    				
+    				
+    				
+    				
+    				
+    				
+    				
+    			
+    			
+    				
+    					
+    				
+    			
+    			
+    				
+    					
+    					
+    				
+    				
+    					
+    					
+    				
+    				
+    					
+    					
+    				
+    			
+    			
+    		
+
+    		
+    	
+    	
+    LivIcons Evolution
+
+    /حزم الاشتراك<http://127.0.0.1:8000/html/rtl/vertical-menu-template-
+    semi-dark/index.html>
+      o
+        /
+
+        /ادارة الحزم <#>
+      o
+        /
+
+        /تعديل حزمة <#>
+      o
+        /
+
+        /اضافة حزمة جديد <#> 
+
+  *
+    /
+
+    		
+
+    		
+    			
+    			
+    		
+
+    		
+    	
+    	
+    LivIcons Evolution
+
+    /العملاء<http://127.0.0.1:8000/html/rtl/vertical-menu-template-semi-
+    dark/index.html>
+      o
+        /
+
+        /ادارة العملاء <#>
+      o
+        /
+
+        /ادارة عناويين العملاء <#> 
+
+  *
+    /
+
+    		
+
+    		
+    			
+    				
+    					
+    						
+    					
+    				
+    				
+    					
+    					
+    					
+    				
+    			
+    			
+    			
+    			
+    		
+
+    		
+    	
+    	
+    LivIcons Evolution
+
+    /الطلبات<http://127.0.0.1:8000/html/rtl/vertical-menu-template-semi-
+    dark/index.html>
+
+  *
+    /
+
+    		
+    			
+    				
+    					
+    					
+    				
+    			
+    		
+    	
+    	
+    LivIcons Evolution
+
+    /المراجعات<http://127.0.0.1:8000/html/rtl/vertical-menu-template-
+    semi-dark/index.html>
+      o
+        /
+
+        /المراجعات <#>
+      o
+        /
+
+        /التقييمات <#> 
+
+  *
+    /
+
+    		
+    			
+    				
+    					
+    				
+    			
+    			
+    				
+    				
+    				
+    				
+    				
+    				
+    			
+    		
+
+    		
+    			
+
+    			
+    				
+    				
+    				
+    				
+    				
+    				
+    				
+    				
+    				
+    				
+    				
+    				
+    			
+
+    			
+    		
+    	
+    	
+    LivIcons Evolution
+
+    /الدعم<http://127.0.0.1:8000/html/rtl/vertical-menu-template-semi-
+    dark/index.html>
+      o
+        /
+
+        /ارقام الدعم <#>
+      o
+        /
+
+        /اضافة رقم <#> 
+
+      o
+      o
+        /
+
+        		
+        			
+        				
+        				
+        			
+        		
+        	
+        	
+        LivIcons Evolution
+
+        /الاعدادات <#> 
+
+
+
+  المشرفين
+
+إضافة مشرف <http://127.0.0.1:8000/monitors/form/add> تعديل المناطق
+<http://127.0.0.1:8000/monitors/edit/area>
+
+------------------------------------------------------------------------
+
+بحث
+
+حدد مدينة:
+
+المشرف 	المنطقة 	المحافظة 	البريد الاكتروني 	رقم الهاتف 	العمليات
+
+2024 © Derrebni Order Designed And Programming with// by Muhammad Khalaf
+😎 <https://fb.com/fenix.p2h> //
+

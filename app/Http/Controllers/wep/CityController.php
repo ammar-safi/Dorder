@@ -20,12 +20,17 @@ class CityController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
             $flag = "show-cities";
-            $cities = City::all();
-            return view("panel.dashboard.cities.cities", compact("flag", "cities"));
+            $query = City::query();
+            $searchName = $request->input('search_name');
+            if ($searchName) {
+                $query->where("title" , "like" , "%{$searchName}%");
+            } 
+            $cities = $query->get();
+            return view("panel.dashboard.cities.cities", compact("flag", "cities" , 'searchName'));
         } catch (Exception $e) {
             Log::error("هنالك مشكلة , حاول مرة اخرى: " . $e->getMessage());
             return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
