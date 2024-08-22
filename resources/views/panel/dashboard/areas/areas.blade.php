@@ -41,7 +41,7 @@
 
                 th, td {
                     padding: 12px;
-                    text-align: right;
+                    text-align: center;
                     border-bottom: 1px solid #ddd; /* خط تحت الخلايا */
                 }
 
@@ -113,6 +113,14 @@
                 </div>
                 <br><br>
             
+            @elseif(session()->has("success")) 
+                <div style="background-color: #c6f8cf; border-right: 6px solid #1be23d; padding: 10px; border-radius: 10px;">
+                    <p style="font-size: 20px; margin: 0;">
+                            {{session("success")}}
+                    </p>
+                </div>
+                <br><br>
+            
             @endif
 
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
@@ -139,7 +147,7 @@
                 <th>عدد المشرفين</th>
                 <th>عدد عمال التوصيل</th>
                 <th>عدد المشتركين</th>
-                <th>العمليات</th>
+                <th> العمليات</th>
             </tr>
         </thead>
         @foreach ($areas as $index)
@@ -150,6 +158,15 @@
                 <td>{{$index->count_of_delivers}}</td> 
                 <td>{{$index->count_of_clients}}</td> 
                 <td>
+                    <div style="display: inline-block;">
+                        <form action="{{Route("areas.add.employs")}}" method="GET" style="display: inline;">
+                            @csrf
+                            <input type="hidden" name="id" value="{{$index->id}}">
+                            <button type="submit" id="delete" style="background: none; border: none; color: rgb(82, 206, 119); cursor: pointer;">اضافة موظفين</button>
+                        </form>
+                        <span class="icon" onclick="deleteRow()"><i class="fas fa-user"></i></span>
+                    </div>
+
                     <div style="display: inline-block; margin-right: 10px;">
                         <form action="{{ route('areas.edit.area')}}" method="GET" style="display: inline;">
                             @csrf
@@ -164,11 +181,11 @@
                         <form action="{{Route("areas.soft.delete")}}" method="POST" style="display: inline;">
                             @csrf
                             <input type="hidden" name="id" value="{{$index->id}}">
-                            <input type="hidden" name="route" value="edit.area">
                             <button type="submit" id="delete" style="background: none; border: none; color: rgb(161, 17, 17); cursor: pointer;">حذف</button>
                         </form>
                         <span class="icon" onclick="deleteRow()"><i class="fas fa-trash"></i></span>
                     </div>
+
                 </td>
             </tr>
         </tbody>

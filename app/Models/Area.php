@@ -43,6 +43,17 @@ class Area extends Model
     {
         return $this->hasMany(User::class);
     }
+    public function AreaMonitors()
+    {
+        return $this->belongsToMany(User::class ,"monitors" ,'area_id' , "monitor_id");
+    }
+    public function AreaDelivers()
+    {
+        return $this->belongsToMany(User::class ,"delivers" , "area_id" ,"deliver_id" );
+    }
+
+
+
 
     /**
      * Append 
@@ -62,11 +73,5 @@ class Area extends Model
     }
 
 
-    // public function softDelete() {
-    //     if ($this) {
-    //             $this->Monitors->delete();
-    //         $this->Delivers->delete();
-    //         $this->Users->delete();
-    //     }
-    // }
+
 }

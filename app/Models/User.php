@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable , SoftDeletes ;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -65,15 +65,15 @@ class User extends Authenticatable
         return $this->belongsTo(Area::class, "area_id");
     }
     public function clientOrders()
-    {   
+    {
         return $this->hasMany(Order::class, 'client_id');
     }
     public function deliverOrders()
-    {   
+    {
         return $this->hasMany(Order::class, 'deliver_id');
     }
     public function adminNotifications()
-    {   
+    {
         return $this->hasMany(AdminNotification::class, 'admin_id');
     }
     public function userGeneralNotifications()
@@ -97,21 +97,27 @@ class User extends Authenticatable
         return $this->hasMany(Invoice::class, 'deliver_id');
     }
     public function rateServices()
-    {   
+    {
         return $this->hasMany(RateService::class, 'client_id');
     }
     public function monitors()
-    {   
+    {
         return $this->hasMany(Monitor::class, 'monitor_id');
     }
     public function ContactUs()
-    {   
+    {
         return $this->hasMany(ContactUs::class, 'client_id');
     }
     public function Delivers()
-    {   
+    {
         return $this->hasMany(Deliver::class, 'deliver_id');
     }
+
+    public function areas()
+    {
+        return $this->belongsToMany(Area::class, 'area_user', 'user_id', 'area_id');
+    }
+
 
     // public function MonitorArea () {
     //     return $this->hasManyThrough(Area::class , Monitor::class , "city_");

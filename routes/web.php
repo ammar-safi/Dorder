@@ -1,5 +1,9 @@
 <?php
 
+
+
+
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
@@ -84,7 +88,8 @@ Route::group(['prefix' => "/areas", 'as' => 'areas.', 'namespace' => "App\Http\C
 
    // Add Area
    Route::get("/form/add", [AreaController::class, 'create'])->name("add");
-   // Route::post("/conform/add", [AreaController::class, 'conformAdding'])->name("conform.adding");
+   Route::get("/form/add/employs", [AreaController::class, 'createEmploys'])->name("add.employs");
+   Route::post("/add/employs", [AreaController::class, 'storeEmploys'])->name("store.employs");
    Route::post("/store", [AreaController::class, 'store'])->name('stor');
 
    /**
