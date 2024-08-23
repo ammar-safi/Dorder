@@ -87,7 +87,7 @@
                 <ul class="menu-content">
                     {{-- <li class={{$flag? NULL : "active"}}></li> --}}
                     <li class={{$flag == "deliver-show"?'active':NULL}}><a href="{{Route("delivers.show")}}"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">ادارة عمال التوصيل</span></a>    
-                    <li class={{$flag == "deliver-add"?'active':NULL}}><a href="{{Route("delivers.edit")}}"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">اضافة عامل توصيل</span></a>    
+                    <li class={{$flag == "deliver-add"?'active':NULL}}><a href="{{Route("delivers.add")}}"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">اضافة عامل توصيل</span></a>    
     
                 </ul>
             </li>
