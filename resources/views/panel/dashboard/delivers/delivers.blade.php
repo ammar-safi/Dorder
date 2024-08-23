@@ -85,11 +85,10 @@
             <div class="card-body">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
                     <div>
-                        <h1 style="margin: 0;">المشرفين </h1>
+                        <h1 style="margin: 0;">عمال التوصيل</h1>
                     </div>
                     <div>
-
-                        <a href="{{ route('monitors.add') }}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة مشرف</a>
+                        <a href="{{ route('delivers.add') }}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة عامل توصيل</a>
                         <a href="{{Route("employs.create")}}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;"> تعيين موظفين</a>
                     </div>
                 </div>
@@ -99,8 +98,8 @@
 
 
                 <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-                    <!-- نموذج البحث عن المشرف بالاسم -->
-                    <form method="GET" action="{{ route('monitors.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+
+                    <form method="GET" action="{{ route('delivers.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
                         <div style="position: relative; display: flex; align-items: center; width: 200px;">
                             <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم المشرف" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
                             <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
@@ -110,7 +109,7 @@
                         @endif
                     </form>
                     
-                    <form method="GET" action="{{ route('monitors.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                    <form method="GET" action="{{ route('delivers.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
                         <input type="hidden" name="search_name" value="{{$searchName}}">
                         <label for="city_id" style="margin: 0; font-size: 0.875rem;">حدد مدينة:</label>
                         <select name="city_id" id="city_id" onchange="this.form.submit()" style="padding: 5px; width: 150px; font-size: 0.875rem; border-radius: 5px;">
@@ -124,7 +123,7 @@
                     </form>
                     
                     @if ($selectedCityId)
-                        <form method="GET" action="{{ route('monitors.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                        <form method="GET" action="{{ route('delivers.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
                             <input type="hidden" name="city_id" value="{{ $selectedCityId }}">
                             <label for="area_id" style="margin: 0; font-size: 0.875rem;">حدد منطقة:</label>
                             <select name="area_id" id="area_id" onchange="this.form.submit()" style="padding: 5px; width: 150px; font-size: 0.875rem; border-radius: 5px;">
@@ -149,7 +148,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>المشرف</th>
+                            <th>الاسم</th>
                             <th>المنطقة</th>
                             <th>المحافظة</th>
                             <th>البريد الاكتروني</th>
@@ -162,41 +161,41 @@
                     </thead>
                     <tbody>
 
+                        {{-- @dd($del) --}}
                         
-                        @foreach ($monitors as $monitor)
-                        {{-- @dd($Monitors) --}}
+                        @foreach ($delivers as $deliver)
+                        {{-- @dd($delivers) --}}
                             {{-- @dd($monitor->user->name) --}}
                             <tr>
-                                <td>{{$monitor->user->name}}</td>
-                                <td>{{$monitor->area->title}}</td>
-                                <td>{{$monitor->area->city->title /*()->withTrashed()->first('title')->title*/}}</td>
-                                <td>{{$monitor->user->email}}</td>
-                                <td>{{$monitor->user->mobile}}</td>
-                                {{-- <td>{{$monitor->user->created_at}}</td>
-                                <td>{{$monitor->user->updated_at}}</td> --}}
-                                {{-- <td style="text-align:right">{{  ['🔴 غير نشط','🟢 نشط']  [$monitor->user->active]}} </td> --}}
+                                <td>{{$deliver->user->name}}</td>
+                                <td>{{$deliver->area->title}}</td>
+                                <td>{{$deliver->area->city->title /*()->withTrashed()->first('title')->title*/}}</td>
+                                <td>{{$deliver->user->email}}</td>
+                                <td>{{$deliver->user->mobile}}</td>
+                                {{-- <td>{{$deliver->user->created_at}}</td>
+                                <td>{{$deliver->user->updated_at}}</td> --}}
+                                {{-- <td style="text-align:right">{{  ['🔴 غير نشط','🟢 نشط']  [$deliver->user->active]}} </td> --}}
                                 <td style="font-size:2ch" >
                                     </div>
-                                    @if (Auth::user()->type == "admin")
                                     <div style="display: inline-block;">
-                                        <form action="{{ route('monitors.edit')}}" method="GET" style="display: inline;">
+                                        <form action="{{ route('delivers.edit')}}" method="GET" style="display: inline;">
                                             @csrf
-                                            <input type="hidden" name="id" value="{{$monitor->id}}">
+                                            <input type="hidden" name="id" value="{{$deliver->id}}">
                                             <input type="hidden" name="route" value="cities.show">
                                             <button type="submit" id="edit" style="background: none; border: none; color: rgb(42, 101, 177); cursor: pointer;">تعديل</button>
                                         </form>
                                         <span class="icon" onclick="deleteRow()"><i class="fas fa-edit"></i></span>
                                     </div>
                                     <div style="display: inline-block;">
-                                        <form action="{{ route('monitors.soft.delete')}}" method="POST" style="display: inline;">
+                                        <form action="{{ route('delivers.soft.delete')}}" method="POST" style="display: inline;">
                                             @csrf
-                                            <input type="hidden" name="id" value="{{$monitor->id}}">
+                                            <input type="hidden" name="id" value="{{$deliver->id}}">
                                             <input type="hidden" name="route" value="cities.show">
                                             <button type="submit" id="delete" style="background: none; border: none; color: rgb(161, 17, 17); cursor: pointer;">اقالة</button>
                                         </form>
                                         <span class="icon" onclick="deleteRow()"><i class="fas fa-user-minus"></i></span>
                                     </div>
-                                    @endif
+                                   
                                 </td>
                                 
                             </tr>

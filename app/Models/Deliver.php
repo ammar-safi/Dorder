@@ -15,11 +15,11 @@ class Deliver extends Model
 
     ];
 
-    public function deliver()
+    public function User()
     {
         return $this->belongsTo(User::class, "deliver_id");
     }
-    public function area()
+    public function Area()
     {
         return $this->belongsTo(Area::class, "area_id");
     }

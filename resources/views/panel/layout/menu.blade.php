@@ -86,9 +86,8 @@
             <li class=" nav-item"><a href="../../../html/rtl/vertical-menu-template-semi-dark/index.html"><i class="menu-livicon" data-icon="truck"></i><span class="menu-title" data-i18n="Dashboard">عمال التوصيل</span><span class="badge badge-light-danger badge-pill badge-round float-right mr-2"></span></a>
                 <ul class="menu-content">
                     {{-- <li class={{$flag? NULL : "active"}}></li> --}}
-                    <li class={{$flag == "a"?'active':NULL}}><a href="#"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">ادارة عمال التوصيل</span></a>    
-                    <li class={{$flag == "a"?'active':NULL}}><a href="#"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">تعديل عامل توصيل</span></a>    
-                    <li class={{$flag == "a"?'active':NULL}}><a href="#"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">اضافة عامل توصيل</span></a>    
+                    <li class={{$flag == "deliver-show"?'active':NULL}}><a href="{{Route("delivers.show")}}"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">ادارة عمال التوصيل</span></a>    
+                    <li class={{$flag == "deliver-add"?'active':NULL}}><a href="{{Route("delivers.edit")}}"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">اضافة عامل توصيل</span></a>    
     
                 </ul>
             </li>
@@ -126,8 +125,6 @@
                 <ul class="menu-content">
                     <li class={{$flag == "a"?'active':NULL}}><a href="#"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">المراجعات</span></a>    
                     <li class={{$flag == "a"?'active':NULL}}><a href="#"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">التقييمات</span></a>    
-
-
                 </ul>
             </li>
              

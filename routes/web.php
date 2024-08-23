@@ -1,9 +1,4 @@
 <?php
-
-
-
-
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
@@ -12,6 +7,8 @@ use App\Http\Controllers\wep\MonitorController;
 use App\Http\Controllers\wep\AdminController;
 use App\Http\Controllers\wep\CityController;
 use App\Http\Controllers\wep\AreaController;
+use App\Http\Controllers\wep\DeliverController;
+use App\Http\Controllers\wep\EmployController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -126,7 +123,7 @@ Route::group(['prefix' => "/admins", 'as' => 'admins.', 'namespace' => "App\Http
 /**
  * Custom Monitors
  */
-Route::group(['prefix' => "/monitors", 'as' => 'monitors.', 'namespace' => "App\Http\Controllers\wep\MonitorsController", "middleware" => ["auth", "hasAccess"]], function () {
+Route::group(['prefix' => "/monitors", 'as' => 'monitors.', 'namespace' => "App\Http\Controllers\wep\MonitorController", "middleware" => ["auth", "hasAccess"]], function () {
    // Show all Monitor
    Route::get('/show', [MonitorController::class, "index"])->name('show'); // done
 
@@ -145,4 +142,38 @@ Route::group(['prefix' => "/monitors", 'as' => 'monitors.', 'namespace' => "App\
     * Soft Delete 
     */
    Route::post("/delete", [MonitorController::class, "delete"])->name("soft.delete");
+});
+
+
+/**
+ * Custom Delivers
+ */
+Route::group(['prefix' => "/delivers", 'as' => 'delivers.', 'namespace' => "App\Http\Controllers\wep\DeliverController", "middleware" => ["auth", "hasAccess"]], function () {
+   // Show all Delivers
+   Route::get('/show', [DeliverController::class, "index"])->name('show'); 
+
+   // Edit Delivers
+   Route::get('/show/edit', [DeliverController::class, "edit"])->name("edit");
+   Route::post('/update', [DeliverController::class, "update"])->name("update");
+   // Route::get('/active', [DeliverController::class, "active"])->name("active");
+   Route::get('/edit/area', [DeliverController::class, "editArea"])->name("edit.area");
+   
+   // Add Delivers
+   Route::get("/form/add", [DeliverController::class, 'create'])->name("add");
+   Route::post("/store", [DeliverController::class, 'store'])->name('store');
+
+   // Route::post("/conform/add", [DeliverController::class, 'conformAdding'])->name("conform.adding");
+
+   /**
+    * Soft Delete 
+    */
+   Route::post("/delete", [DeliverController::class, "delete"])->name("soft.delete");
+});
+
+/**
+ * Add Employs
+ */
+Route::group(['prefix' => "/employs", 'as' => 'employs.', 'namespace' => "App\Http\Controllers\wep\EmployController", "middleware" => ["auth", "hasAccess"]], function () {
+   Route::get("/form/add/employ", [EmployController::class, 'createEmploys'])->name("create");
+   Route::post("/store/employ", [EmployController::class, 'storeEmploys'])->name('store');
 });

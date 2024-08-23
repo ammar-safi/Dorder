@@ -285,23 +285,21 @@ class AreaController extends Controller
             return back()->with("error", "حدث خطأ , حاول مرة اخرى");
         }
 
+
         $monitors = User::leftJoin('monitors', 'users.id', '=', 'monitors.monitor_id')
             ->leftJoin('monitors as deleted_monitors', 'users.id', '=', 'deleted_monitors.monitor_id')
-            ->where('users.type', 'monitor')
-            ->where(function ($query) {
-                $query->whereNull('monitors.monitor_id')
-                    ->orWhere(function ($query) {
-                        $query->whereNotNull('deleted_monitors.monitor_id')
-                            ->whereNotNull('deleted_monitors.deleted_at'); 
-                    });
+            ->where('users.type', 'monitor')->where(function ($query) {
+                $query->whereNull('monitors.monitor_id')->orWhere(function ($query) {
+                    $query->whereNotNull('deleted_monitors.monitor_id')
+                        ->whereNotNull('deleted_monitors.deleted_at');
+                });
             })
             ->distinct()
             ->select('users.*')
             ->get();
+
         $delivers = User::leftJoin('delivers', 'users.id', '=', 'delivers.deliver_id')
-            ->leftJoin('delivers as deleted_delivers', 'users.id', '=', 'deleted_delivers.deliver_id')
-            ->where('users.type', 'deliver')
-            ->where(function ($query) {
+            ->leftJoin('delivers as deleted_delivers', 'users.id', '=', 'deleted_delivers.deliver_id')->where('users.type', 'deliver')->where(function ($query) {
                 $query->whereNull('delivers.deliver_id')
                     ->orWhere(function ($query) {
                         $query->whereNotNull('deleted_delivers.deliver_id')

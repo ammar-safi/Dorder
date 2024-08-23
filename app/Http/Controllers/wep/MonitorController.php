@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Psy\CodeCleaner\ReturnTypePass;
 
 class MonitorController extends Controller
 {
