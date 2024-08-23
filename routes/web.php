@@ -10,6 +10,7 @@ use App\Http\Controllers\wep\CityController;
 use App\Http\Controllers\wep\AreaController;
 use App\Http\Controllers\wep\DeliverController;
 use App\Http\Controllers\wep\EmployController;
+use App\Http\Controllers\wep\PackageController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -193,4 +194,34 @@ Route::group(['prefix' => "/delivers", 'as' => 'delivers.', 'namespace' => "App\
 Route::group(['prefix' => "/employs", 'as' => 'employs.', 'namespace' => "App\Http\Controllers\wep\EmployController", "middleware" => ["auth", "isAdmin"]], function () {
    Route::get("/form/add/employ", [EmployController::class, 'createEmploys'])->middleware("isAdmin")->name("create");
    Route::post("/store/employ", [EmployController::class, 'storeEmploys'])->middleware("isAdmin")->name('store');
+});
+
+
+
+
+
+/**
+ * Custom Admins
+ */
+Route::group(['prefix' => "/packages", 'as' => 'packages.', 'namespace' => "App\Http\Controllers\wep\PackageController", "middleware" => ["auth", "hasAccess"]], function () {
+   // Show all package
+
+   Route::get('/show', [packageController::class, "index"])->name('show'); // done
+
+   Route::middleware('isAdmin')->group(function () {
+
+      // Edit package
+      Route::get('/show/edit', [packageController::class, "edit"])->name("edit"); //done
+      Route::post('/update', [packageController::class, "update"])->name("update");
+
+      // Add package
+      Route::get("/form/add", [PackageController::class, 'create'])->name("add");
+      // Route::post("/conform/add", [packageController::class, 'conformAdding'])->name("conform.adding");
+      Route::post("/store", [packageController::class, 'store'])->name('store');
+
+      /**
+       * Soft Delete 
+       */
+      Route::post("/delete", [packageController::class, "delete"])->name("soft.delete");
+   });
 });

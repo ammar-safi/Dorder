@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Package extends Model
 {
     use HasFactory;
+
+    // عدد المشتركين
+    protected $append = [
+        "count_of_clients",
+        
+    ];
+
     protected $fillable = [
         "title",
         "image",
@@ -16,4 +23,21 @@ class Package extends Model
         "order_price",
     ];
 
+
+    /**
+     * Relation with Users (Client)
+     */
+    public function Clients () {
+       return $this->hasMany(User::class);
+    }
+
+
+    /**
+     * This method for $append->count_of_clients
+     */
+    public function getCountOfClientsAttribute() {
+        return User::where("type" , "client")->where('package_id' , $this->id)->count() ; 
+    }
+
+    
 }

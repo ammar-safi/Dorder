@@ -96,9 +96,8 @@
             <li class=" nav-item"><a href="../../../html/rtl/vertical-menu-template-semi-dark/index.html"><i class="menu-livicon" data-icon="piggybank"></i><span class="menu-title" data-i18n="Dashboard">حزم الاشتراك</span><span class="badge badge-light-danger badge-pill badge-round float-right mr-2"></span></a>
                 <ul class="menu-content">
                     {{-- <li class={{$flag? NULL : "active"}}></li> --}}
-                    <li class={{$flag == "a"?'active':NULL}}><a href="#"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">ادارة الحزم</span></a>    
-                    <li class={{$flag == "a"?'active':NULL}}><a href="#"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">تعديل حزمة</span></a>    
-                    <li class={{$flag == "a"?'active':NULL}}><a href="#"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">اضافة حزمة جديد</span></a>    
+                    <li class={{$flag == "packages-show"?'active':NULL}}><a href="{{Route("packages.show")}}"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">ادارة الحزم</span></a>    
+                    <li class={{$flag == "packages-add"?'active':NULL}}><a href="{{Route("packages.add")}}"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">اضافة حزمة جديد</span></a>    
                 </ul>
             </li>
             <br>

@@ -22,14 +22,14 @@
             }
 
             .widget {
-    background-size: cover; /* يجعل الصورة تغطي كامل العنصر */
-    background-position: center; /* يحدد موضع الصورة في المنتصف */
-    border-radius: 15px;
-    padding: 50px;
-    color: white;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-decoration: none; /* إزالة التزيين الافتراضي للرابط */
+                background-size: cover; /* يجعل الصورة تغطي كامل العنصر */
+                background-position: center; /* يحدد موضع الصورة في المنتصف */
+                border-radius: 15px;
+                padding: 50px;
+                color: white;
+                text-align: center;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                text-decoration: none; /* إزالة التزيين الافتراضي للرابط */
             }
 
 
