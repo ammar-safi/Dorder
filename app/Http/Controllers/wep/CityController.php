@@ -15,6 +15,7 @@ class CityController extends Controller
     public function __construct()
     {
         $this->middleware(["auth", "hasAccess"]);
+        $this->middleware("isAdmin")->except("index");
     }
 
     /**

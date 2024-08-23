@@ -132,7 +132,9 @@
                 <div>
                     <h1 style="margin: 0;">المناطق المخدمة</h1>
                 </div>
+                @if (Auth::User()->type == "admin")
                 <a href="{{ route('areas.add') }}" id="add-city" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة منطقة</a>
+                @endif
             </div>
             <br>
             <hr>
@@ -173,7 +175,9 @@
                                 <th>عدد المشرفين</th>
                                 <th>عدد عمال التوصيل</th>
                                 <th>عدد المشتركين</th>
+                                @if (Auth::User()->type == "admin")
                                 <th>العمليات</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -183,6 +187,7 @@
                                     <td>{{$index->count_of_monitors}}</td> 
                                     <td>{{$index->count_of_delivers}}</td> 
                                     <td>{{$index->count_of_clients}}</td> 
+                                    @if (Auth::User()->type == "admin")
                                     <td>
                                         <div style="display: inline-block; margin-right: 10px;">
                                             <form action="{{Route('areas.add.employs')}}" method="GET" style="display: inline;">
@@ -216,6 +221,7 @@
                                         
 
                                     </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>

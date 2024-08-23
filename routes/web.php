@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
@@ -39,13 +40,19 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // });
 
 //Auth::routes();
-Route::middleware(["auth", "hasAccess"])->group(function () {
-   Route::get('/', [DashboardController::class, 'index']);
+Route::middleware(['auth', 'hasAccess'])->group(function () {
+   Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
    Route::get('/home', [DashboardController::class, 'index'])->name('Admin-Panel');
-   Route::get('/404', [DashboardController::class, 'notFound'])->name('404');
-   Route::get('/500', [DashboardController::class, 'serverError'])->name('500');
 });
-Route::get('/403', [DashboardController::class, 'Forbidden'])->name('403');
+
+
+/**
+ * errors
+ */
+Route::view('/404', 'error.404')->name('404');
+Route::view('/500', 'error.500')->name('500');
+Route::view('/403', "error.403")->name('403');
+
 
 
 
@@ -56,20 +63,23 @@ Route::group(['prefix' => "/cities", 'as' => 'cities.', 'namespace' => "App\Http
    // Show all Cities
    Route::get('/show', [CityController::class, "index"])->name('show'); // done
 
-   // Edit City
-   Route::get('/show/edit', [CityController::class, "edit"])->name("show.city"); //done
-   Route::get("/show/cities/edit", [CityController::class, 'showEdit'])->name("edit.city");
-   Route::post('/update', [CityController::class, "update"])->name("update.city");
+   Route::middleware('isAdmin')->group(function () {
 
-   // Add City
-   Route::get("/form/add", [CityController::class, 'create'])->name("add");
-   Route::post("/conform/add", [CityController::class, 'conformAdding'])->name("conform.adding");
-   Route::post("/store", [CityController::class, 'store'])->name('stor');
+      // Edit City
+      Route::get('/show/edit', [CityController::class, "edit"])->name("show.city"); //done
+      Route::get("/show/cities/edit", [CityController::class, 'showEdit'])->name("edit.city");
+      Route::post('/update', [CityController::class, "update"])->name("update.city");
 
-   /**
-    * Soft Delete 
-    */
-   Route::post("/delete", [CityController::class, "delete"])->name("soft.delete");
+      // Add City
+      Route::get("/form/add", [CityController::class, 'create'])->name("add");
+      Route::post("/conform/add", [CityController::class, 'conformAdding'])->name("conform.adding");
+      Route::post("/store", [CityController::class, 'store'])->name('stor');
+
+      /**
+       * Soft Delete 
+       */
+      Route::post("/delete", [CityController::class, "delete"])->name("soft.delete");
+   });
 });
 
 /**
@@ -79,20 +89,23 @@ Route::group(['prefix' => "/areas", 'as' => 'areas.', 'namespace' => "App\Http\C
    // Show all Areas
    Route::get('/show', [AreaController::class, "index"])->name('show'); // done
 
-   // Edit Area
-   Route::get('/show/edit', [AreaController::class, "edit"])->name("edit.area"); //done
-   Route::post('/update', [AreaController::class, "update"])->name("update.area");
+   Route::middleware('isAdmin')->group(function () {
 
-   // Add Area
-   Route::get("/form/add", [AreaController::class, 'create'])->name("add");
-   Route::get("/form/add/employs", [AreaController::class, 'createEmploys'])->name("add.employs");
-   Route::post("/add/employs", [AreaController::class, 'storeEmploys'])->name("store.employs");
-   Route::post("/store", [AreaController::class, 'store'])->name('stor');
+      // Edit Area
+      Route::get('/show/edit', [AreaController::class, "edit"])->name("edit.area"); //done
+      Route::post('/update', [AreaController::class, "update"])->name("update.area");
 
-   /**
-    * Soft Delete 
-    */
-   Route::post("/delete", [AreaController::class, "delete"])->name("soft.delete");
+      // Add Area
+      Route::get("/form/add", [AreaController::class, 'create'])->name("add");
+      Route::get("/form/add/employs", [AreaController::class, 'createEmploys'])->name("add.employs");
+      Route::post("/add/employs", [AreaController::class, 'storeEmploys'])->name("store.employs");
+      Route::post("/store", [AreaController::class, 'store'])->name('stor');
+
+      /**
+       * Soft Delete 
+       */
+      Route::post("/delete", [AreaController::class, "delete"])->name("soft.delete");
+   });
 });
 
 
@@ -104,19 +117,23 @@ Route::group(['prefix' => "/admins", 'as' => 'admins.', 'namespace' => "App\Http
    // Show all Admin
    Route::get('/show', [AdminController::class, "index"])->name('show'); // done
 
-   // Edit Admin
-   Route::get('/show/edit', [AdminController::class, "edit"])->name("edit"); //done
-   Route::post('/update', [AdminController::class, "update"])->name("update");
 
-   // Add Admin
-   Route::get("/form/add", [AdminController::class, 'create'])->name("add");
-   // Route::post("/conform/add", [AdminController::class, 'conformAdding'])->name("conform.adding");
-   Route::post("/store", [AdminController::class, 'store'])->name('store');
+   Route::middleware('isAdmin')->group(function () {
 
-   /**
-    * Soft Delete 
-    */
-   Route::post("/delete", [AdminController::class, "delete"])->name("soft.delete");
+      // Edit Admin
+      Route::get('/show/edit', [AdminController::class, "edit"])->name("edit"); //done
+      Route::post('/update', [AdminController::class, "update"])->name("update");
+
+      // Add Admin
+      Route::get("/form/add", [AdminController::class, 'create'])->name("add");
+      // Route::post("/conform/add", [AdminController::class, 'conformAdding'])->name("conform.adding");
+      Route::post("/store", [AdminController::class, 'store'])->name('store');
+
+      /**
+       * Soft Delete 
+       */
+      Route::post("/delete", [AdminController::class, "delete"])->name("soft.delete");
+   });
 });
 
 
@@ -127,21 +144,24 @@ Route::group(['prefix' => "/monitors", 'as' => 'monitors.', 'namespace' => "App\
    // Show all Monitor
    Route::get('/show', [MonitorController::class, "index"])->name('show'); // done
 
-   // Edit Monitor
-   Route::get('/show/edit', [MonitorController::class, "edit"])->name("edit"); //done
-   Route::post('/update', [MonitorController::class, "update"])->name("update");
-   Route::get('/active', [MonitorController::class, "active"])->name("active");
-   Route::get('/edit/area', [MonitorController::class, "editArea"])->name("edit.area");
+   Route::middleware('isAdmin')->group(function () {
 
-   // Add Monitor
-   Route::get("/form/add", [MonitorController::class, 'create'])->name("add");
-   // Route::post("/conform/add", [MonitorController::class, 'conformAdding'])->name("conform.adding");
-   Route::post("/store", [MonitorController::class, 'store'])->name('store');
+      // Edit Monitor
+      Route::get('/show/edit', [MonitorController::class, "edit"])->name("edit"); //done
+      Route::post('/update', [MonitorController::class, "update"])->name("update");
+      Route::get('/active', [MonitorController::class, "active"])->name("active");
+      Route::get('/edit/area', [MonitorController::class, "editArea"])->name("edit.area");
 
-   /**
-    * Soft Delete 
-    */
-   Route::post("/delete", [MonitorController::class, "delete"])->name("soft.delete");
+      // Add Monitor
+      Route::get("/form/add", [MonitorController::class, 'create'])->name("add");
+      // Route::post("/conform/add", [MonitorController::class, 'conformAdding'])->name("conform.adding");
+      Route::post("/store", [MonitorController::class, 'store'])->name('store');
+
+      /**
+       * Soft Delete 
+       */
+      Route::post("/delete", [MonitorController::class, "delete"])->name("soft.delete");
+   });
 });
 
 
@@ -150,30 +170,27 @@ Route::group(['prefix' => "/monitors", 'as' => 'monitors.', 'namespace' => "App\
  */
 Route::group(['prefix' => "/delivers", 'as' => 'delivers.', 'namespace' => "App\Http\Controllers\wep\DeliverController", "middleware" => ["auth", "hasAccess"]], function () {
    // Show all Delivers
-   Route::get('/show', [DeliverController::class, "index"])->name('show'); 
+   Route::get('/show', [DeliverController::class, "index"])->name('show');
 
-   // Edit Delivers
-   Route::get('/show/edit', [DeliverController::class, "edit"])->name("edit");
-   Route::post('/update', [DeliverController::class, "update"])->name("update");
-   // Route::get('/active', [DeliverController::class, "active"])->name("active");
-   Route::get('/edit/area', [DeliverController::class, "editArea"])->name("edit.area");
-   
-   // Add Delivers
-   Route::get("/form/add", [DeliverController::class, 'create'])->name("add");
-   Route::post("/store", [DeliverController::class, 'store'])->name('store');
+   Route::middleware('isAdmin')->group(function () {
 
-   // Route::post("/conform/add", [DeliverController::class, 'conformAdding'])->name("conform.adding");
+      // Edit Delivers
+      Route::get('/show/edit', [DeliverController::class, "edit"])->name("edit");
+      Route::post('/update', [DeliverController::class, "update"])->name("update");
 
-   /**
-    * Soft Delete 
-    */
-   Route::post("/delete", [DeliverController::class, "delete"])->name("soft.delete");
+      // Add Delivers
+      Route::get("/form/add", [DeliverController::class, 'create'])->name("add");
+      Route::post("/store", [DeliverController::class, 'store'])->name('store');
+
+      // Soft Delete 
+      Route::post("/delete", [DeliverController::class, "delete"])->name("soft.delete");
+   });
 });
 
 /**
  * Add Employs
  */
-Route::group(['prefix' => "/employs", 'as' => 'employs.', 'namespace' => "App\Http\Controllers\wep\EmployController", "middleware" => ["auth", "hasAccess"]], function () {
-   Route::get("/form/add/employ", [EmployController::class, 'createEmploys'])->name("create");
-   Route::post("/store/employ", [EmployController::class, 'storeEmploys'])->name('store');
+Route::group(['prefix' => "/employs", 'as' => 'employs.', 'namespace' => "App\Http\Controllers\wep\EmployController", "middleware" => ["auth", "isAdmin"]], function () {
+   Route::get("/form/add/employ", [EmployController::class, 'createEmploys'])->middleware("isAdmin")->name("create");
+   Route::post("/store/employ", [EmployController::class, 'storeEmploys'])->middleware("isAdmin")->name('store');
 });

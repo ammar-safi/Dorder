@@ -92,7 +92,9 @@
                     <div>
                         <h1 style="margin: 0;">المدن المخدمة</h1>
                     </div>
+                    @if (Auth::User()->type == "admin")
                     <a href="{{ route('cities.add') }}" id="add-city" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة مدينة</a>
+                    @endif
                 </div>
                 <br>
                 <hr>
@@ -118,7 +120,9 @@
                             <th>عدد المشرفين</th>
                             <th>عدد عمال التوصيل</th>
                             <th>عدد المشتركين</th>
-                            <th>العمليات</th>
+                            @if (Auth::User()->type == "admin")
+                                <th>العمليات</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -132,6 +136,7 @@
                                 <td>{{$city->count_of_monitors}}</td>
                                 <td>{{$city->count_of_delivers}}</td>
                                 <td>{{$city->count_of_clients}}</td>
+                                @if (Auth::User()->type == "admin")
                                 <td>
                                     {{-- <div style="display: inline-block; margin-right: 10px;">
                                         <a href="" id="edit">تعديل</a>
@@ -159,6 +164,7 @@
                                         </span>
                                     </div>
                                 </td>
+                                @endif
                                 
                             </tr>
                         @endforeach

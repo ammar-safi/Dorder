@@ -87,11 +87,12 @@
                     <div>
                         <h1 style="margin: 0;">المشرفين </h1>
                     </div>
+                    @if (Auth::User()->type == "admin")
                     <div>
-
                         <a href="{{ route('monitors.add') }}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة مشرف</a>
                         <a href="{{Route("employs.create")}}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;"> تعيين موظفين</a>
                     </div>
+                    @endif
                 </div>
                 <br>
                 <hr>
@@ -157,7 +158,9 @@
                             {{-- <th>تاريخ الانضمام</th>
                             <th>تاريخ التعديل</th> --}}
                             {{-- <th>الحالة</th> --}}
+                            @if (Auth::User()->type == "admin")
                             <th>العمليات</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -175,9 +178,9 @@
                                 {{-- <td>{{$monitor->user->created_at}}</td>
                                 <td>{{$monitor->user->updated_at}}</td> --}}
                                 {{-- <td style="text-align:right">{{  ['🔴 غير نشط','🟢 نشط']  [$monitor->user->active]}} </td> --}}
+                                @if (Auth::user()->type == "admin")
                                 <td style="font-size:2ch" >
                                     </div>
-                                    @if (Auth::user()->type == "admin")
                                     <div style="display: inline-block;">
                                         <form action="{{ route('monitors.edit')}}" method="GET" style="display: inline;">
                                             @csrf
@@ -196,8 +199,8 @@
                                         </form>
                                         <span class="icon" onclick="deleteRow()"><i class="fas fa-user-minus"></i></span>
                                     </div>
-                                    @endif
                                 </td>
+                                @endif
                                 
                             </tr>
                         @endforeach

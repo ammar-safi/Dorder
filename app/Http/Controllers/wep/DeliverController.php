@@ -90,7 +90,23 @@ class DeliverController extends Controller
      */
     public function create()
     {
-        $flag = '';
+        $flag = 'deliver-add';
+        try {
+            $collection = [];
+            $areas = Area::distinct()->pluck("city_id");
+            foreach ($areas as $cityId) {
+                $city = City::find($cityId);
+                if ($city) {
+                    $collection[$city->title] = Area::where("city_id", $cityId)->get();
+                }
+            }
+            return view("panel.dashboard.delivers.add", compact("flag", "collection"));
+        } catch (Exception $e) {
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+        }
     }
 
     /**
@@ -98,7 +114,77 @@ class DeliverController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'name' => 'required|string|regex:/^[\p{Arabic}\s]+$/u|max:255',
+                    'email' => 'required|email|unique:users,email',
+                    'password' => 'required|string|min:8|confirmed',
+                    'mobile' => 'required|nullable|string|max:20|unique:users,mobile',
+                    // "active" => 'nullable|boolean',
+                    "area_id" => 'nullable|exists:areas,id',
+                ],
+                [
+                    'name.required' => 'الرجاء إدخال اسم عامل التوصيل.',
+                    'name.regex' => 'الرجاء إدخال اسم عامل التوصيل باللغة العربية فقط.',
+                    'name.string' => 'يجب أن يكون الاسم نصًا.',
+                    'name.max' => 'لا يمكن أن يتجاوز طول الاسم 255 حرفًا.',
+
+                    'email.required' => 'الرجاء إدخال البريد الإلكتروني.',
+                    'email.email' => 'الرجاء إدخال بريد إلكتروني صالح.',
+                    'email.unique' => 'البريد الإلكتروني مُستخدم بالفعل.',
+
+                    'password.required' => 'الرجاء إدخال كلمة المرور.',
+                    'password.string' => 'يجب أن تكون كلمة المرور نصًا.',
+                    'password.min' => 'يجب أن تكون كلمة المرور 8 أحرف على الأقل.',
+                    'password.confirmed' => 'كلمتين السر غير متطابقتين',
+
+                    'mobile.required' => 'الرجاء إدخال رقم الهاتف.',
+                    'mobile.string' => 'يجب أن يكون رقم الهاتف نصًا.',
+                    'mobile.max' => 'لا يمكن أن يتجاوز طول رقم الهاتف 20 حرفًا.',
+                    "mobile.unique" => "هذا الرقم قيد الاستخدام بالفعل",
+
+                    'area_id.exists' =>  'المنطقة غير موجودة '
+                ]
+            );
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput($request->all());
+            }
+
+            $deliver = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => $request->password,
+                'mobile' => $request->mobile,
+                'uuid' => \Str::uuid(),
+                'type' => 'deliver',
+                // 'active' => $request->active ? 1 : 0,
+            ]);
+            // dd($deliver);
+            if ($deliver) {
+                if ($request->area_id) {
+
+                    if (Deliver::create([
+                        'deliver_id' => $deliver->id,
+                        'area_id' => $request->area_id,
+                    ])) {
+                        return redirect()->route("delivers.show")->with("update_success", "تمت الاضافة  بنجاح");
+                    } else {
+                        return redirect()->route("delivers.show")->with("error",  " حصل خطأاثناء تعيين المنطقة , قم بتعيين المنطقة بشكل يدوي من 'تعيين منطقة'");
+                    }
+                }
+                return redirect()->route("delivers.show")->with("update_success", "تمت الاضافة  بنجاح");
+            } else {
+                return back()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
+            }
+        } catch (Exception $e) {
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+        }
     }
 
     /**
@@ -222,10 +308,27 @@ class DeliverController extends Controller
     /**
      * Soft-Delete the specified resource from storage.
      */
-    public function delete()
+    public function delete(Request $request)
     {
-        //
-    }
+        try {
+            $validate = Validator::make(['id' => $request->id], ['id' => "required"], [
+                'id.required' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة"
+            ]);
+            if ($validate->fails()) {
+                return back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
+            }
 
-    
+
+            $is_exist = Deliver::find($request->id);
+            if ($is_exist && $is_exist->forceDelete()) {
+                return back();
+            }
+            return back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
+        } catch (Exception $e) {
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+        }
+    }
 }

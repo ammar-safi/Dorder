@@ -16,6 +16,13 @@ use Illuminate\Validation\Rule;
 
 class EmployController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware("isAdmin");
+    }
+
+
     public function createEmploys(Request $request)
     {
         $validator = Validator::make(

@@ -87,7 +87,9 @@
                     <div>
                         <h1 style="margin: 0;">المدراء </h1>
                     </div>
+                    @if (Auth::User()->type == "admin")
                     <a href="{{ route('admins.add') }}" id="add-admin" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة مدير</a>
+                    @endif
                 </div>
                 <br>
                 <hr>
