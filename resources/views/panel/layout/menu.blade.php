@@ -32,7 +32,7 @@
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation" data-icon-style="lines">
             <li class=" navigation-header"><span></span></li>
             <li class=" navigation-header"><span>الرئيسية</span></li>
-            <li><a href="{{Route('Admin-Panel')}}"><i class="menu-livicon" data-icon="home"></i></i><span class="menu-item" data-i18n="eCommerce">الصفحة الرئيسية</span></a></li>
+            <li><li class={{$flag == "home"?'active':NULL}}><a href="{{Route('Admin-Panel')}}"><i class="menu-livicon" data-icon="home"></i></i><span class="menu-item" data-i18n="eCommerce">الصفحة الرئيسية</span></a></li>
             <li><a href="#"><i class="menu-livicon" data-icon="dashboard"></i></i><span class="menu-item" data-i18n="eCommerce">الاحصائيات</span></a></li>
                         
                 
@@ -105,7 +105,7 @@
             <li class=" nav-item"><a href="../../../html/rtl/vertical-menu-template-semi-dark/index.html"><i class="menu-livicon" data-icon="users"></i><span class="menu-title" data-i18n="Dashboard">العملاء</span><span class="badge badge-light-danger badge-pill badge-round float-right mr-2"></span></a>
                 <ul class="menu-content">
                     {{-- <li class={{$flag? NULL : "active"}}></li> --}}
-                    <li class={{$flag == "a"?'active':NULL}}><a href="#"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">ادارة العملاء</span></a>    
+                    <li class={{$flag == "clients-show"?'active':NULL}}><a href="{{Route("clients.show")}}"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">ادارة العملاء</span></a>    
                     <li class={{$flag == "a"?'active':NULL}}><a href="#"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">ادارة عناويين العملاء</span></a>    
 
                 </ul>

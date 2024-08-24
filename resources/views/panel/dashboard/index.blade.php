@@ -12,6 +12,71 @@
         </div>
         <div class="content-body">
 
+            
+
+            <br><br><br>
+            <div class="container">
+                <div class="row">
+                    <!-- Title -->
+                    <div class="col-12 text mb-4">
+                        <h1 style="font-family: 'Cairo', sans-serif; color: #2c3e50;">لوحة التحكم الرئيسية</h1>
+                        <p style="font-family: 'Cairo', sans-serif; color: #34495e;">مرحباً بك في لوحة التحكم</p>
+                    </div>
+                    <!-- Cities Card -->
+                    <div class="col-md-4">
+                        <div class="card shadow-lg rounded-lg" style="border: none;">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #2980b9;">المدن : {{$citiesCount}}</h5>
+                                <p class="card-text">إدارة المدن المتاحة في النظام.</p>
+                                <a href="{{ route('cities.show') }}" class="btn btn-primary" style="background-color: #2980b9; border: none; border-radius: 20px;">إدارة المدن</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Areas Card -->
+                    <div class="col-md-4">
+                        <div class="card shadow-lg rounded-lg" style="border: none;">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #27ae60;">المناطق : {{$areasCount}}</h5>
+                                <p class="card-text">إدارة المناطق ضمن المدن.</p>
+                                <a href="{{ route('areas.show') }}" class="btn btn-primary" style="background-color: #27ae60; border: none; border-radius: 20px;">إدارة المناطق</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Card -->
+                    <div class="col-md-4">
+                        <div class="card shadow-lg rounded-lg" style="border: none;">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #e74c3c;">المستخدمين: {{$clientsCount}}</h5>
+                                <p class="card-text">إدارة العملاء .</p>
+                                <a href="{{ route('clients.show') }}" class="btn btn-primary" style="background-color: #e74c3c; border: none; border-radius: 20px;">إدارة المستخدمين</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- monitrs card -->
+                    <div class="col-md-4">
+                        <div class="card shadow-lg rounded-lg" style="border: none;">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #007c15;">المشرفين : {{$monitorsCount}}</h5>
+                                <p class="card-text">إدارة المشرفين، .</p>
+                                <a href="{{ route('monitors.show') }}" class="btn btn-primary" style="background-color: #e74c3c; border: none; border-radius: 20px;">إدارة المستخدمين</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card shadow-lg rounded-lg" style="border: none;">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #000000;">عمال التوصيل : {{ $deliversCount }}</h5>
+                                <p class="card-text">إدارة عمال التوصيل .</p>
+                                <a href="{{ route('monitors.show') }}" class="btn btn-primary" style="background-color: #e74c3c; border: none; border-radius: 20px;">إدارة المستخدمين</a>
+                            </div>
+                        </div>
+                    </div>
+                
+                </div>
+        </div>
+
         </div>
     </div>
 </div>

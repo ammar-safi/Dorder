@@ -11,6 +11,7 @@ use App\Http\Controllers\wep\AreaController;
 use App\Http\Controllers\wep\DeliverController;
 use App\Http\Controllers\wep\EmployController;
 use App\Http\Controllers\wep\PackageController;
+use App\Http\Controllers\wep\ClientController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -225,3 +226,28 @@ Route::group(['prefix' => "/packages", 'as' => 'packages.', 'namespace' => "App\
       Route::post("/delete", [packageController::class, "delete"])->name("soft.delete");
    });
 });
+
+
+/**
+ * Custom Client
+ */
+Route::group(['prefix' => "/clients", 'as' => 'clients.', 'namespace' => "App\Http\Controllers\wep\ClientController", "middleware" => ["auth", "hasAccess"]], function () {
+   Route::get('/show', [ClientController::class, "index"])->name('show'); 
+
+   Route::middleware('isAdmin')->group(function () {
+
+      // Edit package
+      Route::get('/show/edit', [ClientController::class, "edit"])->name("edit"); 
+      Route::post('/update', [ClientController::class, "update"])->name("update");
+
+      // Add package
+      Route::get("/form/add", [ClientController::class, 'create'])->name("add");
+      Route::post("/store", [ClientController::class, 'store'])->name('store');
+
+      /**
+       * Soft Delete
+       */
+      Route::post("/delete", [ClientController::class, "delete"])->name("soft.delete");
+   });
+});
+ 
