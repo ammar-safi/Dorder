@@ -12,6 +12,7 @@ use App\Http\Controllers\wep\DeliverController;
 use App\Http\Controllers\wep\EmployController;
 use App\Http\Controllers\wep\PackageController;
 use App\Http\Controllers\wep\ClientController;
+use App\Http\Controllers\wep\WorkTimeController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -233,13 +234,13 @@ Route::group(['prefix' => "/packages", 'as' => 'packages.', 'namespace' => "App\
  */
 Route::group(['prefix' => "/clients", 'as' => 'clients.', 'namespace' => "App\Http\Controllers\wep\ClientController", "middleware" => ["auth", "hasAccess"]], function () {
    Route::get('/show', [ClientController::class, "index"])->name('show'); 
-
+   
    Route::middleware('isAdmin')->group(function () {
 
       // Edit package
       Route::get('/show/edit', [ClientController::class, "edit"])->name("edit"); 
       Route::post('/update', [ClientController::class, "update"])->name("update");
-
+      
       // Add package
       Route::get("/form/add", [ClientController::class, 'create'])->name("add");
       Route::post("/store", [ClientController::class, 'store'])->name('store');
@@ -249,5 +250,17 @@ Route::group(['prefix' => "/clients", 'as' => 'clients.', 'namespace' => "App\Ht
        */
       Route::post("/delete", [ClientController::class, "delete"])->name("soft.delete");
    });
+});
+
+Route::group(['prefix' => "/work-times", 'as' => 'work.times.', 'namespace' => "App\Http\Controllers\wep\WorkTimeController", "middleware" => ["auth", "hasAccess"]], function () {
+   
+   Route::get('/show' , [WorkTimeController::class , 'index'] )->name("show");
+
+   Route::get('/edit' , [WorkTimeController::class , 'edit'] )->name("edit");
+   Route::post('/update' , [WorkTimeController::class , 'update'] )->name("update");
+   
+   Route::post('/delete' , [WorkTimeController::class , 'delete'] )->name("soft.delete");
+   
+
 });
  

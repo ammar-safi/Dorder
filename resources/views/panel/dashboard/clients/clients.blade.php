@@ -174,7 +174,7 @@
                                         <form action="{{ route('clients.soft.delete')}}" method="POST" style="display: inline;">
                                             @csrf
                                             <input type="hidden" name="id" value="{{$client->id}}">
-                                            <button type="submit" id="delete" style="background: none; border: none; color: rgb(161, 17, 17); cursor: pointer;">اقالة</button>
+                                            <button type="submit" id="delete" style="background: none; border: none; color: rgb(161, 17, 17); cursor: pointer;">حظر</button>
                                         </form>
                                         <span class="icon" onclick="deleteRow()"><i class="fas fa-user-minus"></i></span>
                                     </div>     

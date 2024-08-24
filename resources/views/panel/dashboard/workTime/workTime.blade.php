@@ -68,7 +68,7 @@
                 </div>                    
             @elseif(session()->has("success"))
             <br><br>
-                <div style="background-color: #ffb3b3; border-right: 6px solid #c20c0c; padding: 20px; border-radius: 10px;">
+                <div style="background-color: #a7eba4; border-right: 6px solid #12c20c; padding: 20px; border-radius: 10px;">
                     <p style="font-size: 20px; margin: 0;">
                         <strong>
                             {{session("success")}}
@@ -85,11 +85,8 @@
             <div class="card-body">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
                     <div>
-                        <h1 style="margin: 0;">المدراء </h1>
+                        <h1 style="margin: 0;">اوقات الدوام  </h1>
                     </div>
-                    @if (Auth::User()->type == "admin")
-                    <a href="{{ route('admins.add') }}" id="add-admin" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة مدير</a>
-                    @endif
                 </div>
                 <br>
                 <hr>
@@ -97,55 +94,40 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>المدير</th>
-                            <th>البريد الاكتروني</th>
-                            <th>رقم الهاتف</th>
-                            <th>تاريخ الانضمام</th>
-                            <th>تاريخ التعديل</th>
-                            {{-- <th>الحالة</th> --}}
-                            {{-- <th>العمليات</th> --}}
+                            <th>اليوم</th>
+                            <th>بداية الدوام</th>
+                            <th>نهاية الدوام</th>
+                            <th>تعديل</th>
                         </tr>
                     </thead>
                     <tbody>
 
                         
-                        @foreach ($admins as $admin)
+                        @foreach ($WorkTimes as $WorkTime)
                                                 
                             <tr>
-                                <td>{{$admin->name}}</td>
-                                <td>{{$admin->email}}</td>
-                                <td>{{$admin->mobile}}</td>
-                                <td>{{$admin->created_at}}</td>
-                                <td>{{$admin->updated_at}}</td>
-                               {{-- <td style="text-align:right">{{  ['🔴 غير نشط','🟢 نشط']  [$admin->active]}} </td>
+                                <td>{{$WorkTime->day}}</td>
+                                <td>{{$WorkTime->from_time?$WorkTime->from_time:'-'}}</td>
+                                <td>{{$WorkTime->to_time?$WorkTime->to_time:'-'}}</td>
                                 <td>
-                                    @if ($admin->email != "ammar@gmail.com" )
-                                     <div style="display: inline-block; margin-right: 10px;">
-                                        <a href="" id="edit">تعديل</a>
-                                            <span class="icon" onclick="edit()"><i class="fas fa-edit"></i></span>
-                                    </div> 
-
-                                    <div style="display: inline-block; margin-right: 10px;">
-                                        <form action="{{ Auth::user()->type == "admin"?route('admins.edit'):'#'}}" method="GET" style="display: inline;">
-                                            @csrf
-                                            <input type="hidden" name="id" value="{{$admin->id}}">
-                                            <input type="hidden" name="route" value="cities.show">
-                                            <button type="submit" id="delete" style="background: none; border: none; color: rgb(59, 98, 206); cursor: pointer;">{{$admin->active?'الغاء تنشيط':"تنشيط"}}</button>
-                                        </form>
-                                        <span class="icon" onclick="edit()"><i class="fas fa-play"></i></span>
-                                    </div>
-                                    
+      
                                     <div style="display: inline-block;">
-                                        <form action="{{  Auth::user()->type == "admin"?route('admins.soft.delete'):'#'}}" method="POST" style="display: inline;">
+                                        <form action="{{ route('work.times.edit')}}" method="get" style="display: inline;">
                                             @csrf
-                                            <input type="hidden" name="id" value="{{$admin->id}}">
-                                            <input type="hidden" name="route" value="cities.show">
-                                            <button type="submit" id="delete" style="background: none; border: none; color: rgb(161, 17, 17); cursor: pointer;">حذف</button>
+                                            <input type="hidden" name="id" value="{{$WorkTime->id}}">
+                                            <button type="submit" id="edit" style="background: none; border: none; color: rgb(17, 75, 161); cursor: pointer;">تعديل</button>
+                                        </form>
+                                        <span class="icon" onclick="deleteRow()"><i class="fas fa-edit"></i></span>
+                                    </div>
+                                    <div style="display: inline-block;">
+                                        <form action="{{ route('work.times.soft.delete')}}" method="POST" style="display: inline;">
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{$WorkTime->id}}">
+                                            <button type="submit" id="delete" style="background: none; border: none; color: rgb(161, 17, 17); cursor: pointer;">الغاء الاوقات</button>
                                         </form>
                                         <span class="icon" onclick="deleteRow()"><i class="fas fa-trash"></i></span>
                                     </div>
-                                    @endif
-                                </td> --}}
+                                </td> 
                                 
                             </tr>
                         @endforeach
@@ -156,5 +138,5 @@
             </div>
         </div>
     </div>
-</div>
-    @include('panel.static.footer')
+
+@include('panel.static.footer')
