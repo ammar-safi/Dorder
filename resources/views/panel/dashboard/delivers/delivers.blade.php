@@ -65,11 +65,13 @@
                     <p style="font-size: 20px; margin: 0;">
                             {{session("error")}}
                     </p>
-                </div>                    
+                </div>  
+                
+
             @elseif(session()->has("success"))
             <br><br>
-                <div style="background-color: #c4f8d4; border-right: 6px solid #0d9135; padding: 20px; border-radius: 10px;">
-                    <p style="font-size: 20px; margin: 0;">
+            <div style="background-color: #c4f8d4; border-right: 6px solid #0d9135; padding: 20px; border-radius: 10px;">
+                <p style="font-size: 20px; margin: 0;">
                         <strong>
                             {{session("success")}}
                         </strong> 
@@ -77,7 +79,7 @@
                 </div>                    
                 <br><br>
             @endif
-
+                
             
             
                 
@@ -89,8 +91,9 @@
                     </div>
                     @if (Auth::User()->type == "admin")
                     <div>
-                        <a href="{{ route('delivers.add') }}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة عامل توصيل</a>
-                        <a href="{{Route("employs.create")}}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;"> تعيين موظفين</a>
+                        <a href="{{ route('delivers.add') }}" id="add-deliver" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة عامل توصيل</a>
+                        <a href="{{Route("employs.create" , ['route'=>'delivers.show'])}}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;"> تعيين موظفين</a>
+                    </div>
                     </div>
                     @endif
                 </div>

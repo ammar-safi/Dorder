@@ -170,12 +170,12 @@ class DeliverController extends Controller
                         'deliver_id' => $deliver->id,
                         'area_id' => $request->area_id,
                     ])) {
-                        return redirect()->route("delivers.show")->with("update_success", "تمت الاضافة  بنجاح");
+                        return redirect()->route("delivers.show")->with("success", "تمت الاضافة  بنجاح");
                     } else {
                         return redirect()->route("delivers.show")->with("error",  " حصل خطأاثناء تعيين المنطقة , قم بتعيين المنطقة بشكل يدوي من 'تعيين منطقة'");
                     }
                 }
-                return redirect()->route("delivers.show")->with("update_success", "تمت الاضافة  بنجاح");
+                return redirect()->route("delivers.show")->with("success", "تمت الاضافة  بنجاح");
             } else {
                 return back()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
             }

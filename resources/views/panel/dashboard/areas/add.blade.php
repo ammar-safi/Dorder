@@ -58,6 +58,7 @@
             </div>
             <br><br>
             <button type="submit"  class="btn btn-primary rounded-button" style="color: black; padding: 7.0px 20px; margin-left: 10px;">اضافة</button>
+            
         </form>
         
         <br><br>            

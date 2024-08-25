@@ -73,8 +73,8 @@ class EmployController extends Controller
             $selectedCityId = $request->input("city_id") ? $request->input("city_id") : '';
             $selectedAreaId = $request->input("area_id") ? $request->input("area_id") : '';
 
-            $flag = "deliver-show";
-            return view("panel.dashboard.employ.addEmploys", compact("flag", "areas", 'cities', 'selectedCityId', 'selectedAreaId', 'monitors', 'delivers'));
+            $route = $request->route ;
+            return view("panel.dashboard.employ.addEmploys", compact('route' , "areas", 'cities', 'selectedCityId', 'selectedAreaId', 'monitors', 'delivers'));
         } catch (Exception $e) {
             return back()->with('error', 'حدث خطأ أثناء تحديث المشرف. يرجى المحاولة لاحقاً.');
         }
@@ -84,13 +84,11 @@ class EmployController extends Controller
     public function storeEmploys(Request $request)
     {
         try {
-            if ($request->input('monitors') || $request->input("delivers")) :
+            // if (($request->input('monitors') || $request->input("delivers")) && $request->input("id")) :
 
-                // التحقق من صحة البيانات الواردة
-                // dd($request->monitors);
                 $validate = Validator::make($request->all(), [
                     'id' => 'required|exists:areas,id',
-                    'monitors' => 'array',
+                    'monitors' => 'required_without_all:delivers|array',
                     'monitors.*' => [
                         Rule::exists('users', 'id')->where(function (Builder $query) {
                             return $query->where('type', 'monitor')->whereNull('deleted_at');
@@ -101,7 +99,7 @@ class EmployController extends Controller
                     ],
 
 
-                    'delivers' => 'array',
+                    'delivers' => 'required_without_all:monitors|array',
                     'delivers.*' => [
                         Rule::exists('users', 'id')->where(function (Builder $query) {
                             return $query->where('type', 'deliver');
@@ -112,12 +110,14 @@ class EmployController extends Controller
 
 
                 ], [
-                    'id.required' => 'حصل خطأ غير معروف, الرجاء إعادة المحاولة',
+                    'id.required' => "يجب ان تقوم بتحديد المدينة والمنطقة " ,
                     'id.exists' => 'المنطقة المحددة غير موجودة',
                     'monitors.array' => 'بيانات المشرفين غير صحيحة',
+                    'monitors.required_without_all' => "يجب ان تختار على الاقل مشرف او عامل توصيل" ,
                     'monitors.*.exists' => "هنالك خطأ , هذا المشرف غير موجود",
                     'monitors.*.unique' => 'المشرف يعمل في هذه المنطقة بالفعل',
                     'delivers.array' => 'بيانات عمال التوصيل غير صحيحة',
+                    'delivers.required_without_all' => "يجب ان تختار على الاقل مشرف او عامل توصيل" ,
                     'delivers.*.unique' => 'عامل التوصيل هذا غير متاح ',
                     'delivers.*.exists' => '  هنالك خطأ , عامل توصيل غير موجود',
                 ]);
@@ -127,18 +127,15 @@ class EmployController extends Controller
                 }
 
                 $area = Area::find($request->id);
-                // dd($area);   
                 if ($area) {
-
                     $monitors = $request->input('monitors', []);
                     $delivers = $request->input('delivers', []);
-                    // dd($delivers);
-
+                    
                     if (
                         $area->AreaMonitors()->syncWithoutDetaching($monitors) &&
                         $area->AreaDelivers()->syncWithoutDetaching($delivers)
-                    ) {
-                        return redirect()->route("delivers.show")->with('success', 'تم التعيين بنجاح');
+                        ) {
+                            return redirect()->route($request->route)->with('success', 'تم التعيين بنجاح');
                     } else {
 
                         return back()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
@@ -147,9 +144,9 @@ class EmployController extends Controller
                     return back()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
                 }
 
-            else :
-                return redirect()->route("areas.show");
-            endif;
+            // else :
+            //     return redirect()->route("areas.show");
+            // endif;
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e

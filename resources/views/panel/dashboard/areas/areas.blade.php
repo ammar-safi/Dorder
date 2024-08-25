@@ -133,7 +133,11 @@
                     <h1 style="margin: 0;">المناطق المخدمة</h1>
                 </div>
                 @if (Auth::User()->type == "admin")
-                <a href="{{ route('areas.add') }}" id="add-city" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة منطقة</a>
+                <div>
+                    <a href="{{ route('areas.add') }}" id="add-city" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة منطقة</a>
+                    <a href="{{ route("employs.create" , ['route'=>'areas.show'])}}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;"> تعيين موظفين</a>
+                </div>
+
                 @endif
             </div>
             <br>

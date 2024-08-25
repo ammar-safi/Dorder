@@ -60,24 +60,24 @@
             </div>
                                
             @elseif(session()->has("error"))
-                <br><br>
-                <div style="background-color: #ffb3b3; border-right: 6px solid #c20c0c; padding: 20px; border-radius: 10px;">
-                    <p style="font-size: 20px; margin: 0;">
-                            {{session("error")}}
-                    </p>
-                </div>                    
+            <br><br>
+            <div style="background-color: #ffb3b3; border-right: 6px solid #c20c0c; padding: 20px; border-radius: 10px;">
+                <p style="font-size: 20px; margin: 0;">
+                    {{session("error")}}
+                </p>
+            </div>                    
             @elseif(session()->has("success"))
             <br><br>
-                <div style="background-color: #c4f8d4; border-right: 6px solid #0d9135; padding: 20px; border-radius: 10px;">
-                    <p style="font-size: 20px; margin: 0;">
-                        <strong>
+            <div style="background-color: #c4f8d4; border-right: 6px solid #0d9135; padding: 20px; border-radius: 10px;">
+                <p style="font-size: 20px; margin: 0;">
+                    <strong>
                             {{session("success")}}
                         </strong> 
                     </p>
                 </div>                    
                 <br><br>
             @endif
-
+            
             
             
                 
@@ -90,7 +90,7 @@
                     @if (Auth::User()->type == "admin")
                     <div>
                         <a href="{{ route('monitors.add') }}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة مشرف</a>
-                        <a href="{{Route("employs.create")}}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;"> تعيين موظفين</a>
+                        <a href="{{Route("employs.create" , ['route'=>'monitors.show'])}}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;"> تعيين موظفين</a>
                     </div>
                     @endif
                 </div>

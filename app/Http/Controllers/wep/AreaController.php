@@ -58,7 +58,7 @@ class AreaController extends Controller
 
                     if ($city) {
                         $query_2 = clone $query;
-                        $collection[$city->title] = $query_2->where('city_id' , $city->id)->get();
+                        $collection[$city->title] = $query_2->where('city_id', $city->id)->get();
                     }
                 }
             }
@@ -374,7 +374,7 @@ class AreaController extends Controller
                     // dd($monitors);
 
                     if (
-                        $area->AreaMonitors()->syncWithoutDetaching($monitors) ||
+                        $area->AreaMonitors()->syncWithoutDetaching($monitors) &&
                         $area->AreaDelivers()->syncWithoutDetaching($delivers)
                     ) {
                         return redirect()->route("areas.show")->with('success', 'تم التعيين بنجاح');
