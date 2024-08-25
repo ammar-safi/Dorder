@@ -236,7 +236,7 @@ Route::group(['prefix' => "/clients", 'as' => 'clients.', 'namespace' => "App\Ht
    Route::get('/show', [ClientController::class, "index"])->name('show'); 
    
    Route::middleware('isAdmin')->group(function () {
-
+      
       // Edit package
       Route::get('/show/edit', [ClientController::class, "edit"])->name("edit"); 
       Route::post('/update', [ClientController::class, "update"])->name("update");

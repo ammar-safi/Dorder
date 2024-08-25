@@ -15,19 +15,14 @@ class DashboardController extends Controller
     {
         $PageTitle = 'Dashboard';
         $flag = 'home';
-        // جلب عدد المدن
         $citiesCount = City::count();
 
-        // جلب عدد المناطق
         $areasCount = Area::count();
 
-        // جلب عدد العملاء
         $clientsCount = User::where('type', 'client')->count();
 
-        // جلب عدد المشرفين
         $monitorsCount = User::where('type', 'monitor')->count();
 
-        // جلب عدد عمال التوصيل
         $deliversCount = User::where('type', 'deliver')->count();
 
         return view('panel.Dashboard.index', compact('PageTitle', 'flag', 'citiesCount', 'areasCount', 'clientsCount', 'monitorsCount', 'deliversCount'));
@@ -42,7 +37,7 @@ class DashboardController extends Controller
 
     public function serverError()
     {
-        return view('error.500');
+        return view('error.500');   
     }
     public function Forbidden()
     {

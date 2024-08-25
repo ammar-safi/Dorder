@@ -158,7 +158,7 @@ class CityController extends Controller
 
             $city = City::find($request->id);
             if ($city && $city->update(["title" => $request->title])) {
-                return redirect()->route($request->route);
+                return redirect()->route($request->route)->with("success" , 'تم التعديل بنجاح');
             } else {
                 session()->flash('error', "حصل خطأ غير متوقع");
                 return back();

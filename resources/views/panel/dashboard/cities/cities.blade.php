@@ -73,10 +73,10 @@
                 </div>                    
             @elseif(session()->has("success"))
             <br><br>
-                <div style="background-color: #ffb3b3; border-right: 6px solid #c20c0c; padding: 20px; border-radius: 10px;">
+                <div style="background-color: #cfffc3; border-right: 6px solid #28c900; padding: 20px; border-radius: 10px;">
                     <p style="font-size: 20px; margin: 0;">
                         <strong>
-                            {{session("ersuccessror")}}
+                            {{session("success")}}
                         </strong> 
                     </p>
                 </div>                    
