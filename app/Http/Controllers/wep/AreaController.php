@@ -49,7 +49,7 @@ class AreaController extends Controller
             }
 
             if ($selectedCityId || $searchName) {
-sdfsdfsdfd
+
 
                 $areas = $query->distinct()->pluck("city_id");
 
@@ -57,7 +57,8 @@ sdfsdfsdfd
                     $city = City::find($cityId);
 
                     if ($city) {
-                        $collection[$city->title] = $query->get();
+                        $query_2 = clone $query;
+                        $collection[$city->title] = $query_2->where('city_id' , $city->id)->get();
                     }
                 }
             }
