@@ -49,7 +49,7 @@ class AreaController extends Controller
             }
 
             if ($selectedCityId || $searchName) {
-
+sdfsdfsdfd
 
                 $areas = $query->distinct()->pluck("city_id");
 
