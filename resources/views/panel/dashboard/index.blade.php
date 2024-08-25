@@ -26,7 +26,7 @@
                     <div class="col-md-4">
                         <div class="card shadow-lg rounded-lg" style="border: none;">
                             <div class="card-body">
-                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #2980b9;">المدن </h5>
+                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #000d16;">المدن </h5>
                                 <p class="card-text">إدارة {{in_array($citiesCount , range(2,9))? $citiesCount . " مدن" : $citiesCount . " مدينة"}}  متاحة في النظام.</p>
                                 <a href="{{ route('cities.show') }}" class="btn btn-primary" style="background-color: #2980b9; border: none; border-radius: 20px;">إدارة المدن</a>
                             </div>
@@ -37,7 +37,7 @@
                     <div class="col-md-4">
                         <div class="card shadow-lg rounded-lg" style="border: none;">
                             <div class="card-body">
-                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #27ae60;">المناطق  </h5>
+                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #001609;">المناطق  </h5>
                                 <p class="card-text">إدارة {{in_array($areasCount , range(2,9))? $areasCount . " مناطق" : $areasCount  . " منطقة"}} ضمن المدن.</p>
                                 <a href="{{ route('areas.show') }}" class="btn btn-primary" style="background-color: #27ae60; border: none; border-radius: 20px;">إدارة المناطق</a>
                             </div>
@@ -48,7 +48,7 @@
                     <div class="col-md-4">
                         <div class="card shadow-lg rounded-lg" style="border: none;">
                             <div class="card-body">
-                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #e74c3c;">العملاء</h5>
+                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #420700;">العملاء</h5>
                                 <p class="card-text">إدارة {{in_array($clientsCount , range(2,9))? $clientsCount . " عملاء" : $clientsCount  . " عميل"}} .</p>
                                 <a href="{{ route('clients.show') }}" class="btn btn-primary" style="background-color: #e74c3c; border: none; border-radius: 20px;">إدارة العملاء</a>
                             </div>
@@ -58,7 +58,7 @@
                     <div class="col-md-4" ">
                         <div class="card shadow-lg rounded-lg" style="border: none;background-color: #ffffff">
                             <div class="card-body">
-                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #007c15;">المشرفين </h5>
+                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #001b05;">المشرفين </h5>
                                 <p class="card-text">إدارة {{in_array($monitorsCount , range(2,9))? $monitorsCount . " مشرفين" : $monitorsCount  . " مشرف"}} .</p>
                                 <a href="{{ route('monitors.show') }}" class="btn btn-primary" style="background-color: #e74c3c; border: none; border-radius: 20px;">إدارة المشرفين</a>
                             </div>
