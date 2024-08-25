@@ -58,7 +58,7 @@ class User extends Authenticatable
 
     public function package()
     {
-        return $this->belongsTo(Package::class, "package_id");
+        return $this->belongsTo(Package::class, "package_id")->withTrashed();
     }
     public function area()
     {

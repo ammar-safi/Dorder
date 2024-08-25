@@ -32,6 +32,7 @@ class MonitorController extends Controller
     {
         try {
 
+
             $validate = Validator::make(
                 $request->all(),
                 [
@@ -45,6 +46,7 @@ class MonitorController extends Controller
             );
 
             if ($validate->fails()) {
+                dd($request->input("search_name"));
                 return back()->withErrors($validate)->withInput($request->all());
             }
 
@@ -53,29 +55,32 @@ class MonitorController extends Controller
             $flag = "show-monitors";
 
             $cities = City::all();
-
+            
             $query = Monitor::query();
             // dd($request->input("city_id"));
             $searchName = $request->input('search_name');
             $selectedCityId = $request->input("city_id");
             $selectedAreaId = $request->input("area_id");
             $areas = $selectedCityId ? Area::where('city_id', $selectedCityId)->get() : '';
-
+            
             if ($selectedAreaId) {
                 $query->where("area_id", $selectedAreaId);
             } elseif ($selectedCityId) {
                 $query->whereIn("area_id", (Area::where("city_id", $selectedCityId)->pluck("id")->toArray()));
             }
-
+            
+            $query_2 = clone $query;
             if ($searchName) {
-                $query->whereIn('monitor_id', User::where("type", "monitor")->where("name", 'LIKE', "%{$searchName}%")->pluck('id')->toArray());
+                $query_2->whereIn('monitor_id', User::where("type", "monitor")->where("name", 'LIKE', "%{$searchName}%")->pluck('id')->toArray());
             }
-
+            
             if ($selectedCityId || $selectedAreaId || $searchName) {
-                $monitors = $query->get();
+                $monitors = $query_2->get();
             } else {
                 $monitors = null;
             }
+            // dd($searchName);
+
             return view("panel.dashboard.monitors.monitors", compact("flag", "monitors", "cities", "areas", 'selectedCityId', 'selectedAreaId', 'searchName'));
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [

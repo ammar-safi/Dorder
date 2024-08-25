@@ -30,7 +30,9 @@ class DeliverController extends Controller
     public function index(Request $request)
     {
         $flag = 'delivers-show';
+        // dd($request->all());
         try {
+
 
             $validate = Validator::make(
                 $request->all(),
@@ -43,7 +45,7 @@ class DeliverController extends Controller
                     "area_id.exists" => "حدث حطأ , حاول مرا اخرى",
                 ]
             );
-
+            
             if ($validate->fails()) {
                 return back()->withErrors($validate)->withInput($request->all());
             }
@@ -55,7 +57,6 @@ class DeliverController extends Controller
             $cities = City::all();
 
             $query = Deliver::query();
-            // dd($request->input("city_id"));
             $searchName = $request->input('search_name');
             $selectedCityId = $request->input("city_id");
             $selectedAreaId = $request->input("area_id");

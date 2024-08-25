@@ -87,6 +87,10 @@
                     <div>
                         <h1 style="margin: 0;">العملاء </h1>
                     </div>
+
+                    <div>
+                        <a href="{{ "#" }}" id="add-deliver" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة عميل </a>
+                    </div>
                    
                 </div>
                 <br>
@@ -95,8 +99,13 @@
 
 
                 <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-                    <!-- نموذج البحث عن العميل بالاسم -->
                     <form method="GET" action="{{ route('clients.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        @if($selectedAreaId)
+                            <input type="hidden" name="area_id" value="{{$selectedAreaId}}">
+                        @endif
+                        @if($selectedCityId)
+                            <input type="hidden" name="city_id" value="{{$selectedCityId}}">
+                        @endif
                         <div style="position: relative; display: flex; align-items: center; width: 200px;">
                             <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم المشرف" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
                             <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
@@ -121,6 +130,7 @@
                     
                     @if ($selectedCityId)
                         <form method="GET" action="{{ route('clients.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                            <input type="hidden" name="search_name" value="{{$searchName}}">
                             <input type="hidden" name="city_id" value="{{ $selectedCityId }}">
                             <label for="area_id" style="margin: 0; font-size: 0.875rem;">حدد منطقة:</label>
                             <select name="area_id" id="area_id" onchange="this.form.submit()" style="padding: 5px; width: 150px; font-size: 0.875rem; border-radius: 5px;">
