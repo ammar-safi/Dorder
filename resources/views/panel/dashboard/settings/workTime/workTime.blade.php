@@ -130,11 +130,14 @@
                                 </td> 
                                 
                             </tr>
+                            
                         @endforeach
                     </tbody>
                 </table>
-
-                </div>
+                
+                
+                <button type="button" class="btn rounded-button" style="color: black; padding: 10px 20px; background-color: #bccad8; border: none; border-radius: 5px;" onclick="history.back()">تراجع</button>
+            </div>
             </div>
         </div>
     </div>

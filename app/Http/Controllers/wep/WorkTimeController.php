@@ -18,7 +18,7 @@ class WorkTimeController extends Controller
     {
         $flag = 'sitting';
         $WorkTimes = WorkTime::all();
-        return view('panel.dashboard.workTime.workTime', compact('flag', 'WorkTimes'));
+        return view('panel.dashboard.settings.workTime.workTime', compact('flag', 'WorkTimes'));
     }
 
     public function edit(Request $request)
@@ -36,7 +36,7 @@ class WorkTimeController extends Controller
 
         $WorkTime = WorkTime::find($request->id);
         if ($WorkTime) {
-            return view('panel.dashboard.workTime.edit', compact('flag', 'WorkTime'));
+            return view('panel.dashboard.settings.workTime.edit', compact('flag', 'WorkTime'));
         }
     }
     public function update(Request $request)

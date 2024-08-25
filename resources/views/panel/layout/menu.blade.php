@@ -142,7 +142,7 @@
             
             <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation" data-icon-style="lines">
                 <li class=" navigation-header"><span></span></li>
-                <li><li class={{$flag == "sitting"?'active':NULL}}><a href="{{Route("work.times.show")}}"><i class="menu-livicon" data-icon="gears"></i></i><span class="menu" data-i18n="eCommerce">الاعدادات</span></a>    
+                <li><li class={{$flag == "sitting"?'active':NULL}}><a href="{{Route("settings.show")}}"><i class="menu-livicon" data-icon="gears"></i></i><span class="menu" data-i18n="eCommerce">الاعدادات</span></a>    
             </ul>
         </ul>
         

@@ -41,6 +41,7 @@
                 @error("from_time")
                 <div style="color: red" >
                     {{$message}}
+                    <br>
                 </div>
                 @enderror 
                 <input type="text" name="from_time" id="from_time" placeholder="HH:MM" value="{{old('from_time')?old('from_time'):date('H:i', strtotime($WorkTime->from_time))}}" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
@@ -51,6 +52,7 @@
                 @error("to_time")
                     <div style="color: red">
                         {{$message}}
+                        <br>
                     </div>
                  @enderror 
                 <input type="text" value="{{old('to_time')?old('to_time'):date('H:i', strtotime($WorkTime->to_time))}}"  name="to_time" id="to_time" placeholder="HH:MM"  style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">

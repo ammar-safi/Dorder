@@ -50,17 +50,17 @@
                             <div class="card-body">
                                 <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #e74c3c;">العملاء</h5>
                                 <p class="card-text">إدارة {{in_array($clientsCount , range(2,9))? $clientsCount . " عملاء" : $clientsCount  . " عميل"}} .</p>
-                                <a href="{{ route('clients.show') }}" class="btn btn-primary" style="background-color: #e74c3c; border: none; border-radius: 20px;">إدارة المستخدمين</a>
+                                <a href="{{ route('clients.show') }}" class="btn btn-primary" style="background-color: #e74c3c; border: none; border-radius: 20px;">إدارة العملاء</a>
                             </div>
                         </div>
                     </div>
                     <!-- monitrs card -->
-                    <div class="col-md-4">
-                        <div class="card shadow-lg rounded-lg" style="border: none;">
+                    <div class="col-md-4" ">
+                        <div class="card shadow-lg rounded-lg" style="border: none;background-color: #ffffff">
                             <div class="card-body">
                                 <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #007c15;">المشرفين </h5>
                                 <p class="card-text">إدارة {{in_array($monitorsCount , range(2,9))? $monitorsCount . " مشرفين" : $monitorsCount  . " مشرف"}} .</p>
-                                <a href="{{ route('monitors.show') }}" class="btn btn-primary" style="background-color: #e74c3c; border: none; border-radius: 20px;">إدارة المستخدمين</a>
+                                <a href="{{ route('monitors.show') }}" class="btn btn-primary" style="background-color: #e74c3c; border: none; border-radius: 20px;">إدارة المشرفين</a>
                             </div>
                         </div>
                     </div>
@@ -69,7 +69,7 @@
                             <div class="card-body">
                                 <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #000000;">عمال التوصيل </h5>
                                 <p class="card-text">إدارة {{in_array($deliversCount , range(2,9))? $deliversCount . " عمال توصيل" : $deliversCount  . " عامل توصيل"}} التوصيل .</p>
-                                <a href="{{ route('monitors.show') }}" class="btn btn-primary" style="background-color: #e74c3c; border: none; border-radius: 20px;">إدارة المستخدمين</a>
+                                <a href="{{ route('monitors.show') }}" class="btn btn-primary" style="background-color: #e74c3c; border: none; border-radius: 20px;">إدارة عمال التوصيل</a>
                             </div>
                         </div>
                     </div>

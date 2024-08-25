@@ -12,8 +12,9 @@ use App\Http\Controllers\wep\DeliverController;
 use App\Http\Controllers\wep\EmployController;
 use App\Http\Controllers\wep\PackageController;
 use App\Http\Controllers\wep\ClientController;
+use App\Http\Controllers\wep\SettingController;
 use App\Http\Controllers\wep\WorkTimeController;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth;   
 
 /*
 |--------------------------------------------------------------------------
@@ -255,12 +256,15 @@ Route::group(['prefix' => "/clients", 'as' => 'clients.', 'namespace' => "App\Ht
 Route::group(['prefix' => "/work-times", 'as' => 'work.times.', 'namespace' => "App\Http\Controllers\wep\WorkTimeController", "middleware" => ["auth", "hasAccess"]], function () {
    
    Route::get('/show' , [WorkTimeController::class , 'index'] )->name("show");
-
+   
    Route::get('/edit' , [WorkTimeController::class , 'edit'] )->name("edit");
    Route::post('/update' , [WorkTimeController::class , 'update'] )->name("update");
    
    Route::post('/delete' , [WorkTimeController::class , 'delete'] )->name("soft.delete");
    
-
+   
 });
- 
+
+Route::group(['prefix' => "/settings", 'as' => 'settings.', 'namespace' => "App\Http\Controllers\wep\SettingController", "middleware" => ["auth", "hasAccess"]], function () {
+   Route::get('/' , [SettingController::class , 'index'] )->name("show");
+});
