@@ -19,7 +19,7 @@ class ClientSeeder extends Seeder
         $packages = Package::all();
         $areas = Area::all();
 
-        User::factory(10)->create()->each(function ($user) use ($packages , $areas) {
+        User::factory(1)->create()->each(function ($user) use ($packages , $areas) {
             $package = $packages->random();
             $area = $areas->random();
             $user->package_id = $package->id;
