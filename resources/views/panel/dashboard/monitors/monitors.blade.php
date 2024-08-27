@@ -15,6 +15,7 @@
                 function deleteRow() {
                     document.getElementById('delete').click();    
                 }
+ 
             </script>
 
             <style>
@@ -127,6 +128,7 @@
                         <label for="city_id" style="margin: 0; font-size: 0.875rem;">حدد مدينة:</label>
                         <select name="city_id" id="city_id" onchange="this.form.submit()" style="padding: 5px; width: 150px; font-size: 0.875rem; border-radius: 5px;">
                             <option value="">حدد مدينة</option>
+                            <option onclick='window.location.href="{{ route("monitors.show" , ["search_name"=>$searchName]) }}"'>الغاء تحديد مدينة</option>
                             @foreach ($cities as $city)
                             <option value="{{ $city->id }}" {{ $selectedCityId == $city->id ? 'selected' : '' }}>
                                 {{ $city->title }}
@@ -200,7 +202,7 @@
                                             <input type="hidden" name="route" value="cities.show">
                                             <button type="submit" id="edit" style="background: none; border: none; color: rgb(42, 101, 177); cursor: pointer;">تعديل</button>
                                         </form>
-                                        <span class="icon" onclick="deleteRow()"><i class="fas fa-edit"></i></span>
+                                        <span class="icon" onclick="editRow()"><i class="fas fa-edit"></i></span>
                                     </div>
                                     <div style="display: inline-block;">
                                         <form action="{{ route('monitors.soft.delete')}}" method="POST" style="display: inline;">

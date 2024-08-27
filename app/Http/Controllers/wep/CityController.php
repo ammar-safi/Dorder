@@ -200,7 +200,7 @@ class CityController extends Controller
                 }
                 $city->areas()->delete();
                 $city->delete();
-                return back();
+                return back()->with("success" , "تمت عمليه الحذف بنجاح");
             }
             return back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
