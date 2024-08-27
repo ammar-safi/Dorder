@@ -99,12 +99,12 @@ class ClientController extends Controller
             $id = $request->id;
             $client = User::Where("type", 'client')->where("id", $id)->first();
             if ($client->delete()) {
-                return redirect()->back()->with('success', 'Client deleted successfully');
+                return redirect()->back()->with('success', 'تم حظر العميل بنجاح');
             }
 
-            return redirect()->back()->with('error', 'Something went wrong');
+            return redirect()->back()->with('error', 'حدث خطأ اثناء الحذف, حاول مرا اخرى');
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Something went wrong');
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 }

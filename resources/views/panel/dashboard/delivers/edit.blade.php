@@ -9,15 +9,32 @@
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
             <div class="col-12">
                 <br><br>
-                <h1>تعديل عامل التوصيل  {{$deliver->user->name}}</h1>
+                <h1>تعديل المشرف {{$deliver->user->name}}</h1>
             </div>
         </div>
+        <script>
+            function sendName() {
+                const name = document.getElementById('nameInput').value;
+                document.getElementById('nameCityHidden').value = name;  
+                document.getElementById('nameAreaHidden').value = name;  
+            }
+            function sendEmail() {
+                const email = document.getElementById('emailInput').value;
+                document.getElementById('emailCityHidden').value = email;  
+                document.getElementById('emailAreaHidden').value = email;  
+            }
+            function sendMobile() {
+                const mobile = document.getElementById('mobileInput').value;
+                document.getElementById('mobileCityHidden').value = mobile;  
+                document.getElementById('mobileAreaHidden').value = mobile;  
+            }
+        </script>
         <div class="content-body">
             <br><br>
             @if(session()->has("error"))
                 <div style="background-color: #ffb3b3; border-right: 6px solid #c20c0c; padding: 20px; border-radius: 10px;">
                     <p style="font-size: 20px; margin: 0;">
-                            {{session("error")}}
+                        {{session("error")}}
                     </p>
                 </div> 
                 <br><br><br>
@@ -29,25 +46,44 @@
                 <!-- Form 1: POST request -->
                 <form id="myForm" action="{{Route('delivers.update')}}" method="post" style="display: flex; flex-direction: column; gap: 10px;">
                     @csrf
-                    @error('name')
-                         <p style="color: red" > * {{$message}}</p>
-                    @enderror
-                    <input type="text" name='name' value="{{old('name')?old('name'):$deliver->user->name}}" style="padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
                     <input type="hidden" name="id" value="{{$deliver->id}}">
                     <input type="hidden" name="city_id" value="{{$selectedCityId}}">
                     <input type="hidden" name="area_id" value="{{$selectedAreaId}}">
+
+                    <label for="nameInput">تعديل الاسم </label>
+                    @error('name')
+                         <p style="color: red" > * {{$message}}</p>
+                    @enderror
+                    <input type="text" oninput="sendName()" id="nameInput" name='name' value="{{old('name')?old('name'):($name?$name:$deliver->user->name)}}" style="padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
+                    @if (Auth::User()->type == "admin")
+                            <label for="mobileInput">تعديل رقم الهاتف </label>
+                            @error('mobile')
+                            <p style="color: red" > * {{$message}}</p>
+                            @enderror
+                            <input type="text" oninput="sendMobile()" id="mobileInput" name='mobile' value="{{old('mobile')?old("mobile"):($mobile?$mobile:$deliver->user->mobile)}}" style="padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
+                            
+                            <label for="emailInput">تعديل البريد الالكتروني </label>
+                            @error('email')
+                            <p style="color: red" > * {{$message}}</p>
+                            @enderror
+                            <input type="text" oninput="sendEmail()" id="emailInput" name='email' value="{{old("email")?old("email"):($email?$email:$deliver->user->email)}}" style="padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
+                    @endif
                 </form>
                 
                 <!-- Form 2: City Select -->
                 <form method="get" action="{{ route('delivers.edit') }}" style="display: flex; flex-direction: column; gap: 10px;">
+                    <input type="hidden" name="id" value="{{$deliver->id}}">
+                    <input type="hidden" id="nameCityHidden" name="name" value="{{old('name')?old('name'):($name?$name:'')}}">
+                    <input type="hidden" id="emailCityHidden" name="email" value="{{old('email')?old("email"):($email?$email:'')}}">
+                    <input type="hidden" id="mobileCityHidden" name="mobile" value="{{old('mobile')?old("mobile"):($mobile?$mobile:"")}}">
+                   
                     @error('city_id')
                     <p style="color: red" >* {{$message}}</p>
                     @enderror
 
-                    <input type="hidden" name="id" value="{{$deliver->id}}">
-                    <label for="city_id" style="font-size: 1rem;">حدد مدينة:</label>
+                    <label for="city_id" id="" style="font-size: 1rem;">حدد مدينة:</label>
                     <select name="city_id" id="city_id" onchange="this.form.submit()" style="padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
-                        <option value="">حدد مدينة</option>
+                        <option>حدد مدينة</option>
                         @foreach ($cities as $city)
                             <option value="{{ $city->id }}" {{ $selectedCityId == $city->id ? 'selected' : '' }}>
                                 {{ $city->title }}
@@ -58,12 +94,16 @@
                 
                 <!-- Form 3: Area Select -->
                 <form method="GET" action="{{ route('delivers.edit') }}" style="display: flex; flex-direction: column; gap: 10px;">
+                    <input type="hidden" name="id" value="{{$deliver->id}}">
+                    <input type="hidden" name="city_id" value="{{ $selectedCityId }}">
+                    <input type="hidden" id="nameAreaHidden" name="name" value="{{old('name')?old('name'):($name?$name:'')}}">
+                    <input type="hidden" id="emailAreaHidden" name="email"value="{{old('email')?old("email"):($email?$email:'')}}">
+                    <input type="hidden" id="mobileAreaHidden" name="mobile" value="{{old('mobile')?old("mobile"):($mobile?$mobile:"")}}">
+
                     @error('area_id')
                      <p style="color: red" > * {{$message}}</p>
                     @enderror
 
-                    <input type="hidden" name="id" value="{{ $deliver->id }}">
-                    <input type="hidden" name="city_id" value="{{ $selectedCityId }}">
                     <label for="area_id" style="font-size: 1rem;">حدد منطقة:</label>
                     <select name="area_id" id="area_id" onchange="this.form.submit()" style="padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
                         <option value="">حدد منطقة</option>
@@ -77,7 +117,8 @@
 
                 <div style="display: flex; gap: 10px;">
                     <button type="submit" onclick="document.getElementById('myForm').submit();" class="rounded-button" style="padding: 10px; width: 50%; color: white; background-color: #007bff; border: none; border-radius: 5px;">تعديل</button>
-                    <button type="submit" onclick="history.back()" class="rounded-button" style="padding: 10px; width: 50%; color: black; background-color: white; border: 1px solid #ccc; border-radius: 5px;">الغاء</button>
+                    <button type="button" class="btn rounded-button" style="background-color: #ccc;width: 50%;color: black; padding: 7.0px 20px;" onclick='window.location.href="{{ route("delivers.show") }}";'>الغاء</button>
+                    
                 </div>
                 
             </div>

@@ -214,7 +214,7 @@ class PackageController extends Controller
 
 
             if (Package::find($request->id)->delete()) {
-                return back();
+                return back()->with("success", "تم حذف الحزمة بنجاح");
             }
             return back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {

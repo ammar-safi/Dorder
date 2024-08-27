@@ -45,7 +45,7 @@ class DeliverController extends Controller
                     "area_id.exists" => "حدث حطأ , حاول مرا اخرى",
                 ]
             );
-            
+
             if ($validate->fails()) {
                 return back()->withErrors($validate)->withInput($request->all());
             }
@@ -232,10 +232,14 @@ class DeliverController extends Controller
             $cities = city::all();
             $areas = Area::where("city_id", $request->input("city_id") ? $request->input("city_id") : $deliver->area->city->id)->get();
             // dd($request->input("area_id"));
+            $name = $request->input("name") ? $request->input("name") : $deliver->user->name;
+            $email = $request->input("email") ? $request->input("email") : $deliver->user->email;
+            $mobile = $request->input('mobile') ? $request->input('mobile') : $deliver->user->mobile;
+
             $selectedCityId = $request->input("city_id") ? $request->input("city_id") : $deliver->area->city->id;
             $selectedAreaId = $request->input("area_id") ? $request->input("area_id") : $deliver->area->id;
 
-            return view("panel.dashboard.delivers.edit", compact('flag', 'deliver', 'cities', "areas", 'selectedCityId', 'selectedAreaId'));
+            return view("panel.dashboard.delivers.edit", compact('flag', 'deliver', 'cities', "areas", 'selectedCityId', 'selectedAreaId', 'name', 'email', 'mobile'));
         } catch (Exception $e) {
             return back()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
         }
@@ -259,10 +263,30 @@ class DeliverController extends Controller
                     }),
 
                 ],
+                "mobile" => [
+                    "regex:/^09[0-9]{8}$/",
+                    "string",
+                    "max:20",
+                    Rule::unique("users", "mobile")->where("type", "deliver")->ignore($request->mobile, 'mobile'),
+                ],
+                "email" => [
+                    "email",
+                    Rule::unique("users", "email")->where("type", "deliver")->ignore($request->email, 'email'),
+                ],
+
             ],
             [
                 'id.required' => "حصل خطأ غير متوقع",
                 'id.exists' => "حصل خطأ غير متوقع",
+
+
+                'email.email' => ' البريد الإلكتروني غير صالح',
+                'email.unique' => 'البريد الإلكتروني مُستخدم بالفعل.',
+
+                'mobile.regex' => 'رقم الهاتف غير صالح.',
+                'mobile.string' => 'يجب أن يكون رقم الهاتف نص.',
+                'mobile.max' => 'لا يمكن أن يتجاوز طول رقم الهاتف 20 رقم.',
+                'mobile.unique' => 'رقم الهاتف مُستخدم بالفعل.',
 
                 'name.required' => 'يرجى إدخال الاسم.',
                 'name.string' => 'يجب أن يكون الاسم نصيًا.',
@@ -289,7 +313,13 @@ class DeliverController extends Controller
                 return back()->with('error', 'المشرف غير موجود.');
             }
 
-            if ($deliver->update(['area_id' => $request->area_id,]) && $deliver->User->update(['name' => $request->name])) {
+            $data = [
+                'name' => $request->name,
+                "email" => $request->email,
+                "mobile" => $request->mobile,
+            ];
+
+            if ($deliver->update(['area_id' => $request->area_id,]) && $deliver->User->update($data)) {
                 return redirect()->route("delivers.show")->with("success", 'تم التعديل بنجاح');
             } else {
                 return back()->with('error', 'لم يتم التعديل , حاول مرة اخرى');
@@ -322,7 +352,7 @@ class DeliverController extends Controller
 
             $is_exist = Deliver::find($request->id);
             if ($is_exist && $is_exist->forceDelete()) {
-                return back();
+                return back()->with("success", "تم حذف المشرف بنجاح");
             }
             return back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {

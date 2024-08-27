@@ -126,6 +126,8 @@
                         <label for="city_id" style="margin: 0; font-size: 0.875rem;">حدد مدينة:</label>
                         <select name="city_id" id="city_id" onchange="this.form.submit()" style="padding: 5px; width: 150px; font-size: 0.875rem; border-radius: 5px;">
                             <option value="">حدد مدينة</option>
+                            <option onclick='window.location.href="{{ route("delivers.show" , ["search_name"=>$searchName]) }}"'>الغاء تحديد مدينة</option>
+
                             @foreach ($cities as $city)
                                 <option value="{{ $city->id }}" {{ $selectedCityId == $city->id ? 'selected' : '' }}>
                                     {{ $city->title }}
