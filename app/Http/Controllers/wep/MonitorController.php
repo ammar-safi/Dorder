@@ -188,7 +188,7 @@ class MonitorController extends Controller
                         return redirect()->route("monitors.show")->with("error",  " حصل خطأاثناء تعيين المنطقة , قم بتعيين المنطقة بشكل يدوي من 'تعيين منطقة'");
                     }
                 }
-                return redirect()->route("monitors.show")->with("update_success", "تمت الاضافة  بنجاح");
+                return redirect()->route("monitors.show")->with("success", "تمت الاضافة  بنجاح");
             } else {
                 return back()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
             }

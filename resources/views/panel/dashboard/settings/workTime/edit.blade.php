@@ -61,7 +61,9 @@
         
            
             <button type="submit" class="btn btn-primary rounded-button" style="color: black; padding: 10px 20px; margin-right: 10px; background-color: #007bff; border: none; border-radius: 5px;">تعديل</button>
-            <button type="button" class="btn rounded-button" style="color: black; padding: 10px 20px; background-color: #bccad8; border: none; border-radius: 5px;" onclick="history.back()">تراجع</button>
+            {{-- <button type="button" class="btn rounded-button" style="color: black; padding: 10px 20px; background-color: #bccad8; border: none; border-radius: 5px;" onclick="history.back()">تراجع</button> --}}
+            <button type="button" class="btn rounded-button" style="background-color: #bccad8;color: black; padding: 7.0px 20px;" onclick='window.location.href="{{ route("work.times.show") }}";'>تراجع</button>
+
         </form>
         
 <br><br>            

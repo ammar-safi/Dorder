@@ -136,7 +136,9 @@
                 </table>
                 
                 
-                <button type="button" class="btn rounded-button" style="color: black; padding: 10px 20px; background-color: #bccad8; border: none; border-radius: 5px;" onclick="history.back()">تراجع</button>
+                {{-- <button type="button" class="btn rounded-button" style="color: black; padding: 10px 20px; background-color: #bccad8; border: none; border-radius: 5px;" onclick="history.back()">تراجع</button> --}}
+                <button type="button" class="btn rounded-button" style="background-color: #bccad8;color: black; padding: 7.0px 20px;" onclick='window.location.href="{{ route("settings.show") }}";'>تراجع</button>
+
             </div>
             </div>
         </div>
