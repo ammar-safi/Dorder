@@ -54,15 +54,15 @@
             <br><br>
             <div style="background-color: #ffb3b3; border-right: 6px solid #c20c0c; padding: 20px; border-radius: 10px;">
                 <p style="font-size: 20px; margin: 0;">
-                    @error('id')
-                        {{$message}}
-                    @enderror
-                    @error('city_id')
-                        {{$message}}
-                    @enderror
-                    @error('area_id')
-                        {{$message}}
-                    @enderror
+@error('id')
+    {{$message}}
+@enderror
+@error('city_id')
+    {{$message}}
+@enderror
+@error('area_id')
+    {{$message}}
+@enderror
                 </p>
             </div>
                                

@@ -17,4 +17,12 @@ class SettingController extends Controller
         $flag = "setting";
         return view("panel.dashboard.settings.index" , compact("flag"));
     }
+
+
+    public function deleted ()
+    {
+        $flag = "setting";
+         
+        return view("panel.dashboard.settings.deleted", compact("flag"));
+    }
 }

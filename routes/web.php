@@ -267,4 +267,9 @@ Route::group(['prefix' => "/work-times", 'as' => 'work.times.', 'namespace' => "
 
 Route::group(['prefix' => "/settings", 'as' => 'settings.', 'namespace' => "App\Http\Controllers\wep\SettingController", "middleware" => ["auth", "hasAccess"]], function () {
    Route::get('/' , [SettingController::class , 'index'] )->name("show");
+
+   Route::middleware(["hasAccess"])->group(function () {
+      Route::get('/deleted', [SettingController::class, 'deleted'])->name("deleted");
+      Route::post('/blocked', [SettingController::class, 'blocked'])->name("blocked");
+   });
 });
