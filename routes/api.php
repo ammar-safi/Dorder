@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::post("/login",[LoginController::class, "login"]);
-Route::middleware("auth:sanctum")->get("/logout", [LoginController::class, "logout"]);
+Route::middleware("auth:sanctum")->post("/logout", [LoginController::class, "logout"]);
 
 Route::get("/show/cities" , [CityController::class , "index"]) ;
 Route::middleware("auth:sanctum")->group(function(){

@@ -13,6 +13,8 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         try {
+            
+            
             $credentials = $request->only('email', 'password');
             if (auth()->attempt($credentials)) {
                 $user = auth()->user(); 
@@ -20,12 +22,15 @@ class LoginController extends Controller
 
                     $token = $user->createToken('auth_token')->plainTextToken;
                     return $this->apiResponse($token , True , NULL);
+                
                 } else {
                     return $this->apiResponse(NULL, False, 'You are not a client');
                 }
             } else {
                 return $this->apiResponse(NULL, False, 'Invalid credentials');
             }
+
+
         } catch (Exception $e) {
             return $this->apiResponse(NULL, False, $e->getMessage());
         }

@@ -74,6 +74,7 @@ class CityController extends Controller
 
 
         if ($validate->fails()) {
+            // return $this->requiredField($validate->error()->first());
             $city = City::find($id);
             if ($city) {
                 $data = [
