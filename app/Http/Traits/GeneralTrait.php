@@ -13,10 +13,10 @@ trait GeneralTrait
     {
         $array = [
             'data' => $data,
-            'status' => $status,
-            'error' => $error,
-            'statusCode' => $statusCode
+            'status' => $status, // True of false 
+            'error' => $error, // user not found 
+            'statusCode' => $statusCode // 404 500 403 200 303 (headers code)
         ];
         return response($array, $statusCode);
-    }
+    } 
 }

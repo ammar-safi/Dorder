@@ -199,10 +199,6 @@ Route::group(['prefix' => "/employs", 'as' => 'employs.', 'namespace' => "App\Ht
    Route::post("/store/employ", [EmployController::class, 'storeEmploys'])->middleware("isAdmin")->name('store');
 });
 
-
-
-
-
 /**
  * Custom Admins
  */
