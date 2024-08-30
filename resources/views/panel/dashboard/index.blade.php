@@ -69,7 +69,7 @@
                             <div class="card-body">
                                 <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #000000;">عمال التوصيل </h5>
                                 <p class="card-text">إدارة {{in_array($deliversCount , range(2,9))? $deliversCount . " عمال توصيل" : $deliversCount  . " عامل توصيل"}} التوصيل .</p>
-                                <a href="{{ route('monitors.show') }}" class="btn btn-primary" style="background-color: #e74c3c; border: none; border-radius: 20px;">إدارة عمال التوصيل</a>
+                                <a href="{{ route('delivers.show') }}" class="btn btn-primary" style="background-color: #e74c3c; border: none; border-radius: 20px;">إدارة عمال التوصيل</a>
                             </div>
                         </div>
                     </div>
