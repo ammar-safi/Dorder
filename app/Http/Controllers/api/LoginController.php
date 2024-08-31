@@ -34,7 +34,11 @@ class LoginController extends Controller
                 $user = Auth::user();
                 if($user->type == "client") {
                     $token = $user->createToken('token')->plainTextToken;
-                    return $this->apiResponse([LoginResource::make($user), 'token' => $token], True, null, 200);
+                    $data["user"] = LoginResource::make($user) ;
+                    $data["token"] = $token ;
+                    return $this->apiResponse($data, True, null, 200);
+
+
                 } else {
                     return $this->apiResponse(NULL, False, "الدخول غير مسموح", 403);
                 }
@@ -72,7 +76,9 @@ class LoginController extends Controller
 
             if ($user) {
                 $token = $user->createToken('token')->plainTextToken;
-                return $this->apiResponse([SignupResource::make($user), 'token' => $token], True, null , 200);
+                $data["user"] = SignupResource::make($user) ;
+                $data["token"] = $token ;
+                return $this->apiResponse($data, True, null , 200);
             } else {
                 return $this->apiResponse("", False, "حدث خطا , الرجاء اعادة المحاولة", 401);
             }
