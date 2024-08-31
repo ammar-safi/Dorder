@@ -35,8 +35,10 @@ Route::middleware("auth:sanctum")->group(function(){
 
     Route::middleware("auth:sanctum")->get("/show/city/{id}" , [CityController::class , "show"]) ;
     
-    Route::get("/cities" , function () {
-        return CityResource::collection(City::all());
-    });
-});
+}); 
 
+
+
+Route::get("/cities" , function () {
+    return CityResource::collection(City::all());
+});

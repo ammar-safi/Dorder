@@ -4,40 +4,45 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CityResource;
+use App\Http\Traits\GeneralTrait;
 use App\Models\City;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CityController extends Controller
 {
+    use GeneralTrait;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
 
-        $statusCode = 200;
-       
-        $city =CityResource::collection(City::all()) ;
-        // dd($city) ;
-        if ($city) {
-            $data = [
-                'data' => $city,
-                'status' => True,
-                'error' => null,
-                'statusCode' => $statusCode,
-            ];
-        } else {
-            $data = [
-                'data' => '',
-                'status' => false,
-                'error' => 'لا يوجد مدن للعرض',
-                'statusCode' => $statusCode,
-            ];
-        }
+        // $statusCode = 200;
+
+        // $city =CityResource::collection(City::all()) ;
+        // // dd($city) ;
+        // if ($city) {
+        //     $data = [
+        //         'data' => $city,
+        //         'status' => True,
+        //         'error' => null,
+        //         'statusCode' => $statusCode,
+        //     ];
+        // } else {
+        //     $data = [
+        //         'data' => '',
+        //         'status' => false,
+        //         'error' => 'لا يوجد مدن للعرض',
+        //         'statusCode' => $statusCode,
+        //     ];
+        // }
 
 
-        return response($data, $statusCode);
+        // return response($data, $statusCode);
+
+
+        return $this->apiResponse(CityResource::collection(City::all()), True, null,200);
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Area;
 use App\Models\City;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ class ClientController extends Controller
     public function __construct()
     {
         $this->middleware(["auth", "hasAccess"]);
+        $this->middleware('isAdmin')->except(["index" , "delete"]);
     }
     /**
      * Display a listing of the resource.
@@ -41,9 +43,9 @@ class ClientController extends Controller
                 ]
             );
             if ($validate->fails()) {
-                return redirect()->back()->with("error" , 'حدث خطأ اثناء البحث, حاول مرا اخرى')->withErrors($validate->errors());;
+                return redirect()->back()->with("error", 'حدث خطأ اثناء البحث, حاول مرا اخرى')->withErrors($validate->errors());;
             }
-            $flag = 'clients-show' ;
+            $flag = 'clients-show';
             $cities = City::all();
             $query = User::query();
 
@@ -67,16 +69,114 @@ class ClientController extends Controller
                 $clients = User::Where("type", 'client')->get();
             }
             return view('panel.dashboard.clients.clients', compact('clients', 'cities', 'areas', 'flag', 'selectedCityId', 'selectedAreaId', 'searchName'));
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
 
+    public function edit(Request $request)
+    {
+        try {
+            $validate = Validator::make(
+                ['id' => $request->id],
+                [
+                    'id' => 'required|exists:users,id',
+                ],
+                [
+                    'id.required' => 'حدث خطأ , حاول مرا اخرى',
+                    'id.exists' => 'حدث خط , حاول مرا اخرى',
+                ]
+            );
+
+            if ($validate->fails()) {
+                return redirect()->back()->with("error", 'حدث خطأ , حاول مرا اخرى')->withErrors($validate->errors());;
+            }
+
+            $client = User::find($request->id);
+            if ($client && $client->type == "client") {
+
+
+                $collection = [];
+
+                $areas = Area::distinct()->pluck("city_id");
+
+                foreach ($areas as $cityId) {
+                    $city = City::find($cityId);
+
+                    if ($city) {
+                        $collection[$city->title] = Area::where("city_id", $cityId)->get();
+                    }
+                }
+                // dd($client);
+                $flag = "clients-show";
+                return view('panel.dashboard.clients.edit', compact('flag', 'client', 'collection'));
+            } else {
+                return redirect()->back()->with("error", 'حدث خطأ, حاول مرا اخرى');
+            }
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
 
+    public function update(Request $request)
+    {
+        try {
+
+            $validate = Validator::make(
+                $request->all(),
+                [
+                    'id' => 'required|exists:users',
+                    'name' => 'required|string|max:255',
+                    'email' => ['required', 'email', 'max:255', Rule::unique("users", "email")->where('type', "client")->ignore($request->id , "id")],
+                    'mobile' => ['required', 'string', 'regex:/^09[0-9]{8}$/',  Rule::unique("users", "mobile")->where('type', "client")->ignore($request->id , "id")],
+                    'subscription_fees' => 'nullable|numeric',
+                    'expire' => 'nullable|date_format:Y-m-d',
+                    'area_id' => 'exists:areas,id',
+                ],
+                [
+                    'id.required' => 'حدث خطأ , حاول مرا اخرى',
+                    'id.exists' => 'حدث خطأ , حاول مرا اخرى',
+                    'name.required' => "اسم العميل مطلوب",
+                    'mobile.required' => 'قم الهاتف مطلوب',
+                    'mobile.unique' => 'رقم الهاتف موجود مسبقا',
+                    'mobile.regex' => 'الرقم غير صحيح',
+                    
+                    'email.required' => 'البريد الالكتروني مطلوب',
+                    'email.email' => 'يرجى ادخال بريد الكتروني صالح',
+                    'email.unique' => 'البريد الالكتروني موجود مسبقا',
+                    'area_id.exists' => 'المنطقة غير صحيحة , حاول مرة اخرة',
+                    'subscription_fees.numeric' => 'عدد الطلبات يجب ان يكون رقم ',
+                    'expire.date_format' => 'تاريخ انتهاء الصلاحية يجب ان يكون من الشكل : YYYY-MM-DD',
+                ]
+            );
 
 
-
+            
+            if ($validate->fails()) {
+                return redirect()->back()->withInput($request->all())->withErrors($validate);
+            }
+            $client = User::find($request->id);
+            if ($client && $client->type == "client") {
+                $client->name = $request->name;
+                $client->mobile = $request->mobile;
+                $client->email = $request->email;
+                $client->area_id = $request->area_id;
+                $client->active = Carbon::parse($request->expire)->isFuture() ? true : false;
+                $client->subscription_fees = $request->subscription_fees;
+                $client->expire = $request->expire;
+                if ($client->save()) {
+                    return redirect()->route("clients.show")->with("success", 'تم تعديل العميل بنجاح');
+                } else {       
+                    return redirect()->back()->with("error", 'حدث خطأ, حاول مرا اخرى');
+                }
+            } else {
+                return redirect()->back()->with("error", 'حدث خطأ, حاول مرا اخرى');
+            }
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
     /**
      * Display the specified resource.
      */

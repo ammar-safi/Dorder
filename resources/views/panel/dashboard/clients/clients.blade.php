@@ -107,7 +107,7 @@
                             <input type="hidden" name="city_id" value="{{$selectedCityId}}">
                         @endif
                         <div style="position: relative; display: flex; align-items: center; width: 200px;">
-                            <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم المشرف" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
+                            <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم العميل" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
                             <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
                         </div>
                         @if ($searchName) 
@@ -161,6 +161,7 @@
                             <th>المحافظة</th>
                             <th>المنطقة</th>
                             <th>الاشتراك</th>
+                            <th>صلاحية الحساب</th>
                             <th>الطلبات المتاحة</th>
                             <th>العمليات </th>
                         </tr>
@@ -178,9 +179,18 @@
                                 <td>{{$client->area->city->title}}</td>
                                 <td>{{$client->area->title}}</td>
                                 <td>{{$client->package->title}}</td>
-                                <td>{{$client->subscription_fees}}</td>
+                                <td>{{$client->expire}} <br> ({{$client->active?"نشط":"غير نشط"}})</td>
+                                <td>{{$client->subscription_fees}}  </td>
                                 <td>
-                                    <div style="display: inline-block;">
+                                    <div style="display: flex;">
+                                        @if (Auth::user()->type=="admin")
+                                        <form action="{{ route('clients.edit')}}" method="GET" style="display: inline;">
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{$client->id}}">
+                                            <button type="submit" id="edit" style="background: none; border: none; color: rgb(4, 47, 139); cursor: pointer;">تعديل</button>
+                                        </form>
+                                        <span class="icon" onclick="editRow()"><i class="fas fa-edit"></i></span>
+                                        @endif
                                         <form action="{{ route('clients.soft.delete')}}" method="POST" style="display: inline;">
                                             @csrf
                                             <input type="hidden" name="id" value="{{$client->id}}">
