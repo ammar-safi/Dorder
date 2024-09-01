@@ -29,7 +29,7 @@ class ClientController extends Controller
             $validate = Validator::make(
                 $request->all(),
                 [
-                    "city_id" => "exists:cities,id",
+                    "city_id" => "nullable|exists:cities,id",
                     'area_id' => [
                         Rule::exists('areas', 'id')->where(function (Builder $query) use ($request) {
                             return $query->where('city_id', $request->city_id);
@@ -45,6 +45,8 @@ class ClientController extends Controller
             if ($validate->fails()) {
                 return redirect()->back()->with("error", 'حدث خطأ اثناء البحث, حاول مرا اخرى')->withErrors($validate->errors());;
             }
+
+
             $flag = 'clients-show';
             $cities = City::all();
             $query = User::query();
@@ -76,6 +78,7 @@ class ClientController extends Controller
 
     public function edit(Request $request)
     {
+        // dd($request->all());
         try {
             $validate = Validator::make(
                 ['id' => $request->id],
@@ -121,8 +124,9 @@ class ClientController extends Controller
 
     public function update(Request $request)
     {
+        dd($request->all());
         try {
-
+            
             $validate = Validator::make(
                 $request->all(),
                 [
@@ -130,9 +134,9 @@ class ClientController extends Controller
                     'name' => 'required|string|max:255',
                     'email' => ['required', 'email', 'max:255', Rule::unique("users", "email")->where('type', "client")->ignore($request->id , "id")],
                     'mobile' => ['required', 'string', 'regex:/^09[0-9]{8}$/',  Rule::unique("users", "mobile")->where('type', "client")->ignore($request->id , "id")],
-                    'subscription_fees' => 'nullable|numeric',
+                    'subscription_fees' => 'nullable|required_with:expire|numeric',
                     'expire' => 'nullable|date_format:Y-m-d',
-                    'area_id' => 'exists:areas,id',
+                    'area_id' => 'nullable|exists:areas,id',
                 ],
                 [
                     'id.required' => 'حدث خطأ , حاول مرا اخرى',
@@ -141,12 +145,12 @@ class ClientController extends Controller
                     'mobile.required' => 'قم الهاتف مطلوب',
                     'mobile.unique' => 'رقم الهاتف موجود مسبقا',
                     'mobile.regex' => 'الرقم غير صحيح',
-                    
                     'email.required' => 'البريد الالكتروني مطلوب',
                     'email.email' => 'يرجى ادخال بريد الكتروني صالح',
                     'email.unique' => 'البريد الالكتروني موجود مسبقا',
                     'area_id.exists' => 'المنطقة غير صحيحة , حاول مرة اخرة',
                     'subscription_fees.numeric' => 'عدد الطلبات يجب ان يكون رقم ',
+                    'subscription_fees.required_with' => "يجب اختيار عدد الطلبات" ,
                     'expire.date_format' => 'تاريخ انتهاء الصلاحية يجب ان يكون من الشكل : YYYY-MM-DD',
                 ]
             );

@@ -37,7 +37,7 @@ class DeliverController extends Controller
             $validate = Validator::make(
                 $request->all(),
                 [
-                    "city_id" => "exists:cities,id",
+                    "city_id" => "nullable|exists:cities,id",
                     "area_id" => "exists:areas,id",
                 ],
                 [

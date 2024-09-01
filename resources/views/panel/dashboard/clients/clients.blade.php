@@ -15,9 +15,47 @@
                 function deleteRow() {
                     document.getElementById('delete').click();    
                 }
+
+                function toggleOptions(button) {
+                    const optionsMenu = button.nextElementSibling;
+                    optionsMenu.style.display = optionsMenu.style.display === 'block' ? 'none' : 'block';
+                }
+
+                // إخفاء القائمة عند النقر خارجها
+                document.addEventListener('click', function(event) {
+                    const isClickInside = event.target.closest('.options-menu') || event.target.closest('button');
+                    if (!isClickInside) {
+                        document.querySelectorAll('.options-menu').forEach(function(menu) {
+                            menu.style.display = 'none';
+                        });
+                    }
+                });
+
+                /*
+                    هي منشان لما بدي اكتب اسم بالبحث ينضاف عال select 
+                */
+                // function calculateUnitPrice() {
+                //     const orderCount = document.getElementById('orderCount').value;
+                //     const totalPrice = document.getElementById('totalPrice').value;
+                //     let unitPrice = 0;
+        
+                //     if (orderCount && totalPrice) {
+                //         unitPrice = totalPrice / orderCount;
+                //     }
+        
+                //     document.getElementById('unitPrice').value = unitPrice.toFixed(2); // عرض النتيجة مع دقتين عشريتين
+                // }
             </script>
 
             <style>
+                .options-menu i {
+                    margin-right: 10px;
+
+                }
+                .options-menu button:hover {
+                    background-color: #f1f1f1;
+                }
+
                 table {
                     width: 100%;
                     border-collapse: collapse;
@@ -144,17 +182,36 @@
                         </form>
                     @endif
                 </div>
-                
+                <br>
+                <div>
+                    <form action="{{route('clients.edit')}}" method="get">
+                        @if($searchName) 
+                            <input type="hidden" name="search_name" value="{{$searchName}}">
+                        @else 
+                            <input id="hiddenSearchName" type="hidden" name="search_name">
+                        @endif
+
+                        <input type="hidden" name="city_id" value="{{ $selectedCityId }}">
+                        <input type="hidden" name="area_id" value="{{$selectedAreaId}}">
+
+
+                        <div>
+                            <input id="deleted" onchange="this.form.submit()" type="checkbox" value="deleted">
+                            <label for="deleted">المحظورين</label>    
+                        </div>
+                    </form>
+                </div>
             </div>
                 
-
-
-
-                
-                @if ($selectedCityId || $selectedAreaId || $searchName)
-                <table>
+            
+            
+            
+            
+            @if ($selectedCityId || $selectedAreaId || $searchName)
+            <table>
                     <thead>
                         <tr>
+                            <th>الصورة الشخصية</th>
                             <th>الاسم</th>
                             <th>البريد الاكتروني</th>
                             <th>رقم الهاتف</th>
@@ -163,7 +220,7 @@
                             <th>الاشتراك</th>
                             <th>صلاحية الحساب</th>
                             <th>الطلبات المتاحة</th>
-                            <th>العمليات </th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -173,32 +230,47 @@
                         {{-- @dd($Monitors) --}}
                             {{-- @dd($monitor->user->name) --}}
                             <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center;">
+                                        <!-- إضافة صورة العميل -->
+                                        <img src="{{ $client->profile_image }}" alt="صورة العميل" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                                    </div>
+                                </td>                                
                                 <td>{{$client->name}}</td>
                                 <td>{{$client->email}}</td>
                                 <td>{{$client->mobile}}</td>
-                                <td>{{$client->area->city->title}}</td>
-                                <td>{{$client->area->title}}</td>
-                                <td>{{$client->package->title}}</td>
+                                <td>{{$client->area?->city->title}}</td>
+                                <td>{{$client->area?->title}}</td>
+                                <td>{{$client->package?->title}}</td>
                                 <td>{{$client->expire}} <br> ({{$client->active?"نشط":"غير نشط"}})</td>
                                 <td>{{$client->subscription_fees}}  </td>
                                 <td>
-                                    <div style="display: flex;">
-                                        @if (Auth::user()->type=="admin")
-                                        <form action="{{ route('clients.edit')}}" method="GET" style="display: inline;">
-                                            @csrf
-                                            <input type="hidden" name="id" value="{{$client->id}}">
-                                            <button type="submit" id="edit" style="background: none; border: none; color: rgb(4, 47, 139); cursor: pointer;">تعديل</button>
-                                        </form>
-                                        <span class="icon" onclick="editRow()"><i class="fas fa-edit"></i></span>
-                                        @endif
-                                        <form action="{{ route('clients.soft.delete')}}" method="POST" style="display: inline;">
-                                            @csrf
-                                            <input type="hidden" name="id" value="{{$client->id}}">
-                                            <button type="submit" id="delete" style="background: none; border: none; color: rgb(161, 17, 17); cursor: pointer;">حظر</button>
-                                        </form>
-                                        <span class="icon" onclick="deleteRow()"><i class="fas fa-user-minus"></i></span>
+                                    <div style="position: relative; display: flex; justify-content: center;">
+                                        <button onclick="toggleOptions(this)" style="background: none; border: none; cursor: pointer;">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <div class="options-menu" style="display: none; position: absolute; top: -60px; right: -100px; background-color: #f9f9f9; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); z-index: 100;">
+                                            @if (Auth::user()->type=="admin")
+                                            <form action="{{ route('clients.edit')}}" method="GET" style="display: block; margin: 0;">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{$client->id}}">
+                                                <button type="submit" style="background: none; border: none; color: rgb(4, 47, 139); padding: 8px 12px; width: 100%; text-align: left;">
+                                                    تعديل <i class="fas fa-edit"></i>
+                                                </button>
+                                            </form>
+                                            @endif
+                                            <form action="{{ route('clients.soft.delete')}}" method="POST" style="display: block; margin: 0;">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{$client->id}}">
+                                                <button type="submit" style="background: none; border: none; color: rgb(161, 17, 17); padding: 8px 12px; width: 100%; text-align: left;">
+                                                     حظر <i class="fas fa-user-minus"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>     
                                 </td>
+                                
+                                
                             </tr>
 
                         @endforeach

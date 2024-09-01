@@ -9,7 +9,24 @@
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
             <div class="col-12">
                 <br><br>
-                <h1>تعديل العميل {{$client->name}}</h1>
+                <div style="display: flex; gap: inherit; align-items: center;">
+                    <h1>تعديل العميل {{$client->name}}</h1>
+                    <!-- تعديل الصورة -->
+
+                    <div style="display: grid; justify-items: center; align-items: center; margin-right: 400px;">
+                        @php
+                            $image = $client->profile_image ? $client->profile_image : '../../../../app-assets/images/portrait/small/images.png'
+                        @endphp
+                        <a href="{{ $image }}">
+                            <!-- صورة العميل -->
+                            
+                            <img id="clientImage" src="{{ $image }}" alt="صورة العميل" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                        </a>
+                        <label for="imageUpload" style="cursor: pointer; margin-top: 10px;">تعديل</label>
+                    </div>
+                    
+                </div>
+                
             </div>
         <style>
          .password-input {
@@ -27,13 +44,13 @@
 
         </style>
             <script>
-                function togglePasswordVisibility(inputId) {
-                var passwordInput = document.getElementById(inputId);
-                if (passwordInput.type === "password") {
-                    passwordInput.type = "text";
-                } else {
-                    passwordInput.type = "password";
-                }
+                function previewImage(event) {
+                    var reader = new FileReader();
+                    reader.onload = function(){
+                        var output = document.getElementById('clientImage');
+                        output.src = reader.result;
+                    }
+                    reader.readAsDataURL(event.target.files[0]);
                 }
 
             </script>
@@ -53,8 +70,10 @@
             @endif
             <div class="row">
                 <div class="col-12"> 
-                    <form action="{{ route('clients.update' , ['id'=>$client->id]) }}" method="POST"> 
+                    <form action="{{ route('clients.update' , ['id'=>$client->id]) }}" method="POST"  enctype="multipart/form-data"> 
                         @csrf
+                        <input type="file" id="imageUpload" name="profile_image" accept="image/*" style="display: none;" onchange="previewImage(event)">
+
                         <div class="form-group">
                             <label for="name">الاسم:</label>
                             @error('name')
