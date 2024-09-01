@@ -138,7 +138,7 @@ class ClientController extends Controller
                     'subscription_fees' => 'nullable|required_with:expire|numeric',
                     'expire' => 'nullable|date_format:Y-m-d',
                     'area_id' => 'nullable|exists:areas,id',
-                    'profile_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                    'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 ],
                 [
                     'id.required' => 'حدث خطأ , حاول مرا اخرى',
@@ -160,7 +160,7 @@ class ClientController extends Controller
                     'subscription_fees.required_with' => "يجب اختيار عدد الطلبات",
 
                     'expire.date_format' => 'تاريخ انتهاء الصلاحية يجب ان يكون من الشكل : YYYY-MM-DD',
-                    'profile_image.required' => 'صورة العميل مطلوبة',
+
                     'profile_image.image' => 'يجب ان يكون صورة',
                     'profile_image.mimes' => 'صيغة الصورة غير صالحة',
                     'profile_image.max' => 'حجم الصورة كبير',
@@ -184,10 +184,9 @@ class ClientController extends Controller
                 if ($client->save()) {
                     if ($request->hasFile('profile_image')) {
                         if ($client->image && Storage::exists('public/' . $client->image->url)) {
-                        }
-                        
-                        Storage::delete($client->image->url);
-                        dd('ammar');
+                            Storage::delete('public/' . $client->image->url);
+                            $client->image->delete();
+                        }                        
                         $file = $request->file('profile_image');
                         $filename = time() . '_' . $file->getClientOriginalName();
                         $path = $file->storeAs('clients', $filename , 'public');
@@ -200,6 +199,7 @@ class ClientController extends Controller
                             return redirect()->back()->with("error", 'حدث خطأ اثناء  تعديل الصورة , حاول مرا اخرى');
                         }
                     }
+                    return redirect()->route("clients.show")->with("success", 'تم تعديل العميل بنجاح');
                 } else {
                     return redirect()->back()->with("error", 'حدث خطأ, حاول مرا اخرى');
                 }

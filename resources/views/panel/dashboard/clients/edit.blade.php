@@ -73,9 +73,8 @@
             <br><br>
             <div style="background-color: #fce5d3; border-right: 6px solid #c55c05; padding: 20px; border-radius: 10px;">
                 <strong>
-                    ⚠ تنبيه        
+                    ⚠ تنبيه   : {{$message}}
                 </strong>
-                <p>{{$meddage}}</p>
             </div> 
             @enderror
 
