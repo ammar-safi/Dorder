@@ -124,7 +124,7 @@ class ClientController extends Controller
 
     public function update(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         try {
             
             $validate = Validator::make(

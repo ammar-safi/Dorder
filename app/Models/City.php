@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class City extends Model
@@ -69,6 +70,15 @@ class City extends Model
     }
     public function getCountOfClientsAttribute()
     {
-        return $this->Clients()->where("type" , '=' , 'client')->count();
+        return $this->Clients()->where("type", '=', 'client')->count();
+    }
+
+    /**
+     * Polymorphic-relationships "Morph" 
+     */
+
+    public function image(): MorphMany
+    {
+        return $this->morphOne(Image::class, "imageable");
     }
 }

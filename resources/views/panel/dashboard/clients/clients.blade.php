@@ -233,7 +233,12 @@
                                 <td>
                                     <div style="display: flex; align-items: center;">
                                         <!-- إضافة صورة العميل -->
-                                        <img src="{{ $client->profile_image }}" alt="صورة العميل" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                                        @php
+                                            $image = $client->image?Storage::url($client->image->url):'../../../../app-assets/images/portrait/small/images.png'  ;
+                                        @endphp
+                                        <a href="{{$image}}">
+                                            <img src="{{$image}}" alt="صورة العميل" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                                        </a>
                                     </div>
                                 </td>                                
                                 <td>{{$client->name}}</td>

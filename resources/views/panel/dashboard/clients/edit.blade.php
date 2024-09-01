@@ -15,9 +15,9 @@
 
                     <div style="display: grid; justify-items: center; align-items: center; margin-right: 400px;">
                         @php
-                            $image = $client->profile_image ? $client->profile_image : '../../../../app-assets/images/portrait/small/images.png'
+                            $image = $client->image?Storage::url($client->image->url):'../../../../app-assets/images/portrait/small/images.png'  ;
                         @endphp
-                        <a href="{{ $image }}">
+                        <a  href="{{ $image }}">
                             <!-- صورة العميل -->
                             
                             <img id="clientImage" src="{{ $image }}" alt="صورة العميل" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
@@ -67,7 +67,19 @@
                     {{-- <p style="font-size: 20px; margin: 0;">
                     </p> --}}
                 </div> 
-            @endif
+            @endif  
+
+            @error('profile_image')
+            <br><br>
+            <div style="background-color: #fce5d3; border-right: 6px solid #c55c05; padding: 20px; border-radius: 10px;">
+                <strong>
+                    ⚠ تنبيه        
+                </strong>
+                <p>{{$meddage}}</p>
+            </div> 
+            @enderror
+
+            
             <div class="row">
                 <div class="col-12"> 
                     <form action="{{ route('clients.update' , ['id'=>$client->id]) }}" method="POST"  enctype="multipart/form-data"> 

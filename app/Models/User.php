@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -45,10 +47,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    public function setAttributePassword($password) {
+    public function setAttributePassword($password)
+    {
         $this->attributes['password'] = Hash::make($password);
     }
- 
+
 
     /**
      * The attributes that should be cast.
@@ -129,4 +132,14 @@ class User extends Authenticatable
     //     return $this->hasManyThrough(Area::class , Monitor::class , "city_");
     // }
 
+
+
+    /**
+     * Polymorphic-relationships "Morph" 
+     */
+
+    public function image(): MorphOne
+    {
+        return $this->morphOne(Image::class, "imageable");
+    }
 }
