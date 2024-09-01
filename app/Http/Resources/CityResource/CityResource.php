@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\CityResource;
 
+use App\Http\Resources\AreaResource\AreaResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PackageResource extends JsonResource
+class CityResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,10 +17,7 @@ class PackageResource extends JsonResource
     {
         return [
             'uuid' => $this->uuid,
-            'title' => $this->title,
-            'count_of_orders' => $this->count_of_orders,
-            'package_price' => $this->package_price,
-            'order_price' => $this->order_price,
+            "name" => $this->title,
         ];
     }
 }

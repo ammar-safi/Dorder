@@ -23,9 +23,20 @@ class City extends Model
     ];
 
     protected $fillable = [
+        'uuid',
         "title",
         "image",
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($city) {
+            $city->uuid = (string) \Str::uuid();  
+        });
+    }
+
+
+
 
     /**
      * The relations whit other tables
@@ -79,6 +90,6 @@ class City extends Model
 
     public function image(): MorphMany
     {
-        return $this->morphOne(Image::class, "imageable");
+        return $this->morphMany(Image::class, "imageable");
     }
 }

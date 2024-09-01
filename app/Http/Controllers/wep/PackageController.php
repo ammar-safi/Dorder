@@ -110,7 +110,7 @@ class PackageController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for edit   ing the specified resource.
      */
     public function edit(Request $request)
     {

@@ -3,46 +3,55 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CityResource;
+use App\Http\Resources\CityResource\CityDataResource;
+use App\Http\Resources\CityResource\CityResource;
+use App\Http\Resources\CityResource\CityUUIDResource;
 use App\Http\Traits\GeneralTrait;
 use App\Models\City;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+
 
 class CityController extends Controller
 {
     use GeneralTrait;
+
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
+
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        try {
+            $validate = Validator::make(
+                $request->all(),
+                [
+                    'search' => 'nullable|string|max:100',
+                ]
+            );
 
-        // $statusCode = 200;
+            if ($validate->fails()) {
+                return $this->validateError($validate);
+            }
 
-        // $city =CityResource::collection(City::all()) ;
-        // // dd($city) ;
-        // if ($city) {
-        //     $data = [
-        //         'data' => $city,
-        //         'status' => True,
-        //         'error' => null,
-        //         'statusCode' => $statusCode,
-        //     ];
-        // } else {
-        //     $data = [
-        //         'data' => '',
-        //         'status' => false,
-        //         'error' => 'لا يوجد مدن للعرض',
-        //         'statusCode' => $statusCode,
-        //     ];
-        // }
+            $query = City::query();
+            if ($request->input('search')) {
+                $query->where('title', 'like', '%' . $request->search . '%');
+            }
 
+            $cities = $query->get();
+            $data["collection"] = CityDataResource::collection($cities);
 
-        // return response($data, $statusCode);
-
-
-        return $this->apiResponse(CityResource::collection(City::all()), True, null,200);
+            return $this->SuccessResponse($data);
+        } catch (Exception $e) {
+            return $this->ServerError($e->getMessage());
+        }
     }
 
     /**
@@ -50,56 +59,24 @@ class CityController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $validate = Validator::make($request->all(), ['title' => 'required|string|max:100|unique:cities,title']);
+            if ($validate->fails()) {
+                return $this->validationError($validate);
+            }
+
+            $city = City::create(['title' => $request->title , 'uuid']);
+            return $this->SuccessResponse(CityResource::make($city));
+        } catch (Exception $e) {
+            return $this->ServerError($e->getMessage());
+        }
     }
+
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        $validate = Validator::make(
-            [$id],
-            [
-                'id' => 'required|exists:cities,id',
-            ],
-            [
-                'id.required' => "حصل خطا",
-                "id.exists"   => 'المدينة غير موجودة'
-            ]
-        );
-
-        $statusCode = 200;
-        $data = [
-            'data' => '',
-            'status' => False,
-            'error',
-            'statusCode' => $statusCode,
-        ];
-
-
-        if ($validate->fails()) {
-            // return $this->requiredField($validate->error()->first());
-            $city = City::find($id);
-            if ($city) {
-                $data = [
-                    'data' => $city,
-                    'status' => True,
-                    'error',
-                    'statusCode' => $statusCode,
-                ];
-            } else {
-                $data = [
-                    'data' => '',
-                    'status' => false,
-                    'error' => 'error',
-                    'statusCode' => $statusCode,
-                ];
-            }
-        }
-
-        return response($data, $statusCode);
-    }
+    public function show(string $id) {}
 
     /**
      * Update the specified resource in storage.
