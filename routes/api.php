@@ -3,7 +3,7 @@
 use App\Http\Controllers\api\CityController;
 use App\Http\Controllers\api\ClientController;
 use App\Http\Controllers\api\LoginController;
-    use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,10 +30,12 @@ Route::post("/logout", [LoginController::class, "logout"])->middleware("auth:san
  **** Cities Routes *****
   ********************
 */
-Route::group(['prefix' => 'cities', 'middleware' => ['auth:sanctum' ]], function () {
+Route::group(['prefix' => 'cities', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [CityController::class, 'index']);
-    Route::post('/add' , [CityController::class, 'store']);
+    Route::post('/add', [CityController::class, 'store']);
 });
-Route::group(['prefix' => 'clients', 'middleware' => ['auth:sanctum' ]], function () {
-    Route::get('/', [ClientController::class, 'index']);
+Route::group(['prefix' => 'clients', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/profile', [ClientController::class, 'index']);
+    Route::get('/edit', [ClientController::class, 'show']);
+    Route::post('/edit', [ClientController::class, 'update']);
 });

@@ -25,38 +25,50 @@ trait GeneralTrait
         return $this->apiResponse(null, false, $error, $statusCode);
     }
 
-    public function SuccessResponse($data=null)
+    /**
+     * Successful Response
+     * 
+     */
+    public function SuccessResponse($data = null, $statusCode = 200)
     {
-        return $this->apiResponse($data, true, null, 200);
+        return $this->apiResponse($data, true, null, $statusCode);
+    }
+    public function PartialUpdate($error)
+    {
+        return $this->apiResponse(null, true, $error, 206);
     }
 
-    public function ValidationError($validator)
+    /**
+     * Client Error Responses
+     */
+    public function BadRequest($error)
     {
-        return $this->apiResponse(null, false, $validator->errors()->first(), 401);
+        return $this->apiResponse(null, false, $error, 400);
     }
-
+    public function ValidationError($data=null , $validator)
+    {
+        return $this->apiResponse($data, false, $validator->errors()->first(), 400);
+    }
+    public function Unauthorized()
+    {
+        return $this->apiResponse(null, false, 'Unauthorized', 401);
+    }
+    public function Forbidden()
+    {
+        return $this->apiResponse(null, false, "Forbidden", 403);
+    }
     public function NotFound($error)
     {
         return $this->apiResponse(null, false, $error, 404);
     }
 
-    public function Unauthorized()
-    {
-        return $this->apiResponse(null, false, 'Unauthorized', 401);
-    }
-
+    /**
+     * Server Errors Response
+     * @param $error
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function ServerError($error)
     {
         return $this->apiResponse(null, false, $error, 500);
-    }
-
-    public function Forbidden()
-    {
-        return $this->apiResponse(null, false, "Forbidden", 403);
-    }
-
-    public function BadRequest($error)
-    {
-        return $this->apiResponse(null, false, $error, 400);
     }
 }

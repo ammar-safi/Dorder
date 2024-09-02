@@ -17,7 +17,7 @@ class CityResource extends JsonResource
     {
         return [
             'uuid' => $this->uuid,
-            "name" => $this->title,
+            "title" => $this->title,
         ];
     }
 }

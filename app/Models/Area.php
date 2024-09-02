@@ -18,9 +18,16 @@ class Area extends Model
     ];
 
     protected $fillable = [
+        'uuid',
         "title",
         "city_id",
     ];
+    protected static function booted()
+    {
+        static::creating(function ($area) {
+            $area->uuid = (string) \Str::uuid();  
+        });
+    }
 
     /**
      * The relations whit other tables
