@@ -24,7 +24,7 @@ class ClientResource extends JsonResource
             'profile_image' => $this->image?Storage::url("public/" . $this->image->url ):"client has no image",
             'mobile' => $this->mobile,
             'area' => $this->area ? $this->area->title : "client has no area",
-            'city' => $this->area->city ? $this->area->city->title : "client has no city",
+            'city' => $this->area?($this->area->city ? $this->area->city->title : "client has no city"):"client has no city",
             "active" => $this->active?"client active":"client not active",
             'subscription_fees' => $this->subscription_fees,
             'expire' => $this->expire,

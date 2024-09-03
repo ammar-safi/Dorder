@@ -50,7 +50,6 @@ class User extends Authenticatable
     public function setAttributePassword($password)
     {
         return $this->attributes['password'] = Hash::make($password);
-        
     }
 
 
@@ -62,6 +61,17 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'name' => 'string',
+        'email' => 'string',
+        'mobile' => 'string',
+        'uuid' => 'string',
+        'package_id' => 'integer',
+        'profile_image' => 'string',
+        'subscription_fees' => 'double',
+        'type' => 'string',
+        'active' => 'boolean',
+        // 'expire' => 'date:',
+        'area_id' => 'integer',
     ];
 
 
@@ -122,7 +132,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Deliver::class, 'deliver_id');
     }
-
     public function areas()
     {
         return $this->belongsToMany(Area::class, 'area_user', 'user_id', 'area_id');

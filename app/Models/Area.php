@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
- 
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Area extends Model
 {
     use HasFactory;
-    use SoftDeletes ;
+    use SoftDeletes;
 
     protected $append = [
         "count_of_monitors",
@@ -22,10 +22,17 @@ class Area extends Model
         "title",
         "city_id",
     ];
+
+    protected $casts = [
+        'uuid' => 'string',
+        "title" => 'string',
+        "city_id" => 'string',
+    ];
+    
     protected static function booted()
     {
         static::creating(function ($area) {
-            $area->uuid = (string) \Str::uuid();  
+            $area->uuid = (string) \Str::uuid();
         });
     }
 
@@ -52,11 +59,11 @@ class Area extends Model
     }
     public function AreaMonitors()
     {
-        return $this->belongsToMany(User::class ,"monitors" ,'area_id' , "monitor_id");
+        return $this->belongsToMany(User::class, "monitors", 'area_id', "monitor_id");
     }
     public function AreaDelivers()
     {
-        return $this->belongsToMany(User::class ,"delivers" , "area_id" ,"deliver_id" );
+        return $this->belongsToMany(User::class, "delivers", "area_id", "deliver_id");
     }
 
 
@@ -65,7 +72,7 @@ class Area extends Model
     /**
      * Append 
      */
-   
+
     public function getCountOfMonitorsAttribute()
     {
         return $this->Monitors->count();
@@ -78,7 +85,4 @@ class Area extends Model
     {
         return $this->Users()->where("type", '=', 'client')->count();
     }
-
-
-
 }

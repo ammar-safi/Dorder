@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ClientResource\LoginResource;
@@ -29,7 +29,7 @@ class LoginController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->ValidationError($validator);
+            return $this->ValidationError( $request->all() , $validator);
         }
         
         try {
@@ -45,7 +45,7 @@ class LoginController extends Controller
                     return $this->Forbidden();
                 }
             } else {
-                return $this->apiResponse(NULL, False, "الايميل او كلمة المرور غير صحيحة", 401);
+                return $this->Error("email or password is not correct" , 401);
             }
         } catch (Exception $e) {
             return $this->ServerError($e->getMessage());
@@ -63,7 +63,7 @@ class LoginController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->ValidationError($validator);
+            return $this->ValidationError($request->all() ,$validator);
         }
 
         try {

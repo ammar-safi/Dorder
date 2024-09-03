@@ -182,7 +182,7 @@ class ClientController extends Controller
                 $client->subscription_fees = $request->subscription_fees;
                 $client->expire = $request->expire;
                 if ($client->save()) {
-                    if ($request->input('profile_image')) {
+                    if ($request->file('profile_image')) {
                         if ($client->image && Storage::exists('public/' . $client->image->url)) {
                             Storage::delete('public/' . $client->image->url);
                             $client->image->delete();

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CityResource\CityDataResource;
@@ -62,7 +62,7 @@ class CityController extends Controller
         try {
             $validate = Validator::make($request->all(), ['title' => 'required|string|max:100|unique:cities,title']);
             if ($validate->fails()) {
-                return $this->validationError($validate);
+                return $this->validationError($request->all() , $validate);
             }
 
             $city = City::create(['title' => $request->title , 'uuid']);

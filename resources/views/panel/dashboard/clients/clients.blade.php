@@ -21,7 +21,6 @@
                     optionsMenu.style.display = optionsMenu.style.display === 'block' ? 'none' : 'block';
                 }
 
-                // إخفاء القائمة عند النقر خارجها
                 document.addEventListener('click', function(event) {
                     const isClickInside = event.target.closest('.options-menu') || event.target.closest('button');
                     if (!isClickInside) {

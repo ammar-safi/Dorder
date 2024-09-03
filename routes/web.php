@@ -257,7 +257,7 @@ Route::group(['prefix' => "/work-times", 'as' => 'work.times.', 'namespace' => "
    Route::post('/update' , [WorkTimeController::class , 'update'] )->name("update");
    
    Route::post('/delete' , [WorkTimeController::class , 'delete'] )->name("soft.delete");
-   
+    
    
 });
 

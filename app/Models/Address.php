@@ -1,5 +1,3 @@
-
-
 <?php
 
 namespace App\Models;
@@ -11,10 +9,17 @@ class Address extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'uuid',
         "client_id",
         "title",
     
     ];
+    protected static function booted()
+    {
+        static::creating(function ($address) {
+            $address->uuid = (string) \Str::uuid();
+        });
+    }
     public function orders () {
         return $this->hasMany(Order::class);
     }

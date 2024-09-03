@@ -28,14 +28,14 @@ trait GeneralTrait
     /**
      * Successful Response
      * 
-     */
+     */ 
     public function SuccessResponse($data = null, $statusCode = 200)
     {
         return $this->apiResponse($data, true, null, $statusCode);
     }
-    public function PartialUpdate($error)
+    public function PartialContent($data, $error)
     {
-        return $this->apiResponse(null, true, $error, 206);
+        return $this->apiResponse($data, true, $error, 206);
     }
 
     /**

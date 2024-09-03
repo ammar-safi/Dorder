@@ -27,6 +27,12 @@ class City extends Model
         "title",
         "image",
     ];
+    
+    protected $casts = [
+        'uuid' => 'string' ,
+        "title" => 'string' ,
+        "image" => 'string' ,
+    ];
 
     protected static function booted()
     {
@@ -36,6 +42,8 @@ class City extends Model
     }
 
 
+
+    
 
 
     /**

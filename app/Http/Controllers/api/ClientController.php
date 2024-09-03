@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AreaResource\AreaResource;
@@ -11,14 +11,13 @@ use App\Http\Traits\GeneralTrait;
 use App\Models\Area;
 use App\Models\City;
 use App\Models\Image;
-use App\Models\User;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+
 
 class ClientController extends Controller
 {
@@ -96,16 +95,16 @@ class ClientController extends Controller
             if ($validate->fails()) {
                 return $this->ValidationError($request->all(), $validate);
             }
-            // dd($request->all);
 
             $client = Auth::user();
             if ($client && $client->type == "client") {
-                $client->name = $request->name;
-                $client->mobile = $request->mobile;
-                $client->email = $request->email;
-                $client->area_id = $request->area_id;
-                $client->save();
-                if ($request->input('profile_image')) {
+                $client->update([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'mobile' => $request->mobile,
+                    'area_uuid' => $request->area_uuid,
+                ]);
+                if ($request->file('profile_image')) {
                     if ($client->image && Storage::exists('public/' . $client->image->url)) {
                         Storage::delete('public/' . $client->image->url);
                         $client->image->delete();
@@ -118,10 +117,9 @@ class ClientController extends Controller
                     $image->url = $path;
 
                     if (!$client->image()->save($image)) {
-                        return $this->PartialUpdate("profile image has not been updated");
+                        return $this->PartialContent(null ,"profile image has not been updated");
                     }
                 }
-                // dd($client);
                 return $this->SuccessResponse();
             } else {
                 return $this->Forbidden();
@@ -130,6 +128,8 @@ class ClientController extends Controller
             return $this->ServerError($e->getMessage());
         }
     }
+
+
 
     /**
      * Remove the specified resource from storage.
