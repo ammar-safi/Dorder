@@ -8,6 +8,7 @@ use App\Http\Resources\ClientResource\OrderClientResource;
 use App\Http\Traits\GeneralTrait;
 use App\Models\Address;
 use App\Models\Image;
+use App\Models\Monitor;
 use App\Models\Order;
 use Exception;
 use Illuminate\Http\Request;
@@ -49,6 +50,11 @@ class OrderController extends Controller
     public function create()
     {
         try {
+            $area_id = Auth::User()->area_id;
+            $monitors = Monitor::where('area_id', $area_id)->get();
+            if ($monitors->count() == 0) {
+                return $this->Error("Your area is currently out of service.", 422); // Unprocessable Entity
+            }
             $addresses = Auth::user()->addresses;
             $data['addresses'] = AddressResource::collection($addresses);
             return $this->SuccessResponse($data);
@@ -62,6 +68,11 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         try {
+            $area_id = Auth::User()->area_id;
+            $monitors = Monitor::where('area_id', $area_id)->get();
+            if ($monitors->count() == 0) {
+                return $this->Error("Your area is currently out of service.", 422); // Unprocessable Entity
+            }
 
             $validator = Validator::make(
                 $request->all(),
@@ -71,7 +82,7 @@ class OrderController extends Controller
                         'required',
                         Rule::exists("addresses", 'uuid')->where('client_id', Auth::user()->id),
                     ],
-                    'scheduled_time' => "nullable|date_format:Y-m-d H:i",
+                    'scheduled_time' => "nullable|date_format:Y-m-d H:i|after_or_equal:today",
                 ]
             );
             if ($validator->fails()) {
@@ -95,7 +106,7 @@ class OrderController extends Controller
             if ($request->file('image')) {
                 $file = $request->file('image');
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('Orders', $filename , 'public');
+                $path = $file->storeAs('Orders', $filename);
 
                 $image = new Image();
                 $image->url = $path;

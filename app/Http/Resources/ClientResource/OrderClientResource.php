@@ -6,9 +6,19 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class OrderClientResource extends JsonResource
 {
+    public function pathImages($images)
+    {
+        $file = [];
+        foreach ($images as $image) {
+            $file[] = Storage::url( 'app/' . $image->url);
+        }
+        return ($file);
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -16,6 +26,7 @@ class OrderClientResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // dd(empty($this->images));
         if (!$this->canceled) {
             /* If Order Not Canceled */
             if ($this->status == 'completed') {
@@ -63,7 +74,7 @@ class OrderClientResource extends JsonResource
 
                     'uuid' => $this->uuid,
                     "order_details" => $this->order,
-                    'image' => $this->images ? Storage::url("public/" . $this->image->url) : "Order has no image",
+                    'image' =>  !empty($this->images) ? $this->pathImages($this->images) : "Order has no image",
                     'address' => $this->address->title,
                     "scheduled_time" => $this->scheduled_time,
                     'status' => $this->status,
