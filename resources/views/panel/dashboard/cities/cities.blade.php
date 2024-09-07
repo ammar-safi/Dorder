@@ -15,9 +15,17 @@
                 function deleteRow() {
                     document.getElementById('delete').click();    
                 }
+                function restoreRow() {
+                    document.getElementById('restore').click();    
+                }
                 function confirmDelete(cityId) {
                     if (confirm(' هل أنت متأكد أنك تريد حذف هذه المدينة؟ سيتم حذف جميع المناطق في هذه المدينة مع المشرفين والمراسلين')) {
                         document.getElementById('delete-form-' + cityId).submit();
+                    }
+                }
+                function confirmRestor(cityId) {
+                    if (confirm('هل أنت متأكد أنك تريد استعادة هذه المدينة؟')) {
+                        document.getElementById('restore-form-' + cityId).submit();
                     }
                 }
             </script>
@@ -109,10 +117,14 @@
                         </div>
                         @if ($searchName) 
                         <button type="button" class="btn btn-primary rounded-button" style="padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;" onclick="document.getElementById('search_name').value=''; this.form.submit();">إلغاء</button>
-                        @endif
+                        @endif 
+                        <div>
+                            <input id="deleted" name="deleted" onchange="this.form.submit()" type="checkbox" {{$deleted?"checked":null}} value="deleted">
+                            <label for="deleted">المحظورين</label>    
+                        </div>
                     </form>
-                                       
-                <table>
+                    
+                    <table>
                     <thead>
                         <tr>
                             <th>المدينة</th>
@@ -142,6 +154,8 @@
                                         <a href="" id="edit">تعديل</a>
                                             <span class="icon" onclick="edit()"><i class="fas fa-edit"></i></span>
                                     </div> --}}
+
+                                    @if(!$deleted) 
                                     <div style="display: inline-block; margin-right: 10px;">
                                         <form action="{{ route('cities.show.city')}}" method="GET" style="display: inline;">
                                             @csrf
@@ -163,6 +177,18 @@
                                             <i class="fas fa-trash"></i>
                                         </span>
                                     </div>
+                                    @else 
+                                    <div style="display: inline-block;">
+                                        <form id="restore-form-{{ $city->id }}" action="#" method="POST" style="display: inline;">
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{ $city->id }}">
+                                        </form>
+                                        <button type="submit" id="restore" onclick="confirmRestor({{ $city->id }})" style="background: none; border: none; color: rgb(206, 59, 59); cursor: pointer;">استعادة</button>
+                                        <span class="icon" onclick="confirmDelete({{ $city->id }})" onclick="restoreRow()" style="cursor: pointer;">
+                                            <i class="fas fa-restore"></i>
+                                        </span>
+                                    </div>
+                                    @endif
                                 </td>
                                 @endif
                                 

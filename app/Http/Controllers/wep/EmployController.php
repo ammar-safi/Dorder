@@ -38,7 +38,7 @@ class EmployController extends Controller
             ]
         );
         if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput($request->all());
+            return redirect()->back()()->withErrors($validator)->withInput($request->all());
         }
         try {
 
@@ -73,10 +73,10 @@ class EmployController extends Controller
             $selectedCityId = $request->input("city_id") ? $request->input("city_id") : '';
             $selectedAreaId = $request->input("area_id") ? $request->input("area_id") : '';
 
-            $route = $request->route ;
-            return view("panel.dashboard.employ.addEmploys", compact('route' , "areas", 'cities', 'selectedCityId', 'selectedAreaId', 'monitors', 'delivers'));
+            $route = $request->route;
+            return view("panel.dashboard.employ.addEmploys", compact('route', "areas", 'cities', 'selectedCityId', 'selectedAreaId', 'monitors', 'delivers'));
         } catch (Exception $e) {
-            return back()->with('error', 'حدث خطأ أثناء تحديث المشرف. يرجى المحاولة لاحقاً.');
+            return redirect()->back()()->with('error', 'حدث خطأ أثناء تحديث المشرف. يرجى المحاولة لاحقاً.');
         }
     }
 
@@ -86,63 +86,63 @@ class EmployController extends Controller
         try {
             // if (($request->input('monitors') || $request->input("delivers")) && $request->input("id")) :
 
-                $validate = Validator::make($request->all(), [
-                    'id' => 'required|exists:areas,id',
-                    'monitors' => 'required_without_all:delivers|array',
-                    'monitors.*' => [
-                        Rule::exists('users', 'id')->where(function (Builder $query) {
-                            return $query->where('type', 'monitor')->whereNull('deleted_at');
-                        }),
-                        Rule::unique('monitors', 'monitor_id')->where(function (Builder $query) use ($request) {
-                            return $query->where('area_id', $request->id)->whereNull('deleted_at');
-                        }),
-                    ],
+            $validate = Validator::make($request->all(), [
+                'id' => 'required|exists:areas,id',
+                'monitors' => 'required_without_all:delivers|array',
+                'monitors.*' => [
+                    Rule::exists('users', 'id')->where(function (Builder $query) {
+                        return $query->where('type', 'monitor')->whereNull('deleted_at');
+                    }),
+                    Rule::unique('monitors', 'monitor_id')->where(function (Builder $query) use ($request) {
+                        return $query->where('area_id', $request->id)->whereNull('deleted_at');
+                    }),
+                ],
 
 
-                    'delivers' => 'required_without_all:monitors|array',
-                    'delivers.*' => [
-                        Rule::exists('users', 'id')->where(function (Builder $query) {
-                            return $query->where('type', 'deliver');
-                        }),
-                        // عامل التوصيل ما بصير يشتغل باكتر من منطقة
-                        Rule::unique('delivers', 'deliver_id')
-                    ],
+                'delivers' => 'required_without_all:monitors|array',
+                'delivers.*' => [
+                    Rule::exists('users', 'id')->where(function (Builder $query) {
+                        return $query->where('type', 'deliver');
+                    }),
+                    // عامل التوصيل ما بصير يشتغل باكتر من منطقة
+                    Rule::unique('delivers', 'deliver_id')
+                ],
 
 
-                ], [
-                    'id.required' => "يجب ان تقوم بتحديد المدينة والمنطقة " ,
-                    'id.exists' => 'المنطقة المحددة غير موجودة',
-                    'monitors.array' => 'بيانات المشرفين غير صحيحة',
-                    'monitors.required_without_all' => "يجب ان تختار على الاقل مشرف او عامل توصيل" ,
-                    'monitors.*.exists' => "هنالك خطأ , هذا المشرف غير موجود",
-                    'monitors.*.unique' => 'المشرف يعمل في هذه المنطقة بالفعل',
-                    'delivers.array' => 'بيانات عمال التوصيل غير صحيحة',
-                    'delivers.required_without_all' => "يجب ان تختار على الاقل مشرف او عامل توصيل" ,
-                    'delivers.*.unique' => 'عامل التوصيل هذا غير متاح ',
-                    'delivers.*.exists' => '  هنالك خطأ , عامل توصيل غير موجود',
-                ]);
+            ], [
+                'id.required' => "يجب ان تقوم بتحديد المدينة والمنطقة ",
+                'id.exists' => 'المنطقة المحددة غير موجودة',
+                'monitors.array' => 'بيانات المشرفين غير صحيحة',
+                'monitors.required_without_all' => "يجب ان تختار على الاقل مشرف او عامل توصيل",
+                'monitors.*.exists' => "هنالك خطأ , هذا المشرف غير موجود",
+                'monitors.*.unique' => 'المشرف يعمل في هذه المنطقة بالفعل',
+                'delivers.array' => 'بيانات عمال التوصيل غير صحيحة',
+                'delivers.required_without_all' => "يجب ان تختار على الاقل مشرف او عامل توصيل",
+                'delivers.*.unique' => 'عامل التوصيل هذا غير متاح ',
+                'delivers.*.exists' => '  هنالك خطأ , عامل توصيل غير موجود',
+            ]);
 
-                if ($validate->fails()) {
-                    return back()->withErrors($validate)->withInput();
-                }
+            if ($validate->fails()) {
+                return redirect()->back()()->withErrors($validate)->withInput();
+            }
 
-                $area = Area::find($request->id);
-                if ($area) {
-                    $monitors = $request->input('monitors', []);
-                    $delivers = $request->input('delivers', []);
-                    
-                    if (
-                        $area->AreaMonitors()->syncWithoutDetaching($monitors) &&
-                        $area->AreaDelivers()->syncWithoutDetaching($delivers)
-                        ) {
-                            return redirect()->route($request->route)->with('success', 'تم التعيين بنجاح');
-                    } else {
+            $area = Area::find($request->id);
+            if ($area) {
+                $monitors = $request->input('monitors', []);
+                $delivers = $request->input('delivers', []);
 
-                        return back()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
-                    }
+                if (
+                    $area->AreaMonitors()->syncWithoutDetaching($monitors) &&
+                    $area->AreaDelivers()->syncWithoutDetaching($delivers)
+                ) {
+                    return redirect()->route($request->route)->with('success', 'تم التعيين بنجاح');
                 } else {
-                    return back()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
+
+                    return redirect()->back()()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
                 }
+            } else {
+                return redirect()->back()()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
+            }
 
             // else :
             //     return redirect()->route("areas.show");
@@ -151,7 +151,7 @@ class EmployController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 }

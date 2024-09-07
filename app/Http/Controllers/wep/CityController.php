@@ -25,18 +25,23 @@ class CityController extends Controller
     {
         try {
             $flag = "show-cities";
+            $deleted = $request->input("deleted");
             $query = City::query();
             $searchName = $request->input('search_name');
             if ($searchName) {
                 $query->where("title", "like", "%{$searchName}%");
             }
-            $cities = $query->get();
-            return view("panel.dashboard.cities.cities", compact("flag", "cities", 'searchName'));
+            if ($request->input("deleted")  == 'deleted') {
+                $cities = $query->onlyTrashed()->get();
+            } else {
+                $cities = $query->get();
+            }
+            return view("panel.dashboard.cities.cities", compact("flag", "cities", 'searchName', "deleted"));
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -52,7 +57,7 @@ class CityController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+           return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -88,7 +93,7 @@ class CityController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+           return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -126,7 +131,7 @@ class CityController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+           return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -153,21 +158,21 @@ class CityController extends Controller
             );
             if ($validate->fails()) {
                 // return Route('cities.show')->with('error' , "حصل خطأ غير متوقع")
-                return back()->withInput($request->all())->withErrors($validate);
+               return redirect()->back()()->withInput($request->all())->withErrors($validate);
             }
 
             $city = City::find($request->id);
             if ($city && $city->update(["title" => $request->title])) {
-                return redirect()->route($request->route)->with("success" , 'تم التعديل بنجاح');
+                return redirect()->route($request->route)->with("success", 'تم التعديل بنجاح');
             } else {
                 session()->flash('error', "حصل خطأ غير متوقع");
-                return back();
+               return redirect()->back()();
             }
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+           return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -186,7 +191,7 @@ class CityController extends Controller
                  * اذا ضرب شي ايرور شيل التحت وفك التغليق عن الفوقا 
                  */
                 // return redirect()->route($request->route)->withErrors($validate);
-                return back()->withErrors($validate);
+               return redirect()->back()()->withErrors($validate);
             }
 
 
@@ -200,15 +205,23 @@ class CityController extends Controller
                 }
                 $city->areas()->delete();
                 $city->delete();
-                return back()->with("success" , "تمت عمليه الحذف بنجاح");
+               return redirect()->back()()->with("success", "تمت عمليه الحذف بنجاح");
             }
-            return back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
+           return redirect()->back()()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+           return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
+    }
+
+    public function Restore()
+    {
+        // try {
+        // } catch (Exception $e) {
+        //     return redirect()->
+        // }
     }
 
     /**
@@ -246,7 +259,7 @@ class CityController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+           return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
     public function showEdit()
@@ -259,7 +272,7 @@ class CityController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+           return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 }

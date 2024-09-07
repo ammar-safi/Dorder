@@ -37,7 +37,7 @@ class PackageController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -79,7 +79,7 @@ class PackageController extends Controller
             );
 
             if ($validator->fails()) {
-                return back()->withInput($request->all())->withErrors($validator);
+                return redirect()->back()()->withInput($request->all())->withErrors($validator);
             }
 
             $package = new Package();
@@ -91,13 +91,13 @@ class PackageController extends Controller
             if ($package->save()) {
                 return redirect()->route("packages.show")->with("success", "تم إضافة الحزمة بنجاح");
             } else {
-                return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+                return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
             }
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ, الرجاء إعادة المحاولة");
+            return redirect()->back()()->with("error", "حصل خطأ, الرجاء إعادة المحاولة");
         }
     }
 
@@ -119,18 +119,18 @@ class PackageController extends Controller
             $flag =  'packages-show';
             $validate = Validator::make($request->all(), ['id' => "required"], ['id.required' => " 😢 طلب خاطئ , حاول مرة اخرى",]);
             if ($validate->fails()) {
-                return back()->withInput($request->all())->withErrors($validate);
+                return redirect()->back()()->withInput($request->all())->withErrors($validate);
             }
             $package = Package::find($request->id);
             if ($package) {
                 return view("panel.dashboard.packages.edit", compact("flag", "package"));
             }
-            return back()->with("error", "طلب خاطئ , حاول مرة اخرى 😢 ");
+            return redirect()->back()()->with("error", "طلب خاطئ , حاول مرة اخرى 😢 ");
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -167,7 +167,7 @@ class PackageController extends Controller
         );
 
         if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput($request->all());
+            return redirect()->back()()->withErrors($validator)->withInput($request->all());
         }
 
         try {
@@ -182,7 +182,7 @@ class PackageController extends Controller
 
 
             if (!$package->save()) {
-                return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+                return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
             }
 
             return redirect()->route('packages.show')->with('success', 'تم تحديث الحزمة بنجاح.');
@@ -190,7 +190,7 @@ class PackageController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ ��ير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()()->with("error", "حصل خطأ ��ير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -209,19 +209,19 @@ class PackageController extends Controller
                 'id.required' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة"
             ]);
             if ($validate->fails()) {
-                return back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
+                return redirect()->back()()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
             }
 
 
             if (Package::find($request->id)->delete()) {
-                return back()->with("success", "تم حذف الحزمة بنجاح");
+                return redirect()->back()()->with("success", "تم حذف الحزمة بنجاح");
             }
-            return back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
+            return redirect()->back()()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 }
