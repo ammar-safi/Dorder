@@ -14,7 +14,10 @@ use App\Http\Controllers\wep\PackageController;
 use App\Http\Controllers\wep\ClientController;
 use App\Http\Controllers\wep\SettingController;
 use App\Http\Controllers\wep\WorkTimeController;
+use App\Mail\SendEmail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Testing\Fakes\MailFake;
 
 /*
 |--------------------------------------------------------------------------
@@ -267,4 +270,13 @@ Route::group(['prefix' => "/settings", 'as' => 'settings.', 'namespace' => "App\
       Route::get('/deleted', [SettingController::class, 'deleted'])->name("deleted");
       Route::post('/blocked', [SettingController::class, 'blocked'])->name("blocked");
    });
+});
+
+
+
+
+
+Route::get("/email" , function (){
+   // Mail::to('ammar.ahmed.safi@gmail.com')->send(new SendEmail());
+   Mail::to('ammar.ahmed.safi@gmail.com')->send(new SendEmail());
 });

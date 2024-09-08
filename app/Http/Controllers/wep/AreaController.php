@@ -70,7 +70,7 @@ class AreaController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -87,7 +87,7 @@ class AreaController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -121,7 +121,7 @@ class AreaController extends Controller
             $validate = Validator::make($data, $rules, $message);
 
             if ($validate->fails()) {
-                return redirect()->back()()->withInput($request->all())->withErrors($validate);
+                return redirect()->back()->withInput($request->all())->withErrors($validate);
             }
 
             if (Area::create([
@@ -130,13 +130,13 @@ class AreaController extends Controller
             ])) {
                 return redirect()->route("areas.show")->with("update_success", "تمت الاضافة  بنجاح");
             } else {
-                return redirect()->back()()->with("error",  "حصل خطأ غير متوقع , تعد المحاولة لاحفا");
+                return redirect()->back()->with("error",  "حصل خطأ غير متوقع , تعد المحاولة لاحفا");
             }
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -158,13 +158,13 @@ class AreaController extends Controller
             $validate = Validator::make(["id" => $request->id], ['id' => "required"], ['id.required' => "حصل خطأ غير متوقع"]);
 
             if ($validate->fails()) {
-                return redirect()->back()()->withInput($request->all())->withErrors($validate);
+                return redirect()->back()->withInput($request->all())->withErrors($validate);
             }
 
             $area = Area::find($request->id);
 
             if (!$area) {
-                return redirect()->back()()->with("error", "حصل خطأ غير متوقع , حاول مرة اخرى ");
+                return redirect()->back()->with("error", "حصل خطأ غير متوقع , حاول مرة اخرى ");
             }
             $cities = City::all();
             $flag = "show-areas";
@@ -173,7 +173,7 @@ class AreaController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -210,7 +210,7 @@ class AreaController extends Controller
             $validate = Validator::make($data, $rules, $message);
 
             if ($validate->fails()) {
-                return redirect()->back()()->withInput($request->all())->withErrors($validate);
+                return redirect()->back()->withInput($request->all())->withErrors($validate);
             }
 
             if (Area::find($request->id)->update([
@@ -219,13 +219,13 @@ class AreaController extends Controller
             ])) {
                 return redirect()->route("areas.show")->with("update_success", "تم التعديل بنجاح");
             } else {
-                return redirect()->back()()->with("error",  "حصل خطأ غير متوقع , تعد المحاولة لاحفا");
+                return redirect()->back()->with("error",  "حصل خطأ غير متوقع , تعد المحاولة لاحفا");
             }
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -248,7 +248,7 @@ class AreaController extends Controller
                 'id.required' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة"
             ]);
             if ($validate->fails()) {
-                return redirect()->back()()->withErrors($validate);
+                return redirect()->back()->withErrors($validate);
             }
 
             $area = Area::find($request->id);
@@ -257,15 +257,15 @@ class AreaController extends Controller
                 $area->Delivers()->delete();
                 $area->Users()->delete();
                 $area->delete();
-                return redirect()->back()();
+                return redirect()->back();
             }
 
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -278,13 +278,13 @@ class AreaController extends Controller
             'id.exist' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة",
         ]);
         if ($validate->fails()) {
-            return redirect()->back()()->withErrors($validate);
+            return redirect()->back()->withErrors($validate);
         }
 
         $area = Area::find($request->id);
         // dd($area);
         if (!$area) {
-            return redirect()->back()()->with("error", "حدث خطأ , حاول مرة اخرى");
+            return redirect()->back()->with("error", "حدث خطأ , حاول مرة اخرى");
         }
 
 
@@ -362,7 +362,7 @@ class AreaController extends Controller
 
                 if ($validate->fails()) {
                     // dd("a,,ar");
-                    return redirect()->back()()->withErrors($validate)->withInput();
+                    return redirect()->back()->withErrors($validate)->withInput();
                 }
 
                 $area = Area::find($request->id);
@@ -380,10 +380,10 @@ class AreaController extends Controller
                         return redirect()->route("areas.show")->with('success', 'تم التعيين بنجاح');
                     } else {
 
-                        return redirect()->back()()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
+                        return redirect()->back()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
                     }
                 } else {
-                    return redirect()->back()()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
+                    return redirect()->back()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
                 }
 
             else :
@@ -393,7 +393,7 @@ class AreaController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 }

@@ -47,7 +47,7 @@ class DeliverController extends Controller
             );
 
             if ($validate->fails()) {
-                return redirect()->back()()->withErrors($validate)->withInput($request->all());
+                return redirect()->back()->withErrors($validate)->withInput($request->all());
             }
 
 
@@ -82,7 +82,7 @@ class DeliverController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -106,7 +106,7 @@ class DeliverController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -178,13 +178,13 @@ class DeliverController extends Controller
                 }
                 return redirect()->route("delivers.show")->with("success", "تمت الاضافة  بنجاح");
             } else {
-                return redirect()->back()()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
+                return redirect()->back()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
             }
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -220,14 +220,14 @@ class DeliverController extends Controller
         // dd($request->);
         if ($validator->fails()) {
             // dd("test");
-            return redirect()->back()()->withErrors($validator)->withInput($request->all());
+            return redirect()->back()->withErrors($validator)->withInput($request->all());
         }
 
         try {
 
             $deliver = Deliver::find($request->id);
             if (!$deliver) {
-                return redirect()->back()()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
+                return redirect()->back()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
             }
             $cities = city::all();
             $areas = Area::where("city_id", $request->input("city_id") ? $request->input("city_id") : $deliver->area->city->id)->get();
@@ -241,7 +241,7 @@ class DeliverController extends Controller
 
             return view("panel.dashboard.delivers.edit", compact('flag', 'deliver', 'cities', "areas", 'selectedCityId', 'selectedAreaId', 'name', 'email', 'mobile'));
         } catch (Exception $e) {
-            return redirect()->back()()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
+            return redirect()->back()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
         }
     }
 
@@ -302,7 +302,7 @@ class DeliverController extends Controller
         );
 
         if ($validator->fails()) {
-            return redirect()->back()()->withErrors($validator)->withInput($request->all());
+            return redirect()->back()->withErrors($validator)->withInput($request->all());
         }
 
         try {
@@ -310,7 +310,7 @@ class DeliverController extends Controller
             $deliver = Deliver::find($request->id);
 
             if (!$deliver) {
-                return redirect()->back()()->with('error', 'المشرف غير موجود.');
+                return redirect()->back()->with('error', 'المشرف غير موجود.');
             }
 
             $data = [
@@ -322,10 +322,10 @@ class DeliverController extends Controller
             if ($deliver->update(['area_id' => $request->area_id,]) && $deliver->User->update($data)) {
                 return redirect()->route("delivers.show")->with("success", 'تم التعديل بنجاح');
             } else {
-                return redirect()->back()()->with('error', 'لم يتم التعديل , حاول مرة اخرى');
+                return redirect()->back()->with('error', 'لم يتم التعديل , حاول مرة اخرى');
             }
         } catch (Exception $e) {
-            return redirect()->back()()->with('error', 'حدث خطأ أثناء تحديث المشرف. يرجى المحاولة لاحقاً.');
+            return redirect()->back()->with('error', 'حدث خطأ أثناء تحديث المشرف. يرجى المحاولة لاحقاً.');
         }
     }
 
@@ -346,20 +346,20 @@ class DeliverController extends Controller
                 'id.required' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة"
             ]);
             if ($validate->fails()) {
-                return redirect()->back()()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
+                return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
             }
 
 
             $is_exist = Deliver::find($request->id);
             if ($is_exist && $is_exist->forceDelete()) {
-                return redirect()->back()()->with("success", "تم حذف المشرف بنجاح");
+                return redirect()->back()->with("success", "تم حذف المشرف بنجاح");
             }
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 }

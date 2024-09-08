@@ -32,7 +32,7 @@ class AdminController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -48,7 +48,7 @@ class AdminController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -103,13 +103,13 @@ class AdminController extends Controller
             ])) {
                 return redirect()->route("admins.show")->with("update_success", "تمت الاضافة  بنجاح");
             } else {
-                return redirect()->back()()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
+                return redirect()->back()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
             }
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -132,26 +132,26 @@ class AdminController extends Controller
             $validate = Validator::make(['id' => $request->id], ['id' => "required"], ['id.required' => "حصل خطأ غير متوقع"]);
 
             if ($validate->fails()) {
-                return redirect()->back()()->withInput($request->all())->withErrors($validate);
+                return redirect()->back()->withInput($request->all())->withErrors($validate);
             }
 
             $admin = User::find($request->id);
 
             if ($admin->type == "admin" && $admin->update(["active" => $admin->active ? 0 : 1])) {
-                return redirect()->back()();
+                return redirect()->back();
             } else {
-                return redirect()->back()()->with("error", "حدث خطأ غير معروف , اعد المحاولة لاحقا");
+                return redirect()->back()->with("error", "حدث خطأ غير معروف , اعد المحاولة لاحقا");
             }
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
 
 
         // if (!$admin && $admin->type != "admin") {
-        //    return redirect()->back()()->with("error", "حصل خطأ غير متوقع , حاول مرة اخرى ");
+        //    return redirect()->back()->with("error", "حصل خطأ غير متوقع , حاول مرة اخرى ");
         // }
         // return view("panel.dashboard.admins.edit",  compact('admin'));
     }
@@ -212,13 +212,13 @@ class AdminController extends Controller
             ])) {
                 return redirect()->route("admins.show")->with("update_success", "تمت التعديل  بنجاح");
             } else {
-                return redirect()->back()()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
+                return redirect()->back()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
             }
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -237,20 +237,20 @@ class AdminController extends Controller
                 'id.required' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة"
             ]);
             if ($validate->fails()) {
-                return redirect()->back()()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
+                return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
             }
 
 
             $is_exist = user::find($request->id);
             if ($is_exist && $is_exist->delete()) {
-                return redirect()->back()();
+                return redirect()->back();
             }
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 }

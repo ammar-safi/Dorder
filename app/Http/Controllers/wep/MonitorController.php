@@ -47,7 +47,7 @@ class MonitorController extends Controller
 
             if ($validate->fails()) {
                 // dd($request->input("search_name"));
-                return redirect()->back()()->withErrors($validate)->withInput($request->all());
+                return redirect()->back()->withErrors($validate)->withInput($request->all());
             }
 
 
@@ -87,7 +87,7 @@ class MonitorController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -117,7 +117,7 @@ class MonitorController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -190,13 +190,13 @@ class MonitorController extends Controller
                 }
                 return redirect()->route("monitors.show")->with("success", "تمت الاضافة  بنجاح");
             } else {
-                return redirect()->back()()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
+                return redirect()->back()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
             }
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -236,12 +236,12 @@ class MonitorController extends Controller
             );
             if ($validate->fails()) {
                 // dd($request->all());
-                return redirect()->back()()->withInput($request->all())->withErrors($validate);
+                return redirect()->back()->withInput($request->all())->withErrors($validate);
             }
 
             $monitor = Monitor::find($request->id);
             if (!$monitor) {
-                return redirect()->back()()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
+                return redirect()->back()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
             }
             $cities = city::all();
             $areas = Area::where("city_id", $request->input("city_id") ? $request->input("city_id") : $monitor->area->city->id)->get();
@@ -259,7 +259,7 @@ class MonitorController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
+            return redirect()->back()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
         }
     }
 
@@ -321,14 +321,14 @@ class MonitorController extends Controller
 
 
         if ($validator->fails()) {
-            return redirect()->back()()->withErrors($validator)->withInput($request->all());
+            return redirect()->back()->withErrors($validator)->withInput($request->all());
         }
 
         try {
             $monitor = Monitor::find($request->id);
 
             if (!$monitor) {
-                return redirect()->back()()->with('error', 'المشرف غير موجود.');
+                return redirect()->back()->with('error', 'المشرف غير موجود.');
             }
             $data = [
                 'name' => $request->name,
@@ -338,10 +338,10 @@ class MonitorController extends Controller
             if ($monitor->update(['area_id' => $request->area_id,]) && $monitor->user->update($data)) {
                 return redirect()->route("monitors.show")->with("success", 'تم التعديل بنجاح');
             } else {
-                return redirect()->back()()->with('error', 'لم يتم التعديل , حاول مرة اخرى');
+                return redirect()->back()->with('error', 'لم يتم التعديل , حاول مرة اخرى');
             }
         } catch (Exception $e) {
-            return redirect()->back()()->with('error', 'حدث خطأ أثناء تحديث المشرف. يرجى المحاولة لاحقاً.');
+            return redirect()->back()->with('error', 'حدث خطأ أثناء تحديث المشرف. يرجى المحاولة لاحقاً.');
         }
     }
 
@@ -360,20 +360,20 @@ class MonitorController extends Controller
                 'id.required' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة"
             ]);
             if ($validate->fails()) {
-                return redirect()->back()()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
+                return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
             }
 
 
             $is_exist = Monitor::find($request->id);
             if ($is_exist && $is_exist->forceDelete()) {
-                return redirect()->back()()->with("success", "تم حذف المشرف بنجاح");
+                return redirect()->back()->with("success", "تم حذف المشرف بنجاح");
             }
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -385,21 +385,21 @@ class MonitorController extends Controller
             $validate = Validator::make(['id' => $request->id], ['id' => "required"], ['id.required' => "حصل خطأ غير متوقع"]);
 
             if ($validate->fails()) {
-                return redirect()->back()()->withInput($request->all())->withErrors($validate);
+                return redirect()->back()->withInput($request->all())->withErrors($validate);
             }
 
             $monitor = User::find($request->id);
 
             if ($monitor->type == "monitor" && $monitor->update(["active" => $monitor->active ? 0 : 1])) {
-                return redirect()->back()();
+                return redirect()->back();
             } else {
-                return redirect()->back()()->with("error", "حدث خطأ غير معروف , اعد المحاولة لاحقا");
+                return redirect()->back()->with("error", "حدث خطأ غير معروف , اعد المحاولة لاحقا");
             }
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 
@@ -414,7 +414,7 @@ class MonitorController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 }

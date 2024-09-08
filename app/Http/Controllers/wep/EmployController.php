@@ -38,7 +38,7 @@ class EmployController extends Controller
             ]
         );
         if ($validator->fails()) {
-            return redirect()->back()()->withErrors($validator)->withInput($request->all());
+            return redirect()->back()->withErrors($validator)->withInput($request->all());
         }
         try {
 
@@ -76,7 +76,7 @@ class EmployController extends Controller
             $route = $request->route;
             return view("panel.dashboard.employ.addEmploys", compact('route', "areas", 'cities', 'selectedCityId', 'selectedAreaId', 'monitors', 'delivers'));
         } catch (Exception $e) {
-            return redirect()->back()()->with('error', 'حدث خطأ أثناء تحديث المشرف. يرجى المحاولة لاحقاً.');
+            return redirect()->back()->with('error', 'حدث خطأ أثناء تحديث المشرف. يرجى المحاولة لاحقاً.');
         }
     }
 
@@ -123,7 +123,7 @@ class EmployController extends Controller
             ]);
 
             if ($validate->fails()) {
-                return redirect()->back()()->withErrors($validate)->withInput();
+                return redirect()->back()->withErrors($validate)->withInput();
             }
 
             $area = Area::find($request->id);
@@ -138,10 +138,10 @@ class EmployController extends Controller
                     return redirect()->route($request->route)->with('success', 'تم التعيين بنجاح');
                 } else {
 
-                    return redirect()->back()()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
+                    return redirect()->back()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
                 }
             } else {
-                return redirect()->back()()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
+                return redirect()->back()->with('error', 'حصل خطأ غير معروف, الرجاء إعادة المحاولة');
             }
 
             // else :
@@ -151,7 +151,7 @@ class EmployController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
 }
