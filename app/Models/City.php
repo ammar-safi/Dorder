@@ -27,23 +27,19 @@ class City extends Model
         "title",
         "image",
     ];
-    
+
     protected $casts = [
-        'uuid' => 'string' ,
-        "title" => 'string' ,
-        "image" => 'string' ,
+        'uuid' => 'string',
+        "title" => 'string',
+        "image" => 'string',
     ];
 
     protected static function booted()
     {
         static::creating(function ($city) {
-            $city->uuid = (string) \Str::uuid();  
+            $city->uuid = (string) \Str::uuid();
         });
     }
-
-
-
-    
 
 
     /**
@@ -55,9 +51,13 @@ class City extends Model
     {
         return $this->hasMany(Area::class, "city_id");
     }
+    public function TrashedAreas()
+    {
+        return Area::onlyTrashed()->where("city_id", $this->id)->get();
+    }
 
     /**
-     * This table has many through relations
+     * This Model has many through relations
      */
     public function Monitors()
     {
@@ -72,24 +72,61 @@ class City extends Model
         return $this->hasManyThrough(User::class, Area::class, 'city_id',  'area_id');
     }
 
+    public function TrashedMonitors()
+    {
+        return Monitor::onlyTrashed()
+            ->whereIn('area_id', Area::onlyTrashed()
+                ->where("city_id", $this->id)
+                ->pluck('id')
+                ->toArray());
+    }
+
+    public function TrashedDelivers()
+    {
+        return Deliver::onlyTrashed()
+            ->whereIn('area_id', Area::onlyTrashed()
+                ->where("city_id", $this->id)
+                ->pluck('id')
+                ->toArray());
+    }
+
+    public function TrashedClients()
+    {
+        return User::onlyTrashed()->where('type', 'client')
+            ->whereIn('area_id', Area::onlyTrashed()
+                ->where("city_id", $this->id)
+                ->pluck('id')
+                ->toArray());
+    }
+
+
     /**
      * Append 
      */
     public function getCountOfAreasAttribute()
     {
-        return $this->areas->count();
+        return $this->deleted_at
+            ? $this->areas()->onlyTrashed()->count()
+            : $this->areas()->count();
     }
     public function getCountOfMonitorsAttribute()
     {
-        return $this->Monitors->count();
+        return $this->deleted_at
+            ? $this->TrashedMonitors()->count()
+            : $this->Monitors()->count();
     }
     public function getCountOfDeliversAttribute()
     {
-        return $this->Delivers->count();
+        return $this->deleted_at
+            ? $this->TrashedDelivers()->count()
+            : $this->Delivers()->count();
     }
     public function getCountOfClientsAttribute()
     {
-        return $this->Clients()->where("type", '=', 'client')->count();
+        // dd($this->deleted_at?"d":$this->Clients()->onlyTrashed()->where("type", '=', 'client')->count());
+        return $this->deleted_at
+            ? $this->TrashedClients()->count()
+            : $this->Clients()->where("type", '=', 'client')->count();
     }
 
     /**

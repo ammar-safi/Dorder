@@ -64,10 +64,10 @@ class MonitorController extends Controller
             $areas = $selectedCityId ? Area::where('city_id', $selectedCityId)->get() : '';
 
 
-            if ($selectedAreaId) {
-                $query->where("area_id", $selectedAreaId);
-            } elseif ($selectedCityId) {
+            if ($selectedCityId) {
                 $query->whereIn("area_id", (Area::where("city_id", $selectedCityId)->pluck("id")->toArray()));
+            } elseif ($selectedAreaId) {
+                $query->where("area_id", $selectedAreaId);
             }
 
             $query_2 = clone $query;

@@ -10,7 +10,6 @@ use App\Models\User;
 use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -266,6 +265,25 @@ class AreaController extends Controller
                 'exception' => $e
             ]);
             return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+        }
+    }
+
+    public function Restore(Request $request)
+    {
+        $validate = Validator::make(['id' => $request->id], [
+            'id' => 'required|exists:areas,id',
+        ]);
+        if ($validate) {
+            return redirect()->back()->with("error", 'حصل خطا , حاول مرة اخرى');
+        }
+
+        try {
+            $area = Area::withTrashed()->find($request->id);
+            if ($area) {
+            }
+            
+        } catch (Exception $e) {
+            return redirect()->back()->with("error", $e->getMessage());
         }
     }
 

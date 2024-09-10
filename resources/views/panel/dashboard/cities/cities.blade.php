@@ -179,13 +179,13 @@
                                     </div>
                                     @else 
                                     <div style="display: inline-block;">
-                                        <form id="restore-form-{{ $city->id }}" action="#" method="POST" style="display: inline;">
+                                        <form id="restore-form-{{ $city->id }}" action="{{Route("cities.restore")}}" method="POST" style="display: inline;">
                                             @csrf
                                             <input type="hidden" name="id" value="{{ $city->id }}">
                                         </form>
                                         <button type="submit" id="restore" onclick="confirmRestor({{ $city->id }})" style="background: none; border: none; color: rgb(206, 59, 59); cursor: pointer;">استعادة</button>
-                                        <span class="icon" onclick="confirmDelete({{ $city->id }})" onclick="restoreRow()" style="cursor: pointer;">
-                                            <i class="fas fa-restore"></i>
+                                        <span class="icon" onclick="restoreRow({{ $city->id }});" style="cursor: pointer;">
+                                            <i class="fas fa-undo-alt"></i>  
                                         </span>
                                     </div>
                                     @endif

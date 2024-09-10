@@ -276,7 +276,10 @@ Route::group(['prefix' => "/settings", 'as' => 'settings.', 'namespace' => "App\
 
 
 
-Route::get("/email" , function (){
-   // Mail::to('ammar.ahmed.safi@gmail.com')->send(new SendEmail());
-   Mail::to('ammar.ahmed.safi@gmail.com')->send(new SendEmail());
+Route::get("/email", function () {
+   $subjectTitle =  "test 🙄";
+   $description =   "";
+   $imageUrl = "" ;
+   // dd($imageUrl);
+   Mail::to('reem.georges1@gmail.com')->send(new SendEmail($subjectTitle, $imageUrl, $description));
 });
