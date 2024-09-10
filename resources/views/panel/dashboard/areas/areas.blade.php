@@ -79,6 +79,47 @@
                     transition: transform 0.3s; /* تأثير عند التحويم */
                     margin-left: 10px; /* مسافة بين العنوان والأيقونة */
                 }
+
+                .options-menu {
+                    display: none;
+                    position: absolute;
+                    top: -60px;
+                    right: -150px;
+                    background-color: #fff;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    z-index: 100;
+                    padding: 10px;
+                    width: 150px;
+                    transition: all 0.3s ease;
+                }
+
+                .options-menu button {
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    background: none;
+                    border: none;
+                    color: #333;
+                    padding: 8px;
+                    cursor: pointer;
+                    text-align: right; /* لجعل النص العربي يظهر بالكامل */
+                    white-space: nowrap; /* منع النص من الانتقال لسطر آخر */
+                    transition: background-color 0.2s ease;
+                    font-size: 14px;
+                }
+
+                .options-menu button:hover {
+                    background-color: #f0f0f0;
+                    border-radius: 4px;
+                }
+
+                .options-menu i {
+                    margin-left: 10px; /* جعل الأيقونة على يسار النص */
+                    color: #555;
+                }
+
             </style>
             <script>
                 function toggleTable(tableId, iconId) {
@@ -93,6 +134,28 @@
                         icon.style.transform = 'rotate(0deg)'; // إعادة الأيقونة لوضعها الأصلي
                     }
                 }
+
+                function toggleOptions(button) {
+                // إغلاق جميع القوائم المفتوحة
+                    document.querySelectorAll('.options-menu').forEach(function(menu) {
+                        menu.style.display = 'none';
+                    });
+
+                    // فتح القائمة الخاصة بالزر المضغوط
+                    const optionsMenu = button.nextElementSibling;
+                    optionsMenu.style.display = optionsMenu.style.display === 'block' ? 'none' : 'block';
+                }
+
+                // إغلاق القوائم عند الضغط خارجها
+                document.addEventListener('click', function(event) {
+                    const isClickInside = event.target.closest('.options-menu') || event.target.closest('button');
+                    if (!isClickInside) {
+                        document.querySelectorAll('.options-menu').forEach(function(menu) {
+                            menu.style.display = 'none';
+                        });
+                    }
+                });
+
 
             </script>
         </div>
@@ -180,51 +243,55 @@
                                 <th>عدد عمال التوصيل</th>
                                 <th>عدد المشتركين</th>
                                 @if (Auth::User()->type == "admin")
-                                <th>العمليات</th>
+                                <th></th>
                                 @endif
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($areas as $index)
+                            @foreach ($areas as $area)
                                 <tr>
-                                    <td>{{$index->title}}</td> 
-                                    <td>{{$index->count_of_monitors}}</td> 
-                                    <td>{{$index->count_of_delivers}}</td> 
-                                    <td>{{$index->count_of_clients}}</td> 
+                                    <td>{{$area->title}}</td> 
+                                    <td>{{$area->count_of_monitors}}</td> 
+                                    <td>{{$area->count_of_delivers}}</td> 
+                                    <td>{{$area->count_of_clients}}</td> 
                                     @if (Auth::User()->type == "admin")
                                     <td>
-                                        <div style="display: inline-block; margin-right: 10px;">
-                                            <form action="{{Route('areas.add.employs')}}" method="GET" style="display: inline;">
-                                                @csrf
-                                                <input type="hidden" name="id" value="{{$index->id}}">
-                                                <button type="submit" id="add-employs" style="background: none; border: none; color: rgb(0, 165, 0); cursor: pointer;">اضافة موظفين</button>
-                                            </form>
-                                        <span class="icon" onclick="edit()"><i class="fas fa-users"></i></span>
-
+                                        <div style="position: relative; display: flex; justify-content: center;">
+                                            <button onclick="toggleOptions(this)" style="background: none; border: none; cursor: pointer;">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <div class="options-menu">
+                                                <!-- اضافة موظفين -->
+                                                <form action="{{Route('areas.add.employs')}}" method="GET">
+                                                    @csrf
+                                                    <input type="hidden" name="id" value="{{$area->id}}">
+                                                    <button type="submit">
+                                                        <i class="fas fa-users"></i> اضافة موظفين
+                                                    </button>
+                                                </form>
+                                                
+                                                <!-- تعديل -->
+                                                <form action="{{ route('areas.edit.area')}}" method="GET">
+                                                    @csrf
+                                                    <input type="hidden" name="id" value="{{$area->id}}">
+                                                    <input type="hidden" name="route" value="edit.area">
+                                                    <button type="submit">
+                                                        <i class="fas fa-edit"></i> تعديل
+                                                    </button>
+                                                </form>
+                                    
+                                                <!-- حذف -->
+                                                <form id="delete-form-{{ $area->id }}" action="{{Route('areas.soft.delete')}}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="id" value="{{$area->id}}">
+                                                    <button type="submit" onclick="confirmDelete({{ $area->id }})">
+                                                        <i class="fas fa-trash"></i> حذف
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
-            
-                                        <div style="display: inline-block; margin-right: 10px;">
-                                            <form action="{{ route('areas.edit.area')}}" method="GET" style="display: inline;">
-                                                @csrf
-                                                <input type="hidden" name="id" value="{{$index->id}}">
-                                                <input type="hidden" name="route" value="edit.area">
-                                                <button type="submit" id="edit" style="background: none; border: none; color: rgb(35, 20, 172); cursor: pointer;">تعديل</button>
-                                            </form>
-                                        <span class="icon" onclick="edit()"><i class="fas fa-edit"></i></span>
-
-                                        </div>
-                                        
-                                        <div style="display: inline-block;">
-                                            <form id="delete-form-{{ $index->id }}" action="{{Route('areas.soft.delete')}}" method="POST" style="display: inline;">
-                                                @csrf
-                                                <input type="hidden" name="id" value="{{$index->id}}">
-                                                <button type="submit" id="delete" onclick="confirmDelete({{ $index->id }})" style="background: none; border: none; color: rgb(172, 21, 21); cursor: pointer;" >حذف</button>
-                                            </form>
-                                            <span class="icon" onclick="edit()"><i class="fas fa-trash"></i></span>
-                                        </div>
-                                        
-
                                     </td>
+                                    
                                     @endif
                                 </tr>
                             @endforeach

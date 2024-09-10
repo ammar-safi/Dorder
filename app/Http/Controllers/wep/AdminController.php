@@ -243,7 +243,7 @@ class AdminController extends Controller
 
             $is_exist = user::find($request->id);
             if ($is_exist && $is_exist->delete()) {
-                return redirect()->back();
+                return redirect()->back()->with("success" , "تم الحذف بنجاح");
             }
             return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {

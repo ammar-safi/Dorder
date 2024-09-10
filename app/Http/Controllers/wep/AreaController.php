@@ -256,7 +256,7 @@ class AreaController extends Controller
                 $area->Delivers()->delete();
                 $area->Users()->delete();
                 $area->delete();
-                return redirect()->back();
+                return redirect()->back()->with("success", "تم الحذف بنجاح");
             }
 
             return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");

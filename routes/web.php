@@ -136,6 +136,7 @@ Route::group(['prefix' => "/admins", 'as' => 'admins.', 'namespace' => "App\Http
       Route::get("/form/add", [AdminController::class, 'create'])->name("add");
       // Route::post("/conform/add", [AdminController::class, 'conformAdding'])->name("conform.adding");
       Route::post("/store", [AdminController::class, 'store'])->name('store');
+      Route::post("/delete", [AdminController::class, "delete"])->name("soft.delete");
 
       /**
        * Soft Delete 

@@ -23,42 +23,141 @@
                         document.getElementById('delete-form-' + cityId).submit();
                     }
                 }
-                function confirmRestor(cityId) {
-                    if (confirm('هل أنت متأكد أنك تريد استعادة هذه المدينة؟')) {
-                        document.getElementById('restore-form-' + cityId).submit();
-                    }
+                function toggleOptions(button) {
+                // إغلاق جميع القوائم المفتوحة
+                document.querySelectorAll('.options-menu').forEach(function(menu) {
+                    menu.style.display = 'none';
+                });
+
+                // فتح القائمة الخاصة بالزر المضغوط
+                const optionsMenu = button.nextElementSibling;
+                optionsMenu.style.display = optionsMenu.style.display === 'block' ? 'none' : 'block';
                 }
+
+                // إغلاق القوائم عند الضغط خارجها
+                document.addEventListener('click', function(event) {
+                    const isClickInside = event.target.closest('.options-menu') || event.target.closest('button');
+                    if (!isClickInside) {
+                        document.querySelectorAll('.options-menu').forEach(function(menu) {
+                            menu.style.display = 'none';
+                        });
+                    }
+                });
+
             </script>
 
-            <style>
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin: 20px auto;
-                }
+<style>
+    .table-container {
+        margin: 0px;
+        width: 100%; /* يضمن أن الجدول يأخذ عرض الشاشة بالكامل */
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    .data-table {
+        width: 100%; /* يجعل الجدول يأخذ عرض الشاشة بالكامل */
+        border-collapse: collapse; /* إزالة الفراغات بين الخلايا */
+    }
 
-                th,
-                td {
-                    border: 1px solid #ddd;
-                    padding: 8px;
-                    text-align: center;
-                }
 
-                th {
-                    background-color: #f2f2f2;
-                }
+    .table-title {
+        background-color: #ffffff; /* لون خلفية العنوان */
+        color: rgb(0, 0, 0); /* لون النص */
+        padding: 10px;
+        cursor: pointer;
+        text-align:right;
+        font-size: 1.5em;
+        display: flex; /* استخدام الفليكس لتوزيع العناصر */
+        justify-content: space-between; /* توزيع المساحة بين العناصر */
+        align-items: center; /* محاذاة العناصر في المنتصف */
+    }
 
-                .icon {
-                    cursor: pointer;
-                    margin: 0 5px;
-                    font-size: 20px;
-                    color: #333;
-                }
+    .table-title:hover {
+        background-color: #bfd4e2; /* تأثير عند التحويم */
+    }
 
-                .icon:hover {
-                    color: #007BFF;
-                }
-            </style>
+    table {
+        width: 100%;
+        border-collapse: collapse; /* إزالة الفراغات بين الخلايا */
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #ddd; /* خط تحت الخلايا */
+    }
+
+    th {
+        background-color: #f2f2f2; /* لون خلفية رأس الجدول */
+    }
+
+    tr:hover {
+        background-color: #b5c6ca; /* تأثير عند التحويم على الصفوف */
+    }
+
+    .edit-button {
+        background-color: #008CBA; /* لون زر التعديل */
+        color: white; /* لون نص الزر */
+        border: none;
+        padding: 8px 12px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .edit-button:hover {
+        background-color: #007B9A; /* تأثير عند التحويم على الزر */
+    }
+
+    .table-title i {
+        transition: transform 0.3s; /* تأثير عند التحويم */
+        margin-left: 10px; /* مسافة بين العنوان والأيقونة */
+    }
+
+    .options-menu {
+        display: none;
+        position: absolute;
+        top: -60px;
+        right: -150px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 100;
+        padding: 10px;
+        width: 150px;
+        transition: all 0.3s ease;
+    }
+
+    .options-menu button {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        background: none;
+        border: none;
+        color: #333;
+        padding: 8px;
+        cursor: pointer;
+        text-align: right; /* لجعل النص العربي يظهر بالكامل */
+        white-space: nowrap; /* منع النص من الانتقال لسطر آخر */
+        transition: background-color 0.2s ease;
+        font-size: 14px;
+    }
+
+    .options-menu button:hover {
+        background-color: #f0f0f0;
+        border-radius: 4px;
+    }
+
+    .options-menu i {
+        margin-left: 10px; /* جعل الأيقونة على يسار النص */
+        color: #555;
+    }
+
+</style>
         </div>
         <div class="content-body">
             <br><br>
@@ -150,48 +249,51 @@
                                 <td>{{$city->count_of_clients}}</td>
                                 @if (Auth::User()->type == "admin")
                                 <td>
-                                    {{-- <div style="display: inline-block; margin-right: 10px;">
-                                        <a href="" id="edit">تعديل</a>
-                                            <span class="icon" onclick="edit()"><i class="fas fa-edit"></i></span>
-                                    </div> --}}
-
-                                    @if(!$deleted) 
-                                    <div style="display: inline-block; margin-right: 10px;">
-                                        <form action="{{ route('cities.show.city')}}" method="GET" style="display: inline;">
-                                            @csrf
-                                            <input type="hidden" name="id" value="{{$city->id}}">
-                                            <input type="hidden" name="route" value="cities.show">
-                                            <button type="submit" id="edit" style="background: none; border: none; color: rgb(59, 98, 206); cursor: pointer;">تعديل</button>
-                                        </form>
-                                        <span class="icon" onclick="edit()"><i class="fas fa-edit"></i></span>
-                                    </div>
-                                    
-                                    <div style="display: inline-block;">
-                                        <form id="delete-form-{{ $city->id }}" action="{{ route('cities.soft.delete') }}" method="POST" style="display: inline;">
-                                            @csrf
-                                            <input type="hidden" name="id" value="{{ $city->id }}">
-                                            <input type="hidden" name="route" value="cities.show">
-                                        </form>
-                                        <button type="submit" id="delete" onclick="confirmDelete({{ $city->id }})" style="background: none; border: none; color: rgb(206, 59, 59); cursor: pointer;">حذف</button>
-                                        <span class="icon" onclick="confirmDelete({{ $city->id }})" onclick="deleteRow()" style="cursor: pointer;">
-                                            <i class="fas fa-trash"></i>
-                                        </span>
-                                    </div>
-                                    @else 
-                                    <div style="display: inline-block;">
-                                        <form id="restore-form-{{ $city->id }}" action="{{Route("cities.restore")}}" method="POST" style="display: inline;">
-                                            @csrf
-                                            <input type="hidden" name="id" value="{{ $city->id }}">
-                                        </form>
-                                        <button type="submit" id="restore" onclick="confirmRestor({{ $city->id }})" style="background: none; border: none; color: rgb(206, 59, 59); cursor: pointer;">استعادة</button>
-                                        <span class="icon" onclick="restoreRow({{ $city->id }});" style="cursor: pointer;">
-                                            <i class="fas fa-undo-alt"></i>  
-                                        </span>
-                                    </div>
-                                    @endif
-                                </td>
-                                @endif
+                                    <div style="position: relative; display: flex; justify-content: center;">
+                                        <button onclick="toggleOptions(this)" style="background: none; border: none; cursor: pointer;">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <div class="options-menu">
+                                            @if(!$deleted)
+                                                <form action="{{ route("employs.create") }}" method="GET">
+                                                    @csrf
+                                                    <input type="hidden" name="route" value="cities.show">
+                                                    <button type="submit">
+                                                        <i class="fas fa-users"></i> اضافة موظفين
+                                                    </button>
+                                                </form>
                                 
+                                                <form action="{{ route('cities.show.city') }}" method="GET">
+                                                    @csrf
+                                                    <input type="hidden" name="id" value="{{ $city->id }}">
+                                                    <input type="hidden" name="route" value="cities.show">
+                                                    <button type="submit">
+                                                        <i class="fas fa-edit"></i> تعديل
+                                                    </button>
+                                                </form>
+                                
+                                                <form id="delete-form-{{ $city->id }}" action="{{ route('cities.soft.delete') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="id" value="{{ $city->id }}">
+                                                    <input type="hidden" name="route" value="cities.show">
+                                                    <button type="submit" onclick="confirmDelete({{ $city->id }})">
+                                                        <i class="fas fa-trash"></i> حذف
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form id="restore-form-{{ $city->id }}" action="{{ route('cities.restore') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="id" value="{{ $city->id }}">
+                                                    <button type="submit" onclick="confirmRestor({{ $city->id }})">
+                                                        <i class="fas fa-undo-alt"></i> استعادة
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>
