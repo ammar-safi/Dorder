@@ -154,8 +154,8 @@
                     
                     <form method="GET" action="{{ route('clients.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
                         <input type="hidden" name="search_name" value="{{$searchName}}">
-                        <label for="city_id" style="margin: 0; font-size: 0.875rem;">حدد مدينة:</label>
-                        <select name="city_id" id="city_id" onchange="this.form.submit()" style="padding: 5px; width: 150px; font-size: 0.875rem; border-radius: 5px;">
+                        {{-- <label for="city_id" style="margin: 0; font-size: 0.875rem;">حدد مدينة:</label> --}}
+                        <select name="city_id" id="city_id" onchange="this.form.submit()" class="custom-select">
                             <option value="">حدد مدينة</option>
                             @foreach ($cities as $city)
                                 <option value="{{ $city->id }}" {{ $selectedCityId == $city->id ? 'selected' : '' }}>
@@ -169,8 +169,8 @@
                         <form method="GET" action="{{ route('clients.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
                             <input type="hidden" name="search_name" value="{{$searchName}}">
                             <input type="hidden" name="city_id" value="{{ $selectedCityId }}">
-                            <label for="area_id" style="margin: 0; font-size: 0.875rem;">حدد منطقة:</label>
-                            <select name="area_id" id="area_id" onchange="this.form.submit()" style="padding: 5px; width: 150px; font-size: 0.875rem; border-radius: 5px;">
+                            {{-- <label for="area_id" style="margin: 0; font-size: 0.875rem;">حدد منطقة:</label> --}}
+                            <select name="area_id" id="area_id" onchange="this.form.submit()" class="custom-select">
                                 <option value="">حدد منطقة</option>
                                 @foreach ($areas as $area)
                                     <option value="{{ $area->id }}" {{ $selectedAreaId == $area->id ? 'selected' : '' }}>
@@ -231,7 +231,6 @@
                             <tr>
                                 <td>
                                     <div style="display: flex; align-items: center;">
-                                        <!-- إضافة صورة العميل -->
                                         @php
                                             $image = $client->image?Storage::url($client->image->url):'../../../../app-assets/images/portrait/small/images.png'  ;
                                         @endphp

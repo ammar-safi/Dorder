@@ -41,7 +41,7 @@
             @endif
             
             <!-- Begin forms section -->
-            <div style="display: flex; flex-direction: column; gap: 20px; width: 50%; margin: inherit;">
+            <div style="display: flex; flex-direction: column; gap: 20px; width: 100%; margin: inherit;">
                 
                 <!-- Form 1: POST request -->
                 <form id="myForm" action="{{Route('delivers.update')}}" method="post" style="display: flex; flex-direction: column; gap: 10px;">
@@ -69,9 +69,10 @@
                             <input type="text" oninput="sendEmail()" id="emailInput" name='email' value="{{old("email")?old("email"):($email?$email:$deliver->user->email)}}" style="padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
                     @endif
                 </form>
-                
+                <div style="display: flex;flex-direction:initial; gap:10px">
+
                 <!-- Form 2: City Select -->
-                <form method="get" action="{{ route('delivers.edit') }}" style="display: flex; flex-direction: column; gap: 10px;">
+                <form method="get" action="{{ route('delivers.edit') }}" style="width: 50%; gap: 10px;">
                     <input type="hidden" name="id" value="{{$deliver->id}}">
                     <input type="hidden" id="nameCityHidden" name="name" value="{{old('name')?old('name'):($name?$name:'')}}">
                     <input type="hidden" id="emailCityHidden" name="email" value="{{old('email')?old("email"):($email?$email:'')}}">
@@ -93,7 +94,7 @@
                 </form>
                 
                 <!-- Form 3: Area Select -->
-                <form method="GET" action="{{ route('delivers.edit') }}" style="display: flex; flex-direction: column; gap: 10px;">
+                <form method="GET" action="{{ route('delivers.edit') }}" style="width:50% ; gap: 10px;">
                     <input type="hidden" name="id" value="{{$deliver->id}}">
                     <input type="hidden" name="city_id" value="{{ $selectedCityId }}">
                     <input type="hidden" id="nameAreaHidden" name="name" value="{{old('name')?old('name'):($name?$name:'')}}">
@@ -114,8 +115,10 @@
                         @endforeach
                     </select>
                 </form>
+                </div>
 
-                <div style="display: flex; gap: 10px;">
+
+                <div style="display: flex; gap: 10px;width: 25%">
                     <button type="submit" onclick="document.getElementById('myForm').submit();" class="rounded-button" style="padding: 10px; width: 50%; color: white; background-color: #007bff; border: none; border-radius: 5px;">تعديل</button>
                     <button type="button" class="btn rounded-button" style="background-color: #ccc;width: 50%;color: black; padding: 7.0px 20px;" onclick='window.location.href="{{ route("delivers.show") }}";'>الغاء</button>
                     

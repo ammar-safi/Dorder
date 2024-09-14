@@ -5,6 +5,8 @@ namespace App\Http\Controllers\wep;
 use App\Http\Controllers\Controller;
 use App\Models\Area;
 use App\Models\City;
+use App\Models\Deliver;
+use App\Models\Monitor;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Query\Builder;
@@ -33,8 +35,8 @@ class EmployController extends Controller
             ],
             [
                 'id.exist' => "حصل خطأ غير متوقع",
-                "city_id.exists" => "",
-                "area_id.exists" => "",
+                "city_id.exists" => "حصل خطا غير متوقع",
+                "area_id.exists" => "حصل خطا غير متوقع",
             ]
         );
         if ($validator->fails()) {
@@ -42,38 +44,46 @@ class EmployController extends Controller
         }
         try {
 
+            $monitors = User::whereNotIn(
+                'id',
+                Monitor::where('area_id' , $request->area_id)->distinct()->pluck('monitor_id')->toArray()
+            )->where("type", "monitor")->get();
 
-            $monitors = User::leftJoin('monitors', 'users.id', '=', 'monitors.monitor_id')
-                ->leftJoin('monitors as deleted_monitors', 'users.id', '=', 'deleted_monitors.monitor_id')
-                ->where('users.type', 'monitor')->where(function ($query) {
-                    $query->whereNull('monitors.monitor_id')->orWhere(function ($query) {
-                        $query->whereNotNull('deleted_monitors.monitor_id')
-                            ->whereNotNull('deleted_monitors.deleted_at');
-                    });
-                })
-                ->distinct()
-                ->select('users.*')
-                ->get();
+            $delivers = User::whereNotIn(
+                'id',
+                Deliver::distinct()->pluck('deliver_id')->toArray()
+            )->where("type", "deliver")->get();
 
-            $delivers = User::leftJoin('delivers', 'users.id', '=', 'delivers.deliver_id')
-                ->leftJoin('delivers as deleted_delivers', 'users.id', '=', 'deleted_delivers.deliver_id')->where('users.type', 'deliver')->where(function ($query) {
-                    $query->whereNull('delivers.deliver_id')
-                        ->orWhere(function ($query) {
-                            $query->whereNotNull('deleted_delivers.deliver_id')
-                                ->whereNotNull('deleted_delivers.deleted_at');
-                        });
-                })
-                ->distinct()
-                ->select('users.*')
-                ->get();
+            // $monitors = User::leftJoin('monitors', 'users.id', '=', 'monitors.monitor_id')
+            //     ->leftJoin('monitors as deleted_monitors', 'users.id', '=', 'deleted_monitors.monitor_id')
+            //     ->where('users.type', 'monitor')->where(function ($query) {
+            //         $query->whereNull('monitors.monitor_id')->orWhere(function ($query) {
+            //             $query->whereNotNull('deleted_monitors.monitor_id')
+            //                 ->whereNotNull('deleted_monitors.deleted_at');
+            //         });
+            //     })
+            //     ->distinct()
+            //     ->select('users.*')
+            //     ->get();
+
+            // $delivers = User::leftJoin('delivers', 'users.id', '=', 'delivers.deliver_id')
+            //     ->leftJoin('delivers as deleted_delivers', 'users.id', '=', 'deleted_delivers.deliver_id')->where('users.type', 'deliver')->where(function ($query) {
+            //         $query->whereNull('delivers.deliver_id')
+            //             ->orWhere(function ($query) {
+            //                 $query->whereNotNull('deleted_delivers.deliver_id')
+            //                     ->whereNotNull('deleted_delivers.deleted_at');
+            //             });
+            //     })
+            //     ->distinct()
+            //     ->select('users.*')
+            //     ->get();
 
             $cities = City::all();
             $areas = $request->input("city_id") ? Area::where("city_id", $request->input("city_id"))->get() : "";
-            // dd($request->input("area_id"));
             $selectedCityId = $request->input("city_id") ? $request->input("city_id") : '';
             $selectedAreaId = $request->input("area_id") ? $request->input("area_id") : '';
-
             $route = $request->route;
+            
             return view("panel.dashboard.employ.addEmploys", compact('route', "areas", 'cities', 'selectedCityId', 'selectedAreaId', 'monitors', 'delivers'));
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'حدث خطأ أثناء تحديث المشرف. يرجى المحاولة لاحقاً.');

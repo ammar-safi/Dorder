@@ -30,26 +30,24 @@ class AreaController extends Controller
     {
         try {
             $flag = "show-areas";
-
             $cities = City::all();
-
             $query = Area::query();
-            // $cityQuery = City::query();             
             $collection = [];
             $searchName = $request->input('search_name');
             $selectedCityId = $request->input("city_id");
+            $deleted = $request->input("deleted");
 
             if ($selectedCityId) {
                 $query->where("city_id", $selectedCityId);
             }
-
             if ($searchName) {
                 $query->where("title", "LIKE", "%{$searchName}%");
             }
+            if ($deleted == "deleted") {
+                $query->onlyTrashed();
+            }
 
-            if ($selectedCityId || $searchName) {
-
-
+            if ($selectedCityId || $searchName || $deleted) {
                 $areas = $query->distinct()->pluck("city_id");
 
                 foreach ($areas as $cityId) {
@@ -61,10 +59,7 @@ class AreaController extends Controller
                     }
                 }
             }
-
-            // dd($collection);
-
-            return view("panel.dashboard.areas.areas", compact("flag", "collection", "cities", "searchName", "selectedCityId"));
+            return view("panel.dashboard.areas.areas", compact("flag", "collection", "cities", "searchName", "selectedCityId", "deleted"));
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
@@ -264,27 +259,38 @@ class AreaController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", $e->getMessage());
         }
     }
 
     public function Restore(Request $request)
     {
         $validate = Validator::make(['id' => $request->id], [
-            'id' => 'required|exists:areas,id',
+            'id' => ['required' , ],
         ]);
-        if ($validate) {
+        if ($validate->fails()) {
             return redirect()->back()->with("error", 'حصل خطا , حاول مرة اخرى');
         }
-
         try {
-            $area = Area::withTrashed()->find($request->id);
-            if ($area) {
-            }
+            $area = Area::onlyTrashed()->find($request->id);
             
+            if ($area) {
+                if ($area->Monitors()->onlyTrashed()->exists()) {
+                    $area->Monitors()->onlyTrashed()->restore();
+                }
+                if ($area->Delivers()->onlyTrashed()->exists()) {
+                    $area->Delivers()->onlyTrashed()->restore();
+                }
+                if ($area->Users()->onlyTrashed()->where("type", "client")->exists()) {
+                    $area->Users()->onlyTrashed()->where("type", "client")->restore();
+                }
+                $area->restore();
+                return redirect()->back()->with("success", "تمت الاستعادة بنجاح");
+            }
         } catch (Exception $e) {
             return redirect()->back()->with("error", $e->getMessage());
         }
+ 
     }
 
 

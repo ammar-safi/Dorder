@@ -18,7 +18,6 @@ use App\Mail\SendEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Testing\Fakes\MailFake;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -113,6 +112,7 @@ Route::group(['prefix' => "/areas", 'as' => 'areas.', 'namespace' => "App\Http\C
        * Soft Delete 
        */
       Route::post("/delete", [AreaController::class, "delete"])->name("soft.delete");
+      Route::post("/restore", [AreaController::class, "restore"])->name("restore");
    });
 });
 
@@ -142,6 +142,7 @@ Route::group(['prefix' => "/admins", 'as' => 'admins.', 'namespace' => "App\Http
        * Soft Delete 
        */
       Route::post("/delete", [AdminController::class, "delete"])->name("soft.delete");
+      Route::post("/restore", [AdminController::class, "restore"])->name("restore");
    });
 });
 
@@ -163,13 +164,17 @@ Route::group(['prefix' => "/monitors", 'as' => 'monitors.', 'namespace' => "App\
 
       // Add Monitor
       Route::get("/form/add", [MonitorController::class, 'create'])->name("add");
-      // Route::post("/conform/add", [MonitorController::class, 'conformAdding'])->name("conform.adding");
       Route::post("/store", [MonitorController::class, 'store'])->name('store');
 
+      // Employ a monitor 
+      Route::get("employ" , [MonitorController::class , 'employ'])->name('employ');
+      Route::post("employ" , [MonitorController::class , 'setEmploy'])->name('set.employ');
       /**
        * Soft Delete 
        */
       Route::post("/delete", [MonitorController::class, "delete"])->name("soft.delete");
+      Route::post("/ban", [MonitorController::class, "ban"])->name("ban");
+      Route::post("/restore", [MonitorController::class, "restore"])->name("restore");
    });
 });
 

@@ -56,7 +56,7 @@
                 }
 
                 tr:hover {
-                    background-color: #b5c6ca; /* تأثير عند التحويم على الصفوف */
+                    background-color: #dbe5e7; /* تأثير عند التحويم على الصفوف */
                 }
 
                 .edit-button {
@@ -156,6 +156,22 @@
                     }
                 });
 
+                function updateForm() {
+                    var deletedCheckbox = document.getElementById('deleted');
+                    var searchForm = document.querySelector('form[action="{{ route('areas.show') }}"]');
+                    var url = new URL(searchForm.action);
+                    var params = new URLSearchParams(url.search);
+                    
+                    // تحديث قيمة deleted
+                    if (deletedCheckbox.checked) {
+                        params.set('deleted', 'deleted');
+                    } else {
+                        params.delete('deleted');
+                    }
+
+                    // إعادة توجيه مع القيم الجديدة
+                    window.location.href = searchForm.action + '?' + params.toString();
+                }
 
             </script>
         </div>
@@ -208,8 +224,14 @@
             <br>
             <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
                 <!-- نموذج البحث عن المدينة بالاسم -->
+                <!-- نموذج البحث -->
                 <form method="GET" action="{{ route('areas.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
                     <input type="hidden" name="city_id" value="{{$selectedCityId}}">
+                    
+                    <select name="deleted" id="" onchange="this.form.submit()" class="custom-select" style="width:180px">
+                        <option value=''  {{ $deleted == '' ? 'selected' : '' }} >المناطق المخدمة</option>
+                        <option value="deleted"  {{ $deleted == 'deleted' ? 'selected' : '' }} >المناطق المحذوفة</option>
+                    </select>
                     <div style="position: relative; display: flex; align-items: center; width: 200px;">
                         <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم المنطقة" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
                         <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
@@ -222,8 +244,8 @@
                 <!-- نموذج اختيار المدينة -->
                 <form method="GET" action="{{ route('areas.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
                     <input type="hidden" name="search_name" value="{{$searchName}}">
-                    <label for="city_id" style="margin: 0; font-size: 0.875rem;">حدد مدينة:</label>
-                    <select name="city_id" id="city_id" onchange="this.form.submit()" style="padding: 5px; width: 150px; font-size: 0.875rem; border-radius: 5px;">
+                    <input type="hidden" name="deleted" value="{{$deleted}}">
+                    <select name="city_id" id="city_id" onchange="this.form.submit()" class="custom-select" style="width: 150px;">
                         <option value="">حدد مدينة</option>
                         @foreach ($cities as $city)
                             <option value="{{ $city->id }}" {{ $selectedCityId == $city->id ? 'selected' : '' }}>
@@ -232,6 +254,9 @@
                         @endforeach
                     </select>
                 </form>
+                <div>
+                </div>
+                
                 @foreach ($collection as $cities => $areas)
                 <div class="table-container">
                     <h2 class="table-title">{{$cities}}</h2>
@@ -261,6 +286,7 @@
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
                                             <div class="options-menu">
+                                                @if(!$deleted)
                                                 <!-- اضافة موظفين -->
                                                 <form action="{{Route('areas.add.employs')}}" method="GET">
                                                     @csrf
@@ -288,7 +314,18 @@
                                                         <i class="fas fa-trash"></i> حذف
                                                     </button>
                                                 </form>
+                                                @else
+                                                <form id="restore-form-{{ $area->id }}" action="{{Route('areas.restore')}}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="id" value="{{$area->id}}">
+                                                    <button type="submit">
+                                                        <i class="fas fa-undo-alt"></i> استعادة
+                                                    </button>
+                                                </form>
+
+                                                @endif
                                             </div>
+
                                         </div>
                                     </td>
                                     

@@ -54,59 +54,64 @@
             @endif
             <div class="row">
                 <div class="col-12"> 
-                    <form action="{{ route('monitors.store') }}" method="POST"> 
+                    <form action="{{ route('monitors.store') }}" method="POST" style="width: 100%; gap:"> 
                         @csrf
-                        <div class="form-group">
-                            <label for="name">الاسم:</label>
-                            @error('name')
-                            <div style="color: #c20c0c" >    
-                                * {{$message}}
-                                <br><br>
+                        <div style="display: flex;gap:10px  ;flex-direction:initial;">
+                            <div class="form-group" style="width: 50%">
+                                <label for="name">الاسم:</label>
+                                @error('name')
+                                <div style="color: #c20c0c" >    
+                                    * {{$message}}
+                                    <br><br>
+                                </div>
+                                @enderror
+                                <input type="text" class="form-control" id="name" name="name" placeholder="أدخل الاسم" value="{{old('name')}}">
                             </div>
-                            @enderror
-                            <input type="text" class="form-control" id="name" name="name" placeholder="أدخل الاسم" value="{{old('name')}}">
+                            <div class="form-group" style="width: 50%">
+                                <label for="email">البريد الإلكتروني:</label>
+                                @error('email')
+                                <div style="color: #c20c0c" >    
+                                    * {{$message}}
+                                    <br><br>
+                                </div>
+                                @enderror
+                                <input type="email" class="form-control" id="email" name="email" placeholder="أدخل البريد الإلكتروني" value="{{old('email')}}">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="email">البريد الإلكتروني:</label>
-                            @error('email')
-                            <div style="color: #c20c0c" >    
-                                * {{$message}}
-                                <br><br>
+                        <div style="display: flex;gap:10px  ;flex-direction:initial;">
+
+                            <div class="form-group" style="width: 50%">
+                                <label for="password"> كلمة المرور:</label>
+                                @error('password')
+                                <div style="color: #c20c0c" >    
+                                    * {{$message}}
+                                    <br><br>
+                                </div>
+                                @enderror
+                                <div class="password-input">
+                                <input type="password" class="form-control" id="password" name="password" placeholder=" كلمة المرور" value="{{old('password')}}">
+                                <span class="password-toggle" onclick="togglePasswordVisibility('password')">
+                                    <i class="fa fa-eye"></i>
+                                </span>
+                                </div>
                             </div>
-                            @enderror
-                            <input type="email" class="form-control" id="email" name="email" placeholder="أدخل البريد الإلكتروني" value="{{old('email')}}">
+                            
+                            <div class="form-group" style="width: 50%">
+                                <label for="password_confirmation">تأكيد كلمة المرور:</label>
+                                @error('password_confirmation')
+                                <div style="color: #c20c0c" >    
+                                    * {{$message}}
+                                    <br><br>
+                                </div>
+                                @enderror
+                                <div class="password-input">
+                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="تأكيد كلمة المرور" value="{{old('password_confirmation')}}">
+                                <span class="password-toggle" onclick="togglePasswordVisibility('password_confirmation')">
+                                    <i class="fa fa-eye"></i>
+                                </span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="password"> كلمة المرور:</label>
-                            @error('password')
-                            <div style="color: #c20c0c" >    
-                                * {{$message}}
-                                <br><br>
-                            </div>
-                            @enderror
-                            <div class="password-input">
-                              <input type="password" class="form-control" id="password" name="password" placeholder=" كلمة المرور" value="{{old('password')}}">
-                              <span class="password-toggle" onclick="togglePasswordVisibility('password')">
-                                <i class="fa fa-eye"></i>
-                              </span>
-                            </div>
-                          </div>
-                          
-                        <div class="form-group">
-                            <label for="password_confirmation">تأكيد كلمة المرور:</label>
-                            @error('password_confirmation')
-                            <div style="color: #c20c0c" >    
-                                * {{$message}}
-                                <br><br>
-                            </div>
-                            @enderror
-                            <div class="password-input">
-                              <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="تأكيد كلمة المرور" value="{{old('password_confirmation')}}">
-                              <span class="password-toggle" onclick="togglePasswordVisibility('password_confirmation')">
-                                <i class="fa fa-eye"></i>
-                              </span>
-                            </div>
-                          </div>
                           
                         
                         <div class="form-group">

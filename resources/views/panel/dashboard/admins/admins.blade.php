@@ -241,6 +241,12 @@
                 <br>
                 <hr>
                 <br>
+                <form action="{{route('admins.show')}}" method="get" style="display: flex; align-items: center; gap: 10px;">
+                    <select name="deleted" id="" onchange="this.form.submit()" class="custom-select" style="width:180px">
+                        <option value=''  {{ $deleted == '' ? 'selected' : '' }} >المدراء النشطين</option>
+                        <option value="deleted"  {{ $deleted == 'deleted' ? 'selected' : '' }} >المدراء المحظورين</option>
+                    </select>                </form>
+                <br><br>
                 <table>
                     <thead>
                         <tr>
@@ -266,13 +272,14 @@
                                 <td>{{$admin->created_at}}</td>
                                 <td>{{$admin->updated_at}}</td>
                                 {{-- <td style="text-align:right">{{  ['🔴 غير نشط','🟢 نشط']  [$admin->active]}} </td> --}}
-                                @if ($admin->email != "ammar@gmail.com" )
                                 <td>
+                                    @if ($admin->email != "ammar@gmail.com" )
                                     <div style="position: relative; display: flex; justify-content: center;">
                                         <button onclick="toggleOptions(this)" style="background: none; border: none; cursor: pointer;">
                                             <i class="fas fa-ellipsis-v"></i>
                                         </button>
                                         <div class="options-menu">
+                                        @if (!$deleted)
                                            <form action="{{ route('admins.edit')}}" method="GET">
                                                 @csrf
                                                 <input type="hidden" name="id" value="{{$admin->id}}">
@@ -280,19 +287,29 @@
                                                     <i class="fas fa-edit"></i> تعديل
                                                 </button>
                                             </form>
+                                           <form action="{{ route('admins.soft.delete')}}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{$admin->id}}">
+                                                <button type="submit">
+                                                    <i class="fas fa-trash"></i> حظر
+                                                </button>
+                                            </form>
                                             
-                                            <form id="delete-form-{{ $admin->id }}" action="{{Route('admins.soft.delete')}}" method="POST">
+                                        @else
+                                            
+                                            <form id="restor-form-{{ $admin->id }}" action="{{Route('admins.restore')}}" method="POST">
                                                 @csrf
                                                 <input type="hidden" name="id" value="{{$admin->id}}">
                                                 <button type="submit" onclick="confirmDelete({{ $admin->id }})">
-                                                    <i class="fas fa-trash"></i> حذف
+                                                    <i class="fas fa-undo-alt"></i> استعادة
                                                 </button>
                                             </form>
+                                        @endif
                                         </div>
                                     </div>
+                                    @endif
                                 </td>
                                 
-                                @endif
                                 
                             </tr>
                         @endforeach

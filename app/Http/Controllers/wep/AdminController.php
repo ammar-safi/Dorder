@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -26,8 +27,13 @@ class AdminController extends Controller
     {
         try {
             $flag = "show-admins";
-            $admins = User::where("type", "admin")->get();
-            return view("panel.dashboard.admins.admins", compact("flag", "admins"));
+            $query = User::query();
+            $deleted = request()->deleted ;
+            if ($deleted) {
+                $query->onlyTrashed();
+            } 
+            $admins = $query->where("type", "admin")->get();
+            return view("panel.dashboard.admins.admins", compact("flag", "admins" , "deleted"));
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
@@ -62,7 +68,7 @@ class AdminController extends Controller
                 'name' => 'required|string|regex:/^[\p{Arabic}\s]+$/u|max:255',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|string|min:8|confirmed',
-                'mobile' => 'required|nullable|string|max:20|unique:users,mobile',
+                'mobile' => 'required|nullable|regex:/^09[0-9]{8}$/|string|max:20|unique:users,mobile',
                 "active" => 'nullable|boolean',
             ], [
                 'name.required' => 'الرجاء إدخال اسم المدير.',
@@ -82,7 +88,9 @@ class AdminController extends Controller
                 'mobile.required' => 'الرجاء إدخال رقم الهاتف.',
                 'mobile.string' => 'يجب أن يكون رقم الهاتف نصًا.',
                 'mobile.max' => 'لا يمكن أن يتجاوز طول رقم الهاتف 20 حرفًا.',
-                "mobile.unique" => "هذا الرقم قيد الاستخدام بالفعل"
+                "mobile.unique" => "هذا الرقم قيد الاستخدام بالفعل",
+                'mobile.regex' => 'رقم الهاتف غير صالح.',
+
             ]);
 
             if ($validator->fails()) {
@@ -129,16 +137,30 @@ class AdminController extends Controller
         try {
 
 
-            $validate = Validator::make(['id' => $request->id], ['id' => "required"], ['id.required' => "حصل خطأ غير متوقع"]);
+            $validate = Validator::make(
+                ['id' => $request->id],
+                [
+                    'id' => [
+                        "required",
+                        "not_in:1",
+                        Rule::exists("users", "id")->where('type', 'admin')
+                    ]
+                ],
+                [
+                    'id.required' => "حصل خطأ غير متوقع",
+                    'id.exists' => "حصل خطأ غير متوقع",
+                    "id.not_in" => "لا يمكنك تعديل هذا المدير"
+                ]
+            );
 
             if ($validate->fails()) {
-                return redirect()->back()->withInput($request->all())->withErrors($validate);
+                return redirect()->back()->with("error", "حصل خطأ غير متوقع, الرجاء المحاولة لاحقا");
             }
 
             $admin = User::find($request->id);
 
-            if ($admin->type == "admin" && $admin->update(["active" => $admin->active ? 0 : 1])) {
-                return redirect()->back();
+            if ($admin->type == "admin") {
+                return view("panel.dashboard.admins.edit", compact('admin'));
             } else {
                 return redirect()->back()->with("error", "حدث خطأ غير معروف , اعد المحاولة لاحقا");
             }
@@ -146,7 +168,7 @@ class AdminController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", $e->getMessage());
         }
 
 
@@ -159,19 +181,28 @@ class AdminController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
         try {
-
             $validator = Validator::make($request->all(), [
-                'id' => 'required',
+                'id' => 'required|not_in:1',
                 'name' => 'required|string|regex:/^[\p{Arabic}\s]+$/u|max:255',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'required|string|min:8|confirmed',
-                'mobile' => 'required|nullable|string|max:20|unique:users,mobile',
-                // "active" => 'nullable|boolean',
+                'email' => [
+                    'required',
+                    'email',
+                    Rule::unique("users", "email")->where("type", "admin")->ignore($request->email, 'email'),
+                ],
+                'mobile' => [
+                    'required',
+                    'nullable',
+                    'string',
+                    'max:20',
+                    'regex:/^09[0-9]{8}$/',
+                    Rule::unique("users", "mobile")->where("type", "admin")->ignore($request->mobile, 'mobile'),
+                ],
             ], [
                 'id.required' => "حصل خطأ غير متوقع",
+                "id.not_in" => "لا يمكنك تعديل هذا المدير",
 
                 'name.required' => 'الرجاء إدخال اسم المدير.',
                 'name.regex' => 'الرجاء إدخال اسم المدير باللغة العربية فقط.',
@@ -182,21 +213,17 @@ class AdminController extends Controller
                 'email.email' => 'الرجاء إدخال بريد إلكتروني صالح.',
                 'email.unique' => 'البريد الإلكتروني مُستخدم بالفعل.',
 
-                'password.required' => 'الرجاء إدخال كلمة المرور.',
-                'password.string' => 'يجب أن تكون كلمة المرور نصًا.',
-                'password.min' => 'يجب أن تكون كلمة المرور 8 أحرف على الأقل.',
-                'password.confirmed' => 'كلمتين السر غير متطابقتين',
-
                 'mobile.required' => 'الرجاء إدخال رقم الهاتف.',
                 'mobile.string' => 'يجب أن يكون رقم الهاتف نصًا.',
                 'mobile.max' => 'لا يمكن أن يتجاوز طول رقم الهاتف 20 حرفًا.',
-                "mobile.unique" => "هذا الرقم قيد الاستخدام بالفعل"
+                "mobile.unique" => "هذا الرقم قيد الاستخدام بالفعل",
+                'mobile.regex' => 'رقم الهاتف غير صالح.',
+
             ]);
 
             if ($validator->fails()) {
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
+                // dd("test");
+                return redirect()->back()->withErrors($validator)->withInput($request->all);
             }
 
             $admin = User::find($request->id);
@@ -204,13 +231,9 @@ class AdminController extends Controller
             if ($admin && $admin->type == "admin"  && $admin->update([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => $request->password,
                 'mobile' => $request->mobile,
-                'uuid' => Str::uuid(),
-                'type' => 'admin',
-                // 'active' => $request->active ? 1 : 0,
             ])) {
-                return redirect()->route("admins.show")->with("update_success", "تمت التعديل  بنجاح");
+                return redirect()->route("admins.show")->with("success", "تمت التعديل  بنجاح");
             } else {
                 return redirect()->back()->with("error",  "حصل خطأ غير متوقع , يرجى المحاولة لاحفا");
             }
@@ -233,8 +256,10 @@ class AdminController extends Controller
     public function delete(Request $request)
     {
         try {
-            $validate = Validator::make(['id' => $request->id], ['id' => "required"], [
-                'id.required' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة"
+            $validate = Validator::make(['id' => $request->id], ['id' => "required|not_in:1"], [
+                'id.required' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة",
+                "id.not_in" => "لا يمكنك تعديل هذا المدير",
+
             ]);
             if ($validate->fails()) {
                 return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
@@ -243,7 +268,7 @@ class AdminController extends Controller
 
             $is_exist = user::find($request->id);
             if ($is_exist && $is_exist->delete()) {
-                return redirect()->back()->with("success" , "تم الحذف بنجاح");
+                return redirect()->back()->with("success", "تم الحذف بنجاح");
             }
             return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
@@ -251,6 +276,30 @@ class AdminController extends Controller
                 'exception' => $e
             ]);
             return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+        }
+    }
+    public function restore (Request $request) {
+        try {
+            $validate = Validator::make(['id' => $request->id], ['id' => "required|not_in:1"], [
+                'id.required' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة",
+                "id.not_in" => "لا يمكنك تعديل هذا المدير",
+
+            ]);
+            if ($validate->fails()) {
+                return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+            }
+
+
+            $is_exist = user::where("type" , "admin")->onlyTrashed()->find($request->id);
+            if ($is_exist && $is_exist->restore()) {
+                return redirect()->back()->with("success", "تمت الاستعادة بنجاح");
+            }
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+        } catch (Exception $e) {
+            // Log::error("حدث خطأ: " . $e->getMessage(), [
+            //     'exception' => $e
+            // ]);
+            return redirect()->back()->with("error", $e->getMessage());
         }
     }
 }

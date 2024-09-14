@@ -8,6 +8,7 @@ use App\Models\City;
 use App\Models\Monitor;
 use App\Models\User;
 use Exception;
+use Google\Service\Dfareporting\Resource\Cities;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -30,14 +31,14 @@ class MonitorController extends Controller
      */
     public function index(Request $request)
     {
+        // dd($request->all());
         try {
-
-
             $validate = Validator::make(
                 $request->all(),
                 [
-                    "city_id" => "exists:cities,id",
-                    "area_id" => "exists:areas,id",
+                    "city_id" => "nullable|exists:cities,id",
+                    "area_id" => "nullable|exists:areas,id",
+                    'show' => "in:monitors,deleted,baned"
                 ],
                 [
                     "city_id.exists" => "حدث حطأ , حاول مرا اخرى",
@@ -46,43 +47,53 @@ class MonitorController extends Controller
             );
 
             if ($validate->fails()) {
+                // dd('');
                 // dd($request->input("search_name"));
                 return redirect()->back()->withErrors($validate)->withInput($request->all());
             }
 
-
-
             $flag = "show-monitors";
 
             $cities = City::all();
-
-            $query = Monitor::query();
-            // dd($request->input("search_name"));
+            $show = $request->input('show') ? $request->input('show') : "monitors";
             $searchName = $request->input('search_name');
             $selectedCityId = $request->input("city_id");
             $selectedAreaId = $request->input("area_id");
             $areas = $selectedCityId ? Area::where('city_id', $selectedCityId)->get() : '';
+            if ($show == "monitors") {
 
+                $query = Monitor::query();
+                if ($selectedAreaId) {
+                    $query->where("area_id", $selectedAreaId);
+                } elseif ($selectedCityId) {
+                    $query->whereIn("area_id", (Area::where("city_id", $selectedCityId)->pluck("id")->toArray()));
+                }
 
-            if ($selectedCityId) {
-                $query->whereIn("area_id", (Area::where("city_id", $selectedCityId)->pluck("id")->toArray()));
-            } elseif ($selectedAreaId) {
-                $query->where("area_id", $selectedAreaId);
-            }
+                $query_2 = clone $query;
+                if ($searchName) {
+                    $query_2->whereIn('monitor_id', User::where("type", "monitor")->where("name", 'LIKE', "%{$searchName}%")->pluck('id')->toArray());
+                }
 
-            $query_2 = clone $query;
-            if ($searchName) {
-                $query_2->whereIn('monitor_id', User::where("type", "monitor")->where("name", 'LIKE', "%{$searchName}%")->pluck('id')->toArray());
-            }
-
-            if ($selectedCityId || $selectedAreaId || $searchName) {
-                $monitors = $query_2->get();
+                if ($selectedCityId || $selectedAreaId || $searchName) {
+                    $monitors = $query_2->get();
+                } else {
+                    $monitors = null;
+                }
             } else {
-                $monitors = null;
-            }
-            // dd($searchName);
+                $query = User::query();
 
-            return view("panel.dashboard.monitors.monitors", compact("flag", "monitors", "cities", "areas", 'selectedCityId', 'selectedAreaId', 'searchName'));
+                if ($searchName) {
+                    $query->where("name", 'LIKE', "%{$searchName}%");
+                }
+                if ($show == 'baned') {
+                    $query->onlyTrashed()->where("type", "monitor");
+                } elseif ($show == "deleted") {
+                    $query->whereNotIn('id', Monitor::distinct()->pluck('monitor_id')->toArray())->where("type", "monitor");
+                }
+                $monitors = $query->get();
+            }
+
+            return view("panel.dashboard.monitors.monitors", compact("flag", 'show', "monitors", "cities", "areas", 'selectedCityId', 'selectedAreaId', 'searchName'));
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
@@ -134,8 +145,7 @@ class MonitorController extends Controller
                     'name' => 'required|string|regex:/^[\p{Arabic}\s]+$/u|max:255',
                     'email' => 'required|email|unique:users,email',
                     'password' => 'required|string|min:8|confirmed',
-                    'mobile' => 'required|nullable|string|max:20|unique:users,mobile',
-                    // "active" => 'nullable|boolean',
+                    'mobile' => 'required|nullable|regex:/^09[0-9]{8}$/|string|max:20|unique:users,mobile',
                     "area_id" => 'nullable|exists:areas,id',
                 ],
                 [
@@ -157,6 +167,7 @@ class MonitorController extends Controller
                     'mobile.string' => 'يجب أن يكون رقم الهاتف نصًا.',
                     'mobile.max' => 'لا يمكن أن يتجاوز طول رقم الهاتف 20 حرفًا.',
                     "mobile.unique" => "هذا الرقم قيد الاستخدام بالفعل",
+                    "mobile.regex" => 'يجب ادخال رقم هاتف صحيح',
 
                     'area_id.exists' =>  'المنطقة غير موجودة '
                 ]
@@ -213,13 +224,12 @@ class MonitorController extends Controller
      */
     public function edit(Request $request)
     {
-        // dd($request->all());
 
         try {
             $validate = Validator::make(
                 $request->all(),
                 [
-                    'id' => "required|exists:monitors,id",
+                    'id' => "required|exists:users,id",
                     // "city_id" => "nullable|exists:cities,id",
                     // "area_id" => "exists:areas,id",
                     // "name" => "nullable",
@@ -239,27 +249,27 @@ class MonitorController extends Controller
                 return redirect()->back()->withInput($request->all())->withErrors($validate);
             }
 
-            $monitor = Monitor::find($request->id);
+            $monitor = User::find($request->id);
+
             if (!$monitor) {
                 return redirect()->back()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
             }
             $cities = city::all();
-            $areas = Area::where("city_id", $request->input("city_id") ? $request->input("city_id") : $monitor->area->city->id)->get();
-            // dd($request->input("area_id"))
-            // dd($request->all());
-            $name = $request->input("name") ? $request->input("name") : $monitor->user->name;
-            $email = $request->input("email") ? $request->input("email") : $monitor->user->email;
-            // dd($email);
-            $mobile = $request->input('mobile') ? $request->input('mobile') : $monitor->user->mobile;
-            $selectedCityId = $request->input("city_id") ? $request->input("city_id") : $monitor->area->city->id;
-            $selectedAreaId = $request->input("area_id") ? $request->input("area_id") : $monitor->area->id;
+            $areas = Area::whereIn("id", $monitor->monitors ? $monitor->monitors()->pluck('area_id')->toArray() : null)->get();
+
+            // dd($areas);
+            $name = $request->input("name") ? $request->input("name") : $monitor->name;
+            $email = $request->input("email") ? $request->input("email") : $monitor->email;
+            $mobile = $request->input('mobile') ? $request->input('mobile') : $monitor->mobile;
+            $selectedCityId = $request->input("city_id") ? $request->input("city_id") : null;
+            $selectedAreaId = $request->input("area_id") ? $request->input("area_id") : null;
             $flag = 'show-monitors';
             return view("panel.dashboard.monitors.edit", compact('flag', 'monitor', 'cities', "areas", 'selectedCityId', 'selectedAreaId', 'name', 'email', 'mobile'));
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
+            return redirect()->back()->with("error", $e->getMessage());
         }
     }
 
@@ -272,7 +282,7 @@ class MonitorController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'id' => "required|exists:monitors,id",
+                'id' => "required|exists:users,id",
                 "email" => [
                     "email",
                     Rule::unique("users", "email")->where("type", "monitor")->ignore($request->email, 'email'),
@@ -284,14 +294,6 @@ class MonitorController extends Controller
                     Rule::unique("users", "mobile")->where("type", "monitor")->ignore($request->mobile, 'mobile'),
                 ],
                 'name' => 'required|string|regex:/^[\p{Arabic}\s]+$/u|max:255',
-                'city_id' => 'required|exists:cities,id',
-                'area_id' => [
-                    'required',
-                    Rule::exists('areas', 'id')->where(function (Builder $query) use ($request) {
-                        return $query->where('city_id', $request->city_id);
-                    }),
-
-                ],
             ],
             [
                 'id.required' => "حصل خطأ غير متوقع",
@@ -305,27 +307,19 @@ class MonitorController extends Controller
                 'mobile.max' => 'لا يمكن أن يتجاوز طول رقم الهاتف 20 رقم.',
                 'mobile.unique' => 'رقم الهاتف مُستخدم بالفعل.',
 
-
                 'name.required' => 'يرجى إدخال الاسم.',
                 'name.string' => 'يجب أن يكون الاسم نصيًا.',
                 'name.regex' => 'يجب أن يحتوي الاسم على أحرف عربية فقط.',
                 'name.max' => 'يجب أن لا يتجاوز الاسم 255 حرفًا.',
-
-                'city_id.required' => 'يرجى تحديد المدينة.',
-                'city_id.exists' => 'المدينة المحددة غير موجودة.',
-
-                'area_id.required' => 'يرجى تحديد المنطقة.',
-                'area_id.exists' => 'المنطقة المحددة غير موجودة ضمن المدينة المحددة.',
             ]
         );
-
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput($request->all());
         }
 
         try {
-            $monitor = Monitor::find($request->id);
+            $monitor = User::where("type", "monitor")->where('id', $request->id)->first();
 
             if (!$monitor) {
                 return redirect()->back()->with('error', 'المشرف غير موجود.');
@@ -335,13 +329,20 @@ class MonitorController extends Controller
                 "email" => $request->email,
                 "mobile" => $request->mobile,
             ];
-            if ($monitor->update(['area_id' => $request->area_id,]) && $monitor->user->update($data)) {
+            // dd($request->area_id);
+            if ($request->input("area_id")) {
+                $deleted_areas = json_decode($request->area_id);
+                foreach ($deleted_areas as $key=>$area_id){
+                    $monitor->monitors()->where('area_id' , $area_id)->forceDelete();
+                }
+            }
+            if ($monitor->update($data)) {
                 return redirect()->route("monitors.show")->with("success", 'تم التعديل بنجاح');
             } else {
                 return redirect()->back()->with('error', 'لم يتم التعديل , حاول مرة اخرى');
             }
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'حدث خطأ أثناء تحديث المشرف. يرجى المحاولة لاحقاً.');
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
@@ -366,7 +367,7 @@ class MonitorController extends Controller
 
             $is_exist = Monitor::find($request->id);
             if ($is_exist && $is_exist->forceDelete()) {
-                return redirect()->back()->with("success", "تم حذف المشرف بنجاح");
+                return redirect()->back()->with("success", "تم اقالة المشرف بنجاح");
             }
             return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
@@ -377,6 +378,56 @@ class MonitorController extends Controller
         }
     }
 
+    public function ban(Request $request)
+    {
+        $validate = Validator::make(['id' => $request->id], ['id' => "required"], [
+            'id.required' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة"
+        ]);
+        if ($validate->fails()) {
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+        }
+        try {
+            $monitor = User::where("type", "monitor")->where('id', $request->id)->first();
+
+            if ($monitor->Monitors()->exists()) {
+                foreach ($monitor->monitors as $monitors) {
+                    $monitors->forceDelete();
+                }
+            }
+
+            if ($monitor->delete()) {
+                return redirect()->back()->with("success", "تم حظر المشرف بنجاح");
+            } else {
+                return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+            }
+        } catch (Exception $e) {
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return redirect()->back()->with("error", $e->getMessage());
+        }
+    }
+
+    public function restore(Request $request)
+    {
+        $validateor = Validator::make([$request->id], ['id' => 'requried'], ['id.requried' => 'حصل خطا غير معروف , حاول مرة اخرى']);
+        if ($validateor->fails()) {
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+        }
+        try {
+            $monitor = User::onlyTrashed()->where("type", "monitor")->where('id', $request->id)->first();
+            if ($monitor->restore()) {
+                return redirect()->back()->with("success", "تم استرجاع المشرف بنجاح");
+            } else {
+                return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+            }
+        } catch (Exception $e) {
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return redirect()->back()->with("error", $e->getMessage());
+        }
+    }
 
 
     public function active(Request $request)
@@ -415,6 +466,66 @@ class MonitorController extends Controller
                 'exception' => $e
             ]);
             return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+        }
+    }
+
+    public function Employ(Request $request)
+    {
+        // dd($request->all());
+        $validate = Validator::make(
+            $request->all(),
+            [
+                'id' => "required",
+                "city_id" => "nullable|exists:cities,id",
+                "area_id" => "nullable|exists:areas,id",
+            ],
+        );
+        if ($validate->fails()) {
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+        }
+        try {
+            $monitor = User::where('type', 'monitor')->where('id', $request->id)->first();
+            $cities = City::all();
+            $areas = $request->input("city_id") ? Area::where("city_id", $request->input("city_id"))->get() : "";
+            $selectedCityId = $request->input("city_id") ? $request->input("city_id") : '';
+            $selectedAreaId = $request->input("area_id") ? $request->input("area_id") : '';
+
+
+            return view("panel.dashboard.monitors.employ", compact("areas", 'monitor', 'cities', 'selectedCityId', 'selectedAreaId'));
+        } catch (Exception $e) {
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return redirect()->back()->with("error", $e->getMessage());
+        }
+    }
+
+
+    public function SetEmploy(Request $request)
+    {
+        $validate = Validator::make(
+            $request->all(),
+            [
+                'id' => "required",
+                "area_id" => "required|exists:areas,id",
+            ],
+        );
+        if ($validate->fails()) {
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+        }
+        // dd($request->all());
+        try {
+            $monitor = User::where('type', 'monitor')->where('id', $request->id)->first();
+            if ($monitor->Monitors()->create(['area_id' => $request->area_id])) {
+                return redirect()->route("monitors.show")->with("success", "تم تعيين المشرف بنجاح");
+            } else {
+                return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+            }
+        } catch (Exception $e) {
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return redirect()->back()->with("error", $e->getMessage());
         }
     }
 }

@@ -46,118 +46,118 @@
 
             </script>
 
-<style>
-    .table-container {
-        margin: 0px;
-        width: 100%; /* يضمن أن الجدول يأخذ عرض الشاشة بالكامل */
-        border: 1px solid #ddd;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-    .data-table {
-        width: 100%; /* يجعل الجدول يأخذ عرض الشاشة بالكامل */
-        border-collapse: collapse; /* إزالة الفراغات بين الخلايا */
-    }
+        <style>
+            .table-container {
+                margin: 0px;
+                width: 100%; /* يضمن أن الجدول يأخذ عرض الشاشة بالكامل */
+                border: 1px solid #ddd;
+                border-radius: 12px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+            }
+            .data-table {
+                width: 100%; /* يجعل الجدول يأخذ عرض الشاشة بالكامل */
+                border-collapse: collapse; /* إزالة الفراغات بين الخلايا */
+            }
 
 
-    .table-title {
-        background-color: #ffffff; /* لون خلفية العنوان */
-        color: rgb(0, 0, 0); /* لون النص */
-        padding: 10px;
-        cursor: pointer;
-        text-align:right;
-        font-size: 1.5em;
-        display: flex; /* استخدام الفليكس لتوزيع العناصر */
-        justify-content: space-between; /* توزيع المساحة بين العناصر */
-        align-items: center; /* محاذاة العناصر في المنتصف */
-    }
+            .table-title {
+                background-color: #ffffff; /* لون خلفية العنوان */
+                color: rgb(0, 0, 0); /* لون النص */
+                padding: 10px;
+                cursor: pointer;
+                text-align:right;
+                font-size: 1.5em;
+                display: flex; /* استخدام الفليكس لتوزيع العناصر */
+                justify-content: space-between; /* توزيع المساحة بين العناصر */
+                align-items: center; /* محاذاة العناصر في المنتصف */
+            }
 
-    .table-title:hover {
-        background-color: #bfd4e2; /* تأثير عند التحويم */
-    }
+            .table-title:hover {
+                background-color: #bfd4e2; /* تأثير عند التحويم */
+            }
 
-    table {
-        width: 100%;
-        border-collapse: collapse; /* إزالة الفراغات بين الخلايا */
-    }
+            table {
+                width: 100%;
+                border-collapse: collapse; /* إزالة الفراغات بين الخلايا */
+            }
 
-    th, td {
-        padding: 12px;
-        text-align: center;
-        border-bottom: 1px solid #ddd; /* خط تحت الخلايا */
-    }
+            th, td {
+                padding: 12px;
+                text-align: center;
+                border-bottom: 1px solid #ddd; /* خط تحت الخلايا */
+            }
 
-    th {
-        background-color: #f2f2f2; /* لون خلفية رأس الجدول */
-    }
+            th {
+                background-color: #f2f2f2; /* لون خلفية رأس الجدول */
+            }
 
-    tr:hover {
-        background-color: #b5c6ca; /* تأثير عند التحويم على الصفوف */
-    }
+            tr:hover {
+                background-color: #e3edf0; /* تأثير عند التحويم على الصفوف */
+            }
 
-    .edit-button {
-        background-color: #008CBA; /* لون زر التعديل */
-        color: white; /* لون نص الزر */
-        border: none;
-        padding: 8px 12px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+            .edit-button {
+                background-color: #008CBA; /* لون زر التعديل */
+                color: white; /* لون نص الزر */
+                border: none;
+                padding: 8px 12px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                border-radius: 5px;
+                cursor: pointer;
+            }
 
-    .edit-button:hover {
-        background-color: #007B9A; /* تأثير عند التحويم على الزر */
-    }
+            .edit-button:hover {
+                background-color: #007B9A; /* تأثير عند التحويم على الزر */
+            }
 
-    .table-title i {
-        transition: transform 0.3s; /* تأثير عند التحويم */
-        margin-left: 10px; /* مسافة بين العنوان والأيقونة */
-    }
+            .table-title i {
+                transition: transform 0.3s; /* تأثير عند التحويم */
+                margin-left: 10px; /* مسافة بين العنوان والأيقونة */
+            }
 
-    .options-menu {
-        display: none;
-        position: absolute;
-        top: -60px;
-        right: -150px;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        z-index: 100;
-        padding: 10px;
-        width: 150px;
-        transition: all 0.3s ease;
-    }
+            .options-menu {
+                display: none;
+                position: absolute;
+                top: -60px;
+                right: -150px;
+                background-color: #fff;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 100;
+                padding: 10px;
+                width: 150px;
+                transition: all 0.3s ease;
+            }
 
-    .options-menu button {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        background: none;
-        border: none;
-        color: #333;
-        padding: 8px;
-        cursor: pointer;
-        text-align: right; /* لجعل النص العربي يظهر بالكامل */
-        white-space: nowrap; /* منع النص من الانتقال لسطر آخر */
-        transition: background-color 0.2s ease;
-        font-size: 14px;
-    }
+            .options-menu button {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                background: none;
+                border: none;
+                color: #333;
+                padding: 8px;
+                cursor: pointer;
+                text-align: right; /* لجعل النص العربي يظهر بالكامل */
+                white-space: nowrap; /* منع النص من الانتقال لسطر آخر */
+                transition: background-color 0.2s ease;
+                font-size: 14px;
+            }
 
-    .options-menu button:hover {
-        background-color: #f0f0f0;
-        border-radius: 4px;
-    }
+            .options-menu button:hover {
+                background-color: #f0f0f0;
+                border-radius: 4px;
+            }
 
-    .options-menu i {
-        margin-left: 10px; /* جعل الأيقونة على يسار النص */
-        color: #555;
-    }
+            .options-menu i {
+                margin-left: 10px; /* جعل الأيقونة على يسار النص */
+                color: #555;
+            }
 
-</style>
+        </style>
         </div>
         <div class="content-body">
             <br><br>
@@ -210,6 +210,10 @@
 
                 <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
                     <form method="GET" action="{{ route('cities.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <select name="deleted" id="" onchange="this.form.submit()" class="custom-select" style="width:150px">
+                            <option value=''  {{ $deleted == '' ? 'selected' : '' }} >المدن المخدمة</option>
+                            <option value="deleted"  {{ $deleted == 'deleted' ? 'selected' : '' }} >المدن المحذوفة</option>
+                        </select>
                         <div style="position: relative; display: flex; align-items: center; width: 200px;">
                             <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم المدينة" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
                             <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
@@ -217,10 +221,6 @@
                         @if ($searchName) 
                         <button type="button" class="btn btn-primary rounded-button" style="padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;" onclick="document.getElementById('search_name').value=''; this.form.submit();">إلغاء</button>
                         @endif 
-                        <div>
-                            <input id="deleted" name="deleted" onchange="this.form.submit()" type="checkbox" {{$deleted?"checked":null}} value="deleted">
-                            <label for="deleted">المحظورين</label>    
-                        </div>
                     </form>
                     
                     <table>
@@ -232,7 +232,7 @@
                             <th>عدد عمال التوصيل</th>
                             <th>عدد المشتركين</th>
                             @if (Auth::User()->type == "admin")
-                                <th>العمليات</th>
+                                <th></th>
                             @endif
                         </tr>
                     </thead>
@@ -289,6 +289,7 @@
                                                     </button>
                                                 </form>
                                             @endif
+                                        
                                         </div>
                                     </div>
                                 </td>

@@ -16,16 +16,13 @@ class DashboardController extends Controller
         $PageTitle = 'Dashboard';
         $flag = 'home';
         $citiesCount = City::count();
-
         $areasCount = Area::count();
-
+        $adminCount = User::where("type", "admin")->count();
         $clientsCount = User::where('type', 'client')->count();
-
         $monitorsCount = User::where('type', 'monitor')->count();
-
         $deliversCount = User::where('type', 'deliver')->count();
 
-        return view('panel.Dashboard.index', compact('PageTitle', 'flag', 'citiesCount', 'areasCount', 'clientsCount', 'monitorsCount', 'deliversCount'));
+        return view('panel.Dashboard.index', compact('PageTitle', 'flag', 'citiesCount', 'areasCount', 'adminCount' , 'clientsCount', 'monitorsCount', 'deliversCount'));
     }
 
 
@@ -37,7 +34,7 @@ class DashboardController extends Controller
 
     public function serverError()
     {
-        return view('error.500');   
+        return view('error.500');
     }
     public function Forbidden()
     {

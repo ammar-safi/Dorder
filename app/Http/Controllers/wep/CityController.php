@@ -24,6 +24,7 @@ class CityController extends Controller
     public function index(Request $request)
     {
         try {
+            // dd($request->deleted);
             $flag = "show-cities";
             $deleted = $request->input("deleted");
             $query = City::query();
@@ -31,7 +32,7 @@ class CityController extends Controller
             if ($searchName) {
                 $query->where("title", "like", "%{$searchName}%");
             }
-            if ($request->input("deleted")  == 'deleted') {
+            if ($deleted  == 'deleted') {
                 $cities = $query->onlyTrashed()->get();
             } else {
                 $cities = $query->get();
@@ -230,7 +231,7 @@ class CityController extends Controller
         ]);
 
         try {
-            $city = City::onlyTrashed()->findOrFail(request()->id);
+            $city = City::onlyTrashed()->find(request()->id);
 
             if ($city) {
 

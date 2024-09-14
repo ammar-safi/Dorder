@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class PackageController extends Controller
 {
@@ -145,7 +146,7 @@ class PackageController extends Controller
             $request->all(),
             [
                 'id' => 'required|exists:packages,id',
-                'title' => 'required|string|max:255|regex:/^[a-zA-Z\s\p{Arabic}]+$/u|unique:packages,title',
+                'title' => ['required','string','max:255','regex:/^[a-zA-Z\s\p{Arabic}]+$/u',Rule::unique('packages' , 'title')->ignore($request->id)],
                 'orderCount' => 'required|integer|min:1',
                 'totalPrice' => 'required|numeric|min:0',
             ],

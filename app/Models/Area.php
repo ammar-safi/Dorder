@@ -66,23 +66,32 @@ class Area extends Model
         return $this->belongsToMany(User::class, "delivers", "area_id", "deliver_id");
     }
 
-
+    // public function TrashedMonitors() {
+    //     return Monitor::onlyTrashed()->where("area_id" , $this->id)->get();
+    // }
 
 
     /**
      * Append 
      */
 
-    public function getCountOfMonitorsAttribute()
-    {
-        return $this->Monitors->count();
-    }
-    public function getCountOfDeliversAttribute()
-    {
-        return $this->Delivers->count();
-    }
+     public function getCountOfMonitorsAttribute()
+     {
+         return $this->deleted_at
+             ? $this->Monitors()->onlyTrashed()->count()
+             : $this->Monitors()->count();
+     }
+     public function getCountOfDeliversAttribute()
+     {
+         return $this->deleted_at
+             ? $this->Delivers()->onlyTrashed()->count()
+             : $this->Delivers()->count();
+     }
     public function getCountOfClientsAttribute()
     {
-        return $this->Users()->where("type", '=', 'client')->count();
+        return $this->deleted_at
+        ?$this->Users()->onlyTrashed()->where("type", '=', 'client')->count()
+        :$this->Users()->where("type", '=', 'client')->count();
+        
     }
 }

@@ -44,6 +44,17 @@
                         </div>
                     </div>
 
+                    <!-- Admins Card -->
+                    <div class="col-md-4">
+                        <div class="card shadow-lg rounded-lg" style="border: none;">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #001a0b;">المدراء  </h5>
+                                <p class="card-text">إدارة {{in_array($adminCount , range(2,9))? $adminCount . " مدراء" : $adminCount  . " مدير"}} </p>
+                                <a href="{{ route('admins.show') }}" class="btn btn-primary" style="background-color: #27ae60; border: none; border-radius: 20px;">إدارة المدراء</a>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Users Card -->
                     <div class="col-md-4">
                         <div class="card shadow-lg rounded-lg" style="border: none;">
