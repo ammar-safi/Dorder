@@ -27,37 +27,40 @@ class ClientController extends Controller
      */
     public function index(Request $request)
     {
-        try {
-            $validate = Validator::make(
-                $request->all(),
-                [
-                    "city_id" => "nullable|exists:cities,id",
-                    'area_id' => [
-                        Rule::exists('areas', 'id')->where(function (Builder $query) use ($request) {
-                            return $query->where('city_id', $request->city_id);
-                        }),
+        $validate = Validator::make(
+            $request->all(),
+            [
+                "city_id" => "nullable|exists:cities,id",
+                'area_id' => [
+                    Rule::exists('areas', 'id')->where(function (Builder $query) use ($request) {
+                        return $query->where('city_id', $request->city_id);
+                    }),
 
-                    ]
-                ],
-                [
-                    "city_id.exists" => "حدث حطأ , حاول مرا اخرى",
-                    "area_id.exists" => "حدث حطأ , حاول مرا اخرى",
                 ]
-            );
-            if ($validate->fails()) {
-                return redirect()->back()->with("error", 'حدث خطأ اثناء البحث, حاول مرا اخرى')->withErrors($validate->errors());;
-            }
+            ],
+            [
+                "city_id.exists" => "حدث حطأ , حاول مرا اخرى",
+                "area_id.exists" => "حدث حطأ , حاول مرا اخرى",
+            ]
+        );
+        if ($validate->fails()) {
+            return redirect()->back()->with("error", 'حدث خطأ اثناء البحث, حاول مرا اخرى')->withErrors($validate->errors());
+        }
 
-
+        try {
             $flag = 'clients-show';
             $cities = City::all();
-            $query = User::query();
+            $query = User::query()->where("type", 'client');
 
+            $show = $request->input('show', 'show');
             $searchName = $request->input('search_name');
             $selectedCityId = $request->input("city_id");
             $selectedAreaId = $request->input("area_id");
             $areas = $selectedCityId ? Area::where('city_id', $selectedCityId)->get() : '';
 
+            if ($show == "deleted") {
+                $query->onlyTrashed();
+            }
             if ($selectedAreaId) {
                 $query->where("area_id", $selectedAreaId);
             } elseif ($selectedCityId) {
@@ -66,13 +69,12 @@ class ClientController extends Controller
             if ($searchName) {
                 $query->where("name", "like", "%" . $searchName . "%");
             }
-
-            if ($selectedAreaId || $selectedCityId || $searchName) {
-                $clients = $query->where("type", 'client')->get();
+            if ($selectedAreaId || $selectedCityId || $searchName || $show == "deleted") {
+                $clients = $query->get();
             } else {
-                $clients = User::Where("type", 'client')->get();
+                $clients = null;
             }
-            return view('panel.dashboard.clients.clients', compact('clients', 'cities', 'areas', 'flag', 'selectedCityId', 'selectedAreaId', 'searchName'));
+            return view('panel.dashboard.clients.clients', compact('clients', 'cities', 'areas', 'flag', 'selectedCityId', 'selectedAreaId', 'searchName' , "show"));
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -186,10 +188,10 @@ class ClientController extends Controller
                         if ($client->image && Storage::exists('public/' . $client->image->url)) {
                             Storage::delete('public/' . $client->image->url);
                             $client->image->delete();
-                        }                        
+                        }
                         $file = $request->file('profile_image');
                         $filename = time() . '_' . $file->getClientOriginalName();
-                        $path = $file->storeAs('clients', $filename , 'public');
+                        $path = $file->storeAs('clients', $filename, 'public');
 
                         $image = new Image();
                         $image->url = $path;
@@ -236,6 +238,24 @@ class ClientController extends Controller
             }
 
             return redirect()->back()->with('error', 'حدث خطأ اثناء الحذف, حاول مرا اخرى');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function restore(Request $request)
+    {
+        $validate = Validator::make($request->all(), ['id' => 'required|exists:users']);
+        if ($validate->fails()) {
+            return redirect()->back()->with("error", 'حدث خطأ, حاول مرا اخرى')->withErrors($validate->errors());;
+        }
+        try {
+            $client = User::Where("type", 'client')->where("id", $request->id)->onlyTrashed()->first();
+            if ($client->restore()) {
+                return redirect()->back()->with('success', 'تم استرجاع العميل بنجاح');
+            }
+
+            return redirect()->back()->with('error', 'حدث خطأ اثناء الاسترجاع, حاول مرا اخرى');
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

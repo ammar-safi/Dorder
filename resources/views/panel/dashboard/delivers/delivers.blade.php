@@ -168,22 +168,17 @@
                             {{session("error")}}
                     </p>
                 </div>  
-                
-
             @elseif(session()->has("success"))
-            <br><br>
-            <div style="background-color: #c4f8d4; border-right: 6px solid #0d9135; padding: 20px; border-radius: 10px;">
-                <p style="font-size: 20px; margin: 0;">
-                        <strong>
-                            {{session("success")}}
-                        </strong> 
-                    </p>
-                </div>                    
                 <br><br>
+                <div style="background-color: #c4f8d4; border-right: 6px solid #0d9135; padding: 20px; border-radius: 10px;">
+                    <p style="font-size: 20px; margin: 0;">
+                            <strong>
+                                {{session("success")}}
+                            </strong> 
+                        </p>
+                </div>                    
+                <br>
             @endif
-                
-            
-            
                 
             
             <div class="card-body">
@@ -196,78 +191,79 @@
                         <a href="{{ route('delivers.add') }}" id="add-deliver" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة عامل توصيل</a>
                         <a href="{{Route("employs.create" , ['route'=>'delivers.show'])}}" id="add-monitor" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;"> تعيين موظفين</a>
                     </div>
-                    </div>
                     @endif
                 </div>
-                <br>
-                <hr>
-                <br>
+            </div>
+            <br>
+            <hr>
+            <br>
 
 
-                <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-
-                    <form method="GET" action="{{ route('delivers.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                        @if($selectedAreaId)
+            <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                <form method="GET" action="{{ route('delivers.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    @if($selectedAreaId)
                         <input type="hidden" name="area_id" value="{{$selectedAreaId}}">
                     @endif
                     @if($selectedCityId)
                         <input type="hidden" name="city_id" value="{{$selectedCityId}}">
                     @endif
-                        
-                        <div style="position: relative; display: flex; align-items: center; width: 200px;">
-                            <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم عامل التوصيل" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
-                            <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
-                        </div>
-                        @if ($searchName) 
+                    <select name="show" id="" onchange="this.form.submit()" class="custom-select" style="width:180px">
+                        <option value='delivers'  {{ $show == 'delivers' ? 'selected' : '' }} >على رأس العمل</option>
+                        <option value="deleted"  {{ $show == 'deleted' ? 'selected' : '' }} >المتاحين للعمل</option>
+                        <option value="baned"  {{ $show == 'baned' ? 'selected' : '' }} >العمال المحظورين</option>
+                    </select>
+                    <div style="position: relative; display: flex; align-items: center; width: 200px;">
+                        <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم عامل التوصيل" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
+                        <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
+                    </div>
+                    @if ($searchName) 
                         <button type="button" class="btn btn-primary rounded-button" style="padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;" onclick="document.getElementById('search_name').value=''; this.form.submit();">إلغاء</button>
-                        @endif
-                    </form>
+                    @endif
+                </form>
                     
-                    <form method="GET" action="{{ route('delivers.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
-                        <input type="hidden" name="search_name" value="{{$searchName}}">
-                        {{-- <label for="city_id" style="margin: 0; font-size: 0.875rem;">حدد مدينة:</label> --}}
-                        <select name="city_id" id="city_id" onchange="this.form.submit()" class="custom-select">
-                            <option value="">حدد مدينة</option>
-                            <option onclick='window.location.href="{{ route("delivers.show" , ["search_name"=>$searchName]) }}"'>الغاء تحديد مدينة</option>
+                <form method="GET" action="{{ route('delivers.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                    <input type="hidden" name="search_name" value="{{$searchName}}">
+                    <input type="hidden" name="show" value="{{$show}}">
+                    <select name="city_id" id="city_id" onchange="this.form.submit()" class="custom-select">
+                        <option value="">حدد مدينة</option>
+                        <option onclick='window.location.href="{{ route("delivers.show" , ["search_name"=>$searchName]) }}"'>الغاء تحديد مدينة</option>
 
-                            @foreach ($cities as $city)
-                                <option value="{{ $city->id }}" {{ $selectedCityId == $city->id ? 'selected' : '' }}>
-                                    {{ $city->title }}
+                        @foreach ($cities as $city)
+                            <option value="{{ $city->id }}" {{ $selectedCityId == $city->id ? 'selected' : '' }}>
+                                {{ $city->title }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+                    
+                @if ($selectedCityId)
+                    <form method="GET" action="{{ route('delivers.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                        <input type="hidden" name="show" value="{{$show}}">
+                        <input type="hidden" name="city_id" value="{{ $selectedCityId }}">
+                        <input type="hidden" name="search_name" value="{{ $searchName }}">
+                        <select name="area_id" id="area_id" onchange="this.form.submit()" class="custom-select">
+                            <option value="">حدد منطقة</option>
+                            @foreach ($areas as $area)
+                                <option value="{{ $area->id }}" {{ $selectedAreaId == $area->id ? 'selected' : '' }}>
+                                    {{ $area->title }}
                                 </option>
                             @endforeach
                         </select>
                     </form>
-                    
-                    @if ($selectedCityId)
-                        <form method="GET" action="{{ route('delivers.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
-                            <input type="hidden" name="city_id" value="{{ $selectedCityId }}">
-                            <input type="hidden" name="search_name" value="{{ $searchName }}">
-                            {{-- <label for="area_id" style="margin: 0; font-size: 0.875rem;">حدد منطقة:</label> --}}
-                            <select name="area_id" id="area_id" onchange="this.form.submit()" class="custom-select">
-                                <option value="">حدد منطقة</option>
-                                @foreach ($areas as $area)
-                                    <option value="{{ $area->id }}" {{ $selectedAreaId == $area->id ? 'selected' : '' }}>
-                                        {{ $area->title }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </form>
-                    @endif
-                </div>
-                
+                @endif
             </div>
-                
-
-<br><br>
+            <br><br>
 
                 
-                @if ($selectedCityId || $selectedAreaId || $searchName)
+            @if ($selectedCityId || $selectedAreaId || $searchName || $show != "delivers")
                 <table>
                     <thead>
                         <tr>
                             <th>الاسم</th>
-                            <th>المنطقة</th>
-                            <th>المحافظة</th>
+                            @if($show == "delivers")
+                                <th>المنطقة</th>
+                                <th>المحافظة</th>
+                            @endif
                             <th>البريد الاكتروني</th>
                             <th>رقم الهاتف</th>
                             {{-- <th>تاريخ الانضمام</th>
@@ -278,22 +274,16 @@
                             @endif
                         </tr>
                     </thead>
-                    <tbody>
-
-                        {{-- @dd($del) --}}
-                        
+                    <tbody>                        
                         @foreach ($delivers as $deliver)
-                        {{-- @dd($delivers) --}}
-                            {{-- @dd($monitor->user->name) --}}
                             <tr>
-                                <td>{{$deliver->user->name}}</td>
-                                <td>{{$deliver->area->title}}</td>
-                                <td>{{$deliver->area->city->title /*()->withTrashed()->first('title')->title*/}}</td>
-                                <td>{{$deliver->user->email}}</td>
-                                <td>{{$deliver->user->mobile}}</td>
-                                {{-- <td>{{$deliver->user->created_at}}</td>
-                                <td>{{$deliver->user->updated_at}}</td> --}}
-                                {{-- <td style="text-align:right">{{  ['🔴 غير نشط','🟢 نشط']  [$deliver->user->active]}} </td> --}}
+                                <td>{{$deliver->name}}</td>
+                                @if($show == "delivers")
+                                    <td>{{$deliver->deliver->area->title}}</td>
+                                    <td>{{$deliver->deliver->area->city->title /*()->withTrashed()->first('title')->title*/}}</td>
+                                @endif
+                                <td>{{$deliver->email}}</td>
+                                <td>{{$deliver->mobile}}</td>
                                 @if (Auth::User()->type == "admin")
                                 <td>
                                     <div style="position: relative; display: flex; justify-content: center;">
@@ -301,37 +291,48 @@
                                             <i class="fas fa-ellipsis-v"></i>
                                         </button>
                                         <div class="options-menu">
-                                            <form action="{{ route('delivers.edit')}}" method="GET" style="display: inline;">
-                                                @csrf
-                                                <input type="hidden" name="id" value="{{$deliver->id}}">
-                                                <input type="hidden" name="route" value="cities.show">
-                                                <button type="submit" id="edit" > <i class="fas fa-edit"></i>تعديل</button>
-                                            </form>
-                                             
-                                        
-                                        
-                                            <form action="{{ route('delivers.soft.delete')}}" method="POST" style="display: inline;">
-                                                @csrf
-                                                <input type="hidden" name="id" value="{{$deliver->id}}">
-                                                <input type="hidden" name="route" value="cities.show">
-                                                <button type="submit" id="delete"> <i class="fas fa-user-minus"></i>اقالة </button>
-                                            </form>
-                                            
+                                            @if($show == "deleted" || $show == "delivers")
+                                                <form action="{{ route('delivers.edit')}}" method="GET" style="display: inline;">
+                                                    @csrf
+                                                    <input type="hidden" name="id" value="{{$deliver->id}}">
+                                                    <button type="submit" id="edit" > <i class="fas fa-edit"></i>تعديل</button>
+                                                </form>
+                                                @if($show == "delivers")
+                                                    <form action="{{ route('delivers.soft.delete')}}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        <input type="hidden" name="id" value="{{$deliver->id}}">
+                                                        <button type="submit" id="delete"> <i class="fas fa-user-minus"></i>اقالة </button>
+                                                    </form>
+                                                @endif
+                                                @if($show == "deleted")
+                                                    <form action="{{ route('delivers.employ')}}" method="GET" style="display: inline;">
+                                                        <input type="hidden" name="id" value="{{$deliver->id}}">
+                                                        <button type="submit" id="delete"> <i class="fas fa-add"></i>تعيين منطقة </button>
+                                                    </form>
+                                                @endif
+                                                    <form action="{{ route('delivers.ban')}}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        <input type="hidden" name="id" value="{{$deliver->id}}">
+                                                        <button type="submit" id="delete"> <i class="fas fa-ban"></i>حظر </button>
+                                                    </form>
+                                            @elseif($show == "baned")
+                                                    <form action="{{ route('delivers.restore')}}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        <input type="hidden" name="id" value="{{$deliver->id}}">
+                                                        <button type="submit" id="delete"> <i class="fas fa-undo-alt"></i>الغاء الحظر </button>
+                                                    </form>
+                                            @endif 
                                         </div>
                                     </div>
                                 </td>
                                 @endif
-                                
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
-                @endif
-
-
-                </div>
-            </div>
+            @endif
+            <br><br><br>
         </div>
     </div>
 </div>
-    @include('panel.static.footer')
+@include('panel.static.footer')

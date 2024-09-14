@@ -128,9 +128,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ContactUs::class, 'client_id');
     }
-    public function Delivers()
+    public function Deliver()
     {
-        return $this->hasMany(Deliver::class, 'deliver_id');
+        return $this->hasOne(Deliver::class, 'deliver_id');
     }
     public function areas()
     {

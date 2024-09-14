@@ -196,8 +196,14 @@ Route::group(['prefix' => "/delivers", 'as' => 'delivers.', 'namespace' => "App\
       Route::get("/form/add", [DeliverController::class, 'create'])->name("add");
       Route::post("/store", [DeliverController::class, 'store'])->name('store');
 
+      // Employ a monitor 
+      Route::get("/employ", [DeliverController::class, 'Employ'])->name('employ');
+      Route::post("/employ", [DeliverController::class, 'SetEmploy'])->name('set.employ');
+
       // Soft Delete 
       Route::post("/delete", [DeliverController::class, "delete"])->name("soft.delete");
+      Route::post("/ban", [DeliverController::class, "ban"])->name("ban");
+      Route::post("/restore" , [DeliverController::class , "restore"])->name("restore");
    });
 });
 
@@ -232,6 +238,7 @@ Route::group(['prefix' => "/packages", 'as' => 'packages.', 'namespace' => "App\
        * Soft Delete 
        */
       Route::post("/delete", [packageController::class, "delete"])->name("soft.delete");
+      Route::post("/restore", [packageController::class, "restore"])->name("restore");
    });
 });
 
@@ -251,11 +258,13 @@ Route::group(['prefix' => "/clients", 'as' => 'clients.', 'namespace' => "App\Ht
       // Add package
       Route::get("/form/add", [ClientController::class, 'create'])->name("add");
       Route::post("/store", [ClientController::class, 'store'])->name('store');
+      
 
       /**
        * Soft Delete
        */
       Route::post("/delete", [ClientController::class, "delete"])->name("soft.delete");
+      Route::post("/restore", [ClientController::class, "restore"])->name("restore");
    });
 });
 

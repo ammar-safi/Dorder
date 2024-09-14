@@ -47,41 +47,116 @@
             </script>
 
             <style>
-                .options-menu i {
-                    margin-right: 10px;
-
+                .table-container {
+                    margin: 0px;
+                    width: 100%; /* يضمن أن الجدول يأخذ عرض الشاشة بالكامل */
+                    border: 1px solid #ddd;
+                    border-radius: 12px;
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                    overflow: hidden;
                 }
-                .options-menu button:hover {
-                    background-color: #f1f1f1;
+                .data-table {
+                    width: 100%; /* يجعل الجدول يأخذ عرض الشاشة بالكامل */
+                    border-collapse: collapse; /* إزالة الفراغات بين الخلايا */
+                }
+
+
+                .table-title {
+                    background-color: #ffffff; /* لون خلفية العنوان */
+                    color: rgb(0, 0, 0); /* لون النص */
+                    padding: 10px;
+                    cursor: pointer;
+                    text-align:right;
+                    font-size: 1.5em;
+                    display: flex; /* استخدام الفليكس لتوزيع العناصر */
+                    justify-content: space-between; /* توزيع المساحة بين العناصر */
+                    align-items: center; /* محاذاة العناصر في المنتصف */
+                }
+
+                .table-title:hover {
+                    background-color: #bfd4e2; /* تأثير عند التحويم */
                 }
 
                 table {
                     width: 100%;
-                    border-collapse: collapse;
-                    margin: 20px auto;
+                    border-collapse: collapse; /* إزالة الفراغات بين الخلايا */
                 }
 
-                th,
-                td {
-                    border: 1px solid #ddd;
-                    padding: 8px;
+                th, td {
+                    padding: 12px;
                     text-align: center;
+                    border-bottom: 1px solid #ddd; /* خط تحت الخلايا */
                 }
 
                 th {
-                    background-color: #f2f2f2;
+                    background-color: #f2f2f2; /* لون خلفية رأس الجدول */
                 }
 
-                .icon {
+                tr:hover {
+                    background-color: #e2e9eb; /* تأثير عند التحويم على الصفوف */
+                }
+
+                .edit-button {
+                    background-color: #008CBA; /* لون زر التعديل */
+                    color: white; /* لون نص الزر */
+                    border: none;
+                    padding: 8px 12px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    border-radius: 5px;
                     cursor: pointer;
-                    margin: 0 5px;
-                    font-size: 20px;
-                    color: #333;
                 }
 
-                .icon:hover {
-                    color: #007BFF;
+                .edit-button:hover {
+                    background-color: #007B9A; /* تأثير عند التحويم على الزر */
                 }
+
+                .table-title i {
+                    transition: transform 0.3s; /* تأثير عند التحويم */
+                    margin-left: 10px; /* مسافة بين العنوان والأيقونة */
+                }
+
+                .options-menu {
+                    display: none;
+                    position: absolute;
+                    top: -60px;
+                    right: -150px;
+                    background-color: #fff;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    z-index: 100;
+                    padding: 10px;
+                    width: 150px;
+                    transition: all 0.3s ease;
+                }
+
+                .options-menu button {
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    background: none;
+                    border: none;
+                    color: #333;
+                    padding: 8px;
+                    cursor: pointer;
+                    text-align: right; /* لجعل النص العربي يظهر بالكامل */
+                    white-space: nowrap; /* منع النص من الانتقال لسطر آخر */
+                    transition: background-color 0.2s ease;
+                    font-size: 14px;
+                }
+
+                .options-menu button:hover {
+                    background-color: #f0f0f0;
+                    border-radius: 4px;
+                }
+
+                .options-menu i {
+                    margin-left: 10px; /* جعل الأيقونة على يسار النص */
+                    color: #555;
+                }
+
             </style>
         </div>
         <div class="content-body">
@@ -143,6 +218,14 @@
                         @if($selectedCityId)
                             <input type="hidden" name="city_id" value="{{$selectedCityId}}">
                         @endif
+
+                        <select name="show" id="" onchange="this.form.submit()" class="custom-select" style="width:180px">
+                            <option value='show'  {{ $show == 'show' ? 'selected' : '' }} >الكل</option>
+                            <option value="deleted"  {{ $show == 'deleted' ? 'selected' : '' }} >النشطين</option>
+                            <option value="deleted"  {{ $show == 'deleted' ? 'selected' : '' }} >الغير نشطين</option>
+                            <option value="deleted"  {{ $show == 'deleted' ? 'selected' : '' }} >المحظورين</option>
+                        </select>
+
                         <div style="position: relative; display: flex; align-items: center; width: 200px;">
                             <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم العميل" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
                             <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
@@ -152,9 +235,9 @@
                         @endif
                     </form>
                     
-                    <form method="GET" action="{{ route('clients.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                    <form method="GET" action="{{ route('clients.show') }}" style="margin-bottom: 10px;width:200px; display: flex; align-items: center; gap: 5px;">
                         <input type="hidden" name="search_name" value="{{$searchName}}">
-                        {{-- <label for="city_id" style="margin: 0; font-size: 0.875rem;">حدد مدينة:</label> --}}
+                        <input type="hidden" name="show" value="{{$show}}">
                         <select name="city_id" id="city_id" onchange="this.form.submit()" class="custom-select">
                             <option value="">حدد مدينة</option>
                             @foreach ($cities as $city)
@@ -166,10 +249,10 @@
                     </form>
                     
                     @if ($selectedCityId)
-                        <form method="GET" action="{{ route('clients.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                        <form method="GET" action="{{ route('clients.show') }}" style="margin-bottom: 10px;width:200px; display: flex; align-items: center; gap: 5px;">
+                            <input type="hidden" name="show" value="{{$show}}">
                             <input type="hidden" name="search_name" value="{{$searchName}}">
                             <input type="hidden" name="city_id" value="{{ $selectedCityId }}">
-                            {{-- <label for="area_id" style="margin: 0; font-size: 0.875rem;">حدد منطقة:</label> --}}
                             <select name="area_id" id="area_id" onchange="this.form.submit()" class="custom-select">
                                 <option value="">حدد منطقة</option>
                                 @foreach ($areas as $area)
@@ -193,11 +276,6 @@
                         <input type="hidden" name="city_id" value="{{ $selectedCityId }}">
                         <input type="hidden" name="area_id" value="{{$selectedAreaId}}">
 
-
-                        <div>
-                            <input id="deleted" onchange="this.form.submit()" type="checkbox" value="deleted">
-                            <label for="deleted">المحظورين</label>    
-                        </div>
                     </form>
                 </div>
             </div>
@@ -206,7 +284,7 @@
             
             
             
-            @if ($selectedCityId || $selectedAreaId || $searchName)
+            @if ($selectedCityId || $selectedAreaId || $searchName ||$show != "show")
             <table>
                     <thead>
                         <tr>
@@ -252,23 +330,27 @@
                                         <button onclick="toggleOptions(this)" style="background: none; border: none; cursor: pointer;">
                                             <i class="fas fa-ellipsis-v"></i>
                                         </button>
-                                        <div class="options-menu" style="display: none; position: absolute; top: -60px; right: -100px; background-color: #f9f9f9; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); z-index: 100;">
-                                            @if (Auth::user()->type=="admin")
-                                            <form action="{{ route('clients.edit')}}" method="GET" style="display: block; margin: 0;">
-                                                @csrf
-                                                <input type="hidden" name="id" value="{{$client->id}}">
-                                                <button type="submit" style="background: none; border: none; color: rgb(4, 47, 139); padding: 8px 12px; width: 100%; text-align: left;">
-                                                    تعديل <i class="fas fa-edit"></i>
-                                                </button>
-                                            </form>
-                                            @endif
-                                            <form action="{{ route('clients.soft.delete')}}" method="POST" style="display: block; margin: 0;">
-                                                @csrf
-                                                <input type="hidden" name="id" value="{{$client->id}}">
-                                                <button type="submit" style="background: none; border: none; color: rgb(161, 17, 17); padding: 8px 12px; width: 100%; text-align: left;">
-                                                     حظر <i class="fas fa-user-minus"></i>
-                                                </button>
-                                            </form>
+
+                                        <div class="options-menu">
+                                            @if($show == "show")
+                                                @if (Auth::user()->type=="admin")
+                                                <form action="{{ route('clients.edit')}}" method="GET" style="display: inline;">
+                                                    <input type="hidden" name="id" value="{{$client->id}}">
+                                                    <button type="submit"><i class="fas fa-edit"></i>تعديل</button>
+                                                </form>
+                                                @endif
+                                                <form action="{{ route('clients.soft.delete')}}" method="POST" style="display: inline;">
+                                                    @csrf
+                                                    <input type="hidden" name="id" value="{{$client->id}}">
+                                                    <button type="submit"><i class="fas fa-user-minus"></i>حظر</button>
+                                                </form>
+                                            @elseif($show == "deleted") 
+                                                <form action="{{ route('clients.restore')}}" method="POST" style="display: inline;">
+                                                    @csrf
+                                                    <input type="hidden" name="id" value="{{$client->id}}">
+                                                    <button type="submit"><i class="fas fa-undo-alt"></i>لغاء الحظر</button>
+                                                </form>
+                                            @endif    
                                         </div>
                                     </div>     
                                 </td>

@@ -188,20 +188,22 @@
             <br>
             <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
                 <div style="width: 100%;" >
-                <!-- نموذج البحث عن المدينة بالاسم -->
-                <form method="GET" action="{{ route('packages.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                    <div style="position: relative; display: flex; align-items: center; width: 200px;">
-                        <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم الحزمة" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
-                        <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
-                    </div>
-                    @if ($searchName) 
-                    <button type="button" class="btn btn-primary rounded-button" style="padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;" onclick="document.getElementById('search_name').value=''; this.form.submit();">إلغاء</button>
-                    @endif
-                </form>
+                    <!-- نموذج البحث عن المدينة بالاسم -->
+                    <form method="GET" action="{{ route('packages.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <select name="show" id="" onchange="this.form.submit()" class="custom-select" style="width:180px">
+                            <option value='show'  {{ $show == 'show' ? 'selected' : '' }} > الحزم الفعالة</option>
+                            <option value="deleted"  {{ $show == 'deleted' ? 'selected' : '' }} > الحزم المحذوفة</option>
+                        </select>
+                        <div style="position: relative; display: flex; align-items: center; width: 200px;">
+                            <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم الحزمة" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
+                            <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
+                        </div>
+                        @if ($searchName) 
+                        <button type="button" class="btn btn-primary rounded-button" style="padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;" onclick="document.getElementById('search_name').value=''; this.form.submit();">إلغاء</button>
+                        @endif
+                    </form>
                 </div>
                 <div class="card-body">
-                   
-                    
                     <br>
                     <table>
                         <thead>
@@ -216,11 +218,8 @@
                                 @endif
                             </tr>
                         </thead>
-                        <tbody>
-    
-                            
-                            @foreach ($packages as $package)
-                                                    
+                        <tbody> 
+                            @foreach ($packages as $package)                     
                                 <tr>
                                     <td>{{$package->title}}</td>
                                     <td>{{$package->package_price}}</td>
@@ -233,36 +232,40 @@
                                             <button onclick="toggleOptions(this)" style="background: none; border: none; cursor: pointer;">
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
-                                            <div class="options-menu">
-                                            <form action="{{ Route("packages.edit") }}" method="GET" style="display: inline;">
-                                                <input type="hidden" name="id" value="{{$package->id}}">
-                                                <button type="submit" id="edit"><i class="fas fa-edit"></i> تعديل </button>
-                                            </form>
-                                            
-                                            <form action="{{ Route("packages.soft.delete") }}" method="POST" style="display: inline;">
-                                                @csrf
-                                                <input type="hidden" name="id" value="{{$package->id}}">
-                                                <button type="submit" id="delete"><i class="fas fa-trash"></i>حذف</button>
-                                            </form>
-                                            </div>
+                                            @if($show == "deleted")
+                                                <div class="options-menu">
+                                                    <form action="{{ Route("packages.restore") }}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        <input type="hidden" name="id" value="{{$package->id}}">
+                                                        <button type="submit" id="edit"><i class="fas fa-undo-alt"></i> استعادة </button>
+                                                    </form>
+                                                </div>
+                                            @else
+                                                <div class="options-menu">
+                                                    <form action="{{ Route("packages.edit") }}" method="GET" style="display: inline;">
+                                                        <input type="hidden" name="id" value="{{$package->id}}">
+                                                        <button type="submit" id="edit"><i class="fas fa-edit"></i> تعديل </button>
+                                                    </form>
+                                                    <form action="{{ Route("packages.soft.delete") }}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        <input type="hidden" name="id" value="{{$package->id}}">
+                                                        <button type="submit" id="delete"><i class="fas fa-trash"></i>حذف</button>
+                                                    </form>
+                                                </div>
+                                            @endif
                                         </div>
                                     </td> 
                                     @endif
-                                    
+                                        
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
-    
-                    </div>
                 </div>
-            
-        
-        
-        </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <div class="sidenav-overlay"></div>

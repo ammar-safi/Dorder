@@ -28,12 +28,16 @@ class PackageController extends Controller
 
         try {
             $query = Package::query();
+            $show = $request->input('show', 'show');
             $searchName = $request->input('search_name');
             if ($searchName) {
                 $query->where("title", 'LIKE', "%{$searchName}%");
             }
+            if ($show == "deleted") {
+                $query->onlyTrashed();
+            }
             $packages = $query->get();
-            return view("panel.dashboard.packages.packages", compact('flag', 'packages', 'searchName'));
+            return view("panel.dashboard.packages.packages", compact('flag','show' ,'packages', 'searchName'));
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
@@ -222,7 +226,29 @@ class PackageController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", $e->getMessage());
         }
     }
+
+    public function restore(Request $request) {
+        $validate = Validator::make(['id' => $request->id], ['id' => "required"], [
+            'id.required' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة"
+        ]);
+        if ($validate->fails()) {
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+        }
+        try {
+            $package = Package::onlyTrashed()->find($request->id);
+            if ($package->restore()) {
+                return redirect()->back()->with("success", "تم استرجاع الحزمة بنجاح");
+            }
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+        } catch (Exception $e) {
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return redirect()->back()->with("error", $e->getMessage());
+        }
+    }
+
 }

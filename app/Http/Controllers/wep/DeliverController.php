@@ -56,33 +56,49 @@ class DeliverController extends Controller
 
             $cities = City::all();
 
-            $query = Deliver::query();
+            $show = $request->input('show') ? $request->input('show') : "delivers";
             $searchName = $request->input('search_name');
             $selectedCityId = $request->input("city_id");
             $selectedAreaId = $request->input("area_id");
             $areas = $selectedCityId ? Area::where('city_id', $selectedCityId)->get() : '';
 
-            if ($selectedAreaId) {
-                $query->where("area_id", $selectedAreaId);
-            } elseif ($selectedCityId) {
-                $query->whereIn("area_id", (Area::where("city_id", $selectedCityId)->pluck("id")->toArray()));
+            $query = User::query()->where('type', 'deliver');
+
+            if ($show == "delivers") {
+                if ($selectedAreaId) {
+                    $query->whereIn(
+                        "id",
+                        Deliver::where('area_id', $selectedAreaId)->pluck('deliver_id')->toArray()
+                    );
+                } elseif ($selectedCityId) {
+                    $query->WhereIn(
+                        'id',
+                        Deliver::whereIn(
+                            "area_id",
+                            Area::where("city_id", $selectedCityId)->pluck("id")->toArray()
+                        )->pluck('deliver_id')->toArray()
+                    );
+                } else {
+                    $query->whereIn('id', Deliver::pluck('deliver_id')->toArray());
+                }
+            } elseif ($show == "baned") {
+                $query->onlyTrashed();
+            } elseif ($show == "deleted") {
+                $query->whereNotIn('id', Deliver::distinct()->pluck('deliver_id')->toArray());
             }
 
             if ($searchName) {
-                $query->whereIn('deliver_id', User::where("type", "deliver")->where("name", 'LIKE', "%{$searchName}%")->pluck('id')->toArray());
+                $query->where("name", 'LIKE', "%{$searchName}%");
             }
 
-            if ($selectedCityId || $selectedAreaId || $searchName) {
+            if ($selectedCityId || $selectedAreaId || $searchName || $show != "deliver") {
                 $delivers = $query->get();
             } else {
                 $delivers = null;
             }
-            return view("panel.dashboard.delivers.delivers", compact("flag", "delivers", "cities", "areas", 'selectedCityId', 'selectedAreaId', 'searchName'));
+            return view("panel.dashboard.delivers.delivers", compact("flag", "delivers", 'show', "cities", "areas", 'selectedCityId', 'selectedAreaId', 'searchName'));
         } catch (Exception $e) {
-            Log::error("حدث خطأ: " . $e->getMessage(), [
-                'exception' => $e
-            ]);
-            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", $e->getMessage());
         }
     }
 
@@ -106,7 +122,7 @@ class DeliverController extends Controller
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", "حصل خطأ غير معروف , الرجاء إعادة المحاولة");
         }
     }
 
@@ -122,7 +138,7 @@ class DeliverController extends Controller
                     'name' => 'required|string|regex:/^[\p{Arabic}\s]+$/u|max:255',
                     'email' => 'required|email|unique:users,email',
                     'password' => 'required|string|min:8|confirmed',
-                    'mobile' => 'required|nullable|string|max:20|unique:users,mobile',
+                    'mobile' => 'required|nullable|regex:/^09[0-9]{8}$/|string|max:20|unique:users,mobile',
                     // "active" => 'nullable|boolean',
                     "area_id" => 'nullable|exists:areas,id',
                 ],
@@ -145,6 +161,7 @@ class DeliverController extends Controller
                     'mobile.string' => 'يجب أن يكون رقم الهاتف نصًا.',
                     'mobile.max' => 'لا يمكن أن يتجاوز طول رقم الهاتف 20 حرفًا.',
                     "mobile.unique" => "هذا الرقم قيد الاستخدام بالفعل",
+                    'mobile.regex' => 'رقم الهاتف غير صالح.',
 
                     'area_id.exists' =>  'المنطقة غير موجودة '
                 ]
@@ -205,9 +222,9 @@ class DeliverController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'id' => "required|exists:delivers,id",
+                'id' => "required|exists:users,id",
                 "city_id" => "nullable|exists:cities,id",
-                "area_id" => "exists:areas,id",
+                "area_id" => "nullable|exists:areas,id",
             ],
             [
                 'id.required' => "حصل خطأ غير متوقع",
@@ -217,31 +234,29 @@ class DeliverController extends Controller
 
             ]
         );
-        // dd($request->);
         if ($validator->fails()) {
-            // dd("test");
-            return redirect()->back()->withErrors($validator)->withInput($request->all());
+            return redirect()->back()->withErrors($validator->errors()->first())->withInput($request->all());
         }
 
         try {
 
-            $deliver = Deliver::find($request->id);
+            $deliver = User::where('type', 'deliver')->find($request->id);
             if (!$deliver) {
                 return redirect()->back()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
             }
             $cities = city::all();
-            $areas = Area::where("city_id", $request->input("city_id") ? $request->input("city_id") : $deliver->area->city->id)->get();
+            $areas = Area::where("city_id", $request->input("city_id") ? $request->input("city_id") : ($deliver->deliver ? $deliver->deliver->area->city->id : null))->get();
             // dd($request->input("area_id"));
-            $name = $request->input("name") ? $request->input("name") : $deliver->user->name;
-            $email = $request->input("email") ? $request->input("email") : $deliver->user->email;
-            $mobile = $request->input('mobile') ? $request->input('mobile') : $deliver->user->mobile;
+            $name = $request->input("name") ? $request->input("name") : $deliver->name;
+            $email = $request->input("email") ? $request->input("email") : $deliver->email;
+            $mobile = $request->input('mobile') ? $request->input('mobile') : $deliver->mobile;
 
-            $selectedCityId = $request->input("city_id") ? $request->input("city_id") : $deliver->area->city->id;
-            $selectedAreaId = $request->input("area_id") ? $request->input("area_id") : $deliver->area->id;
+            $selectedCityId = $request->input("city_id") ? $request->input("city_id") : ($deliver->deliver ? $deliver->deliver->area->city->id : null);
+            $selectedAreaId = $request->input("area_id") ? $request->input("area_id") : ($deliver->deliver ? $deliver->deliver->area->id : null);
 
             return view("panel.dashboard.delivers.edit", compact('flag', 'deliver', 'cities', "areas", 'selectedCityId', 'selectedAreaId', 'name', 'email', 'mobile'));
         } catch (Exception $e) {
-            return redirect()->back()->with("error", "حدث خطأ , يرجى المحاولة لاحقا");
+            return redirect()->back()->with("error", $e->getMessage());
         }
     }
 
@@ -250,14 +265,16 @@ class DeliverController extends Controller
      */
     public function update(Request $request,)
     {
+        // dd($request->all());
         $validator = Validator::make(
             $request->all(),
             [
-                'id' => "required|exists:delivers,id",
+                'id' => ["required", Rule::exists('users', 'id')->where('type', "deliver")],
                 'name' => 'required|string|regex:/^[\p{Arabic}\s]+$/u|max:255',
-                'city_id' => 'required|exists:cities,id',
+                'city_id' => 'nullable|exists:cities,id',
                 'area_id' => [
-                    'required',
+                    'required_with:city_id',
+                    'nullable',
                     Rule::exists('areas', 'id')->where(function (Builder $query) use ($request) {
                         return $query->where('city_id', $request->city_id);
                     }),
@@ -294,10 +311,12 @@ class DeliverController extends Controller
                 'name.max' => 'يجب أن لا يتجاوز الاسم 255 حرفًا.',
 
                 'city_id.required' => 'يرجى تحديد المدينة.',
+                'city_id.required' => 'يرجى تحديد المدينة.',
                 'city_id.exists' => 'المدينة المحددة غير موجودة.',
 
-                'area_id.required' => 'يرجى تحديد المنطقة.',
-                'area_id.exists' => 'المنطقة المحددة غير موجودة ضمن المدينة المحددة.',
+                'area_id.required_with' => 'يرجى تحديد المنطقة.',
+                'area_id.exists' => 'يرجى تحديد منطقة.',
+                // 'area_id.exists' => 'المنطقة المحددة غير موجودة ضمن المدينة المحددة.',
             ]
         );
 
@@ -306,9 +325,7 @@ class DeliverController extends Controller
         }
 
         try {
-
-            $deliver = Deliver::find($request->id);
-
+            $deliver = User::where('type', 'deliver')->where('id', $request->id)->first();
             if (!$deliver) {
                 return redirect()->back()->with('error', 'المشرف غير موجود.');
             }
@@ -318,14 +335,82 @@ class DeliverController extends Controller
                 "email" => $request->email,
                 "mobile" => $request->mobile,
             ];
-
-            if ($deliver->update(['area_id' => $request->area_id,]) && $deliver->User->update($data)) {
+            if ($request->input("area_id")) {
+                $deliver->deliver()->updateOrCreate(["deliver_id" => $request->id], ["area_id" => $request->area_id]);
+            }
+            if ($deliver->update($data)) {
                 return redirect()->route("delivers.show")->with("success", 'تم التعديل بنجاح');
             } else {
                 return redirect()->back()->with('error', 'لم يتم التعديل , حاول مرة اخرى');
             }
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'حدث خطأ أثناء تحديث المشرف. يرجى المحاولة لاحقاً.');
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function Employ(Request $request)
+    {
+        // dd($request->all());
+        $validate = Validator::make(
+            $request->all(),
+            [
+                'id' => "required",
+                "city_id" => "nullable|exists:cities,id",
+                "area_id" => "nullable|exists:areas,id",
+            ],
+        );
+        if ($validate->fails()) {
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+        }
+        try {
+            $deliver = User::where('type', 'deliver')->where('id', $request->id)->first();
+            $cities = City::all();
+            $areas = $request->input("city_id") ? Area::where("city_id", $request->input("city_id"))->get() : "";
+            $selectedCityId = $request->input("city_id") ? $request->input("city_id") : '';
+            $selectedAreaId = $request->input("area_id") ? $request->input("area_id") : '';
+
+
+            return view("panel.dashboard.delivers.employ", compact("areas", 'deliver', 'cities', 'selectedCityId', 'selectedAreaId'));
+        } catch (Exception $e) {
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return redirect()->back()->with("error", $e->getMessage());
+        }
+    }
+
+    public function SetEmploy(Request $request)
+    {
+        $validate = Validator::make(
+            $request->all(),
+            [
+                'id' => "required",
+                "area_id" => "required|exists:areas,id",
+            ],
+            [
+                'area_id.required' => "يجب تحديد منطقة",
+                'area_id.exists' => "حصل خطأ , الرجاء اعادة المحاولة",
+            ]
+        );
+        if ($validate->fails()) {
+            return redirect()->back()->withErrors($validate);
+        }
+        // dd($request->all());
+        try {
+            $monitor = User::where('type', 'deliver')->where('id', $request->id)->first();
+            if ($monitor->deliver()->exists()) {
+                return redirect()->back()->with("error", "هذا العامل غير متاح للتوظيف");
+            }
+            if ($monitor->deliver()->create(['area_id' => $request->area_id])) {
+                return redirect()->route("delivers.show")->with("success", "تم تعيين عامل التوصيل بنجاح");
+            } else {
+                return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+            }
+        } catch (Exception $e) {
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return redirect()->back()->with("error", $e->getMessage());
         }
     }
 
@@ -349,17 +434,66 @@ class DeliverController extends Controller
                 return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
             }
 
-
-            $is_exist = Deliver::find($request->id);
+            $is_exist = Deliver::where('deliver_id', $request->id)->first();
             if ($is_exist && $is_exist->forceDelete()) {
-                return redirect()->back()->with("success", "تم حذف المشرف بنجاح");
+                return redirect()->back()->with("success", "تم اقالة المشرف بنجاح");
             }
             return redirect()->back()->with("error", "حصل خطأ غير معروف , حاول مرة اخرى");
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
+            return redirect()->back()->with("error", $e->getMessage());
+        }
+    }
+    public function ban(Request $request)
+    {
+        $validate = Validator::make(['id' => $request->id], ['id' => "required"]);
+        if ($validate->fails()) {
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+        }
+        try {
+            $deliver = User::where("type", "deliver")->where('id', $request->id)->first();
+
+            if ($deliver->deliver()->exists()) {
+                $deliver->deliver()->forceDelete();
+            }
+
+            if ($deliver->delete()) {
+                return redirect()->back()->with("success", "تم حظر المشرف بنجاح");
+            } else {
+                return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+            }
+        } catch (Exception $e) {
+            Log::error("حدث خطأ: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return redirect()->back()->with("error", $e->getMessage());
+        }
+    }
+    /**
+     * Restore the specified resource from storage.
+     */
+    public function restore(Request $request)
+    {
+        try {
+            $validate = Validator::make(['id' => $request->id], ['id' => "required"], [
+                'id.required' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة"
+            ]);
+            if ($validate->fails()) {
+                return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+            }
+
+            $is_exist = User::where('type', 'deliver')->onlyTrashed()->find($request->id);
+            if ($is_exist && $is_exist->restore()) {
+                return redirect()->back()->with("success", "تم استرجاع المشرف بنجاح");
+            }
+            return redirect()->back()->with("error", "حصل خطأ غير معروف, حاول مرة اخرى");
+        } catch (Exception $e) {
+            // Log::error("حدث خطأ: " . $e->getMessage(), [
+            //     'exception' => $e
+            // ]);
+            return redirect()->back()->with("error", $e->getMessage());
         }
     }
 }
