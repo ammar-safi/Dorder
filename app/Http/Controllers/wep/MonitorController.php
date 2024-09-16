@@ -285,13 +285,13 @@ class MonitorController extends Controller
                 'id' => "required|exists:users,id",
                 "email" => [
                     "email",
-                    Rule::unique("users", "email")->where("type", "monitor")->ignore($request->email, 'email'),
+                    Rule::unique("users", "email")->where("type", "monitor")->ignore($request->id),
                 ],
                 "mobile" => [
                     "regex:/^09[0-9]{8}$/",
                     "string",
                     "max:20",
-                    Rule::unique("users", "mobile")->where("type", "monitor")->ignore($request->mobile, 'mobile'),
+                    Rule::unique("users", "mobile")->where("type", "monitor")->ignore($request->id),
                 ],
                 'name' => 'required|string|regex:/^[\p{Arabic}\s]+$/u|max:255',
             ],

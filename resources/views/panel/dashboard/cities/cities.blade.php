@@ -215,7 +215,7 @@
                             <option value="deleted"  {{ $deleted == 'deleted' ? 'selected' : '' }} >المدن المحذوفة</option>
                         </select>
                         <div style="position: relative; display: flex; align-items: center; width: 200px;">
-                            <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم المدينة" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
+                            <input type="text" class="custom-select" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم المدينة" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
                             <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
                         </div>
                         @if ($searchName) 

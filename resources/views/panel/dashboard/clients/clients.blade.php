@@ -74,7 +74,7 @@
                 }
 
                 .table-title:hover {
-                    background-color: #bfd4e2; /* تأثير عند التحويم */
+                    /* background-color: #bfd4e2; تأثير عند التحويم */
                 }
 
                 table {
@@ -113,7 +113,7 @@
                 }
 
                 .table-title i {
-                    transition: transform 0.3s; /* تأثير عند التحويم */
+                    transition: transform 0.3s; تأثير عند التحويم
                     margin-left: 10px; /* مسافة بين العنوان والأيقونة */
                 }
 
@@ -201,7 +201,7 @@
                     </div>
 
                     <div>
-                        <a href="{{ "#" }}" id="add-deliver" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة عميل </a>
+                        <a href="{{ Route("clients.add") }}" id="add-deliver" class="btn btn-primary rounded-button" style="background-color: rgb(23, 54, 139); color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px;">إضافة عميل </a>
                     </div>
                    
                 </div>
@@ -220,14 +220,14 @@
                         @endif
 
                         <select name="show" id="" onchange="this.form.submit()" class="custom-select" style="width:180px">
-                            <option value='show'  {{ $show == 'show' ? 'selected' : '' }} >الكل</option>
-                            <option value="deleted"  {{ $show == 'deleted' ? 'selected' : '' }} >النشطين</option>
-                            <option value="deleted"  {{ $show == 'deleted' ? 'selected' : '' }} >الغير نشطين</option>
+                            <option value='show'  {{ $show == 'show' ? 'selected' : '' }} >العملاء</option>
+                            <option value="active"  {{ $show == 'active' ? 'selected' : '' }} >المشتركين</option>
+                            <option value="not_active"  {{ $show == 'not_active' ? 'selected' : '' }} >الغير مشتركين</option>
                             <option value="deleted"  {{ $show == 'deleted' ? 'selected' : '' }} >المحظورين</option>
                         </select>
 
                         <div style="position: relative; display: flex; align-items: center; width: 200px;">
-                            <input type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم العميل" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
+                            <input  class="custom-select" type="text" name="search_name" id="search_name" value="{{ $searchName }}" placeholder="اسم العميل" style="padding: 5px 40px 5px 10px; width: 100%; font-size: 0.875rem; border-radius: 5px; border: 1px solid #ccc;">
                             <button type="submit" class="btn btn-primary rounded-button" style="position: absolute; left: 0; top: 0; bottom: 0; padding: 5px 10px; font-size: 0.875rem; background-color: rgb(23, 54, 139); color: white; border-radius: 5px; border: none;">بحث</button>
                         </div>
                         @if ($searchName) 
@@ -280,93 +280,125 @@
                 </div>
             </div>
                 
-            
-            
-            
-            
-            @if ($selectedCityId || $selectedAreaId || $searchName ||$show != "show")
-            <table>
-                    <thead>
-                        <tr>
-                            <th>الصورة الشخصية</th>
-                            <th>الاسم</th>
-                            <th>البريد الاكتروني</th>
-                            <th>رقم الهاتف</th>
-                            <th>المحافظة</th>
-                            <th>المنطقة</th>
-                            <th>الاشتراك</th>
-                            <th>صلاحية الحساب</th>
-                            <th>الطلبات المتاحة</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        
+            @if (($selectedCityId || $selectedAreaId || $searchName || $clients ) && !$id)
+                <div class="container"><div class="container">
+                    <div class="row">
                         @foreach ($clients as $client)
-                        {{-- @dd($Monitors) --}}
-                            {{-- @dd($monitor->user->name) --}}
-                            <tr>
-                                <td>
-                                    <div style="display: flex; align-items: center;">
-                                        @php
-                                            $image = $client->image?Storage::url($client->image->url):'../../../../app-assets/images/portrait/small/images.png'  ;
-                                        @endphp
-                                        <a href="{{$image}}">
-                                            <img src="{{$image}}" alt="صورة العميل" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
-                                        </a>
-                                    </div>
-                                </td>                                
-                                <td>{{$client->name}}</td>
-                                <td>{{$client->email}}</td>
-                                <td>{{$client->mobile}}</td>
-                                <td>{{$client->area?->city->title}}</td>
-                                <td>{{$client->area?->title}}</td>
-                                <td>{{$client->package?->title}}</td>
-                                <td>{{$client->expire}} <br> ({{$client->active?"نشط":"غير نشط"}})</td>
-                                <td>{{$client->subscription_fees}}  </td>
-                                <td>
-                                    <div style="position: relative; display: flex; justify-content: center;">
-                                        <button onclick="toggleOptions(this)" style="background: none; border: none; cursor: pointer;">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </button>
-
-                                        <div class="options-menu">
-                                            @if($show == "show")
-                                                @if (Auth::user()->type=="admin")
-                                                <form action="{{ route('clients.edit')}}" method="GET" style="display: inline;">
-                                                    <input type="hidden" name="id" value="{{$client->id}}">
-                                                    <button type="submit"><i class="fas fa-edit"></i>تعديل</button>
-                                                </form>
-                                                @endif
-                                                <form action="{{ route('clients.soft.delete')}}" method="POST" style="display: inline;">
-                                                    @csrf
-                                                    <input type="hidden" name="id" value="{{$client->id}}">
-                                                    <button type="submit"><i class="fas fa-user-minus"></i>حظر</button>
-                                                </form>
-                                            @elseif($show == "deleted") 
-                                                <form action="{{ route('clients.restore')}}" method="POST" style="display: inline;">
-                                                    @csrf
-                                                    <input type="hidden" name="id" value="{{$client->id}}">
-                                                    <button type="submit"><i class="fas fa-undo-alt"></i>لغاء الحظر</button>
-                                                </form>
-                                            @endif    
+                            <!-- Cities Card -->
+                            <div class="col-md-6">
+                                <a href="{{ route('clients.show' , ['id'=>$client->id]) }}" style="text-decoration: none;"> <!-- تغليف البطاقة بـ <a> -->
+                                    <div class="card shadow-lg rounded-lg" style="border: none; display: flex; flex-direction: row; align-items: center;">
+                                        <div class="card-body" style="display: flex; gap: 2rem; flex-grow: 1;">
+                                            
+                                            <!-- صورة العميل -->
+                                            <div style="display: flex;">
+                                                @php
+                                                    $image = $client->image ? Storage::url($client->image->url) : '../../../../app-assets/images/portrait/small/images.png';
+                                                @endphp
+                                                <img src="{{ $image }}" alt="صورة العميل" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                                            </div>
+                                            
+                                            <!-- تفاصيل العميل -->
+                                            <div>
+                                                <h5 class="card-title" style="font-family: 'Cairo', sans-serif; color: #000000;">{{ $client->name }}</h5>
+                                                <p class="card-text" style="color: #686868;">{{$client->area ? (' من ' . $client->area->city->title . ' يقيم في ' . $client->area->title):'لم يتم تحديد مدينة' }}</p>
+                                            </div>  
                                         </div>
-                                    </div>     
-                                </td>
-                                
-                                
-                            </tr>
-
+                                        
+                                        <div style="display: flex; justify-content: center; align-items: center;">
+                                            <div style="display: flex; justify-content: center; align-items: center; border-radius: 50%; width: 40px; height: 40px; color: #070707;">
+                                                <i class="fas fa-arrow-left"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
                         @endforeach
-                    </tbody>
-                </table>
-                @endif
+                    </div>
+                </div>                  
+            @elseif($id) 
+            @foreach ($clients as $client)
+                <div class="table-container">
+                <h2 class="table-title">
+                    <div style="display: flex;gap: 10px; align-items: center;">
+                        @php
+                            $image = $client->image?Storage::url($client->image->url):'../../../../app-assets/images/portrait/small/images.png'  ;
+                        @endphp
+                        <a href="{{$image}}">
+                            <img src="{{$image}}" alt="صورة العميل" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                        </a>
+                        <div>
+                            {{$client->name}}
+                        </div>
+                    </div>
+                
+                    <div>
+                        @if(!$client->deleted_at)
+                            @if (Auth::user()->type=="admin")
+                            <form action="{{ route('clients.edit')}}" method="GET" style="display: inline;">
+                                <input type="hidden" name="id" value="{{$client->id}}">
+                                <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-edit"></i></button>
+                            </form>
+                            @endif
+                            <form action="{{ route('clients.soft.delete')}}" method="POST" style="display: inline;">
+                                @csrf
+                                <input type="hidden" name="id" value="{{$client->id}}">
+                                <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-user-minus"></i></button>
+                            </form>
+                        @else 
+                            <form action="{{ route('clients.restore')}}" method="POST" style="display: inline;">
+                                @csrf
+                                <input type="hidden" name="id" value="{{$client->id}}">
+                                <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-undo-alt"></i></button>
+                            </form>
+                        @endif    
+                    </div>
+                </h2>
 
+                <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>البريد الاكتروني</th>
+                                <th>رقم الهاتف</th>
+                                @if($client->area)
+                                    <th>المحافظة</th>
+                                    <th>المنطقة</th>
+                                    <th>الاشتراك</th>
+                                @endif
+                                <th>صلاحية الحساب</th>
+                                <th>الطلبات المتاحة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-                </div>
-            </div>
+                            
+                            {{-- @dd($Monitors) --}}
+                                {{-- @dd($monitor->user->name) --}}
+                                <tr>
+                                    <td>{{$client->email}}</td>
+                                    <td>{{$client->mobile}}</td>
+                                    @if($client->area)
+                                        <td>{{$client->area->city->title}}</td>
+                                        <td>{{$client->area->title}}</td>
+                                        <td>{{$client->package?->title}}</td>
+                                    @endif
+                                    <td>{{$client->expire}} <br> ({{$client->active?"نشط":"غير نشط"}})</td>
+                                    <td>{{$client->subscription_fees}}  </td>
+                                    <td>
+                                           
+                                    </td>
+                                    
+                                    
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                @endforeach
+            @endif 
         </div>
     </div>
 </div>
-    @include('panel.static.footer')
+</div>
+
+@include('panel.static.footer')

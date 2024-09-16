@@ -13,8 +13,6 @@ class Deliver extends Model
     protected $fillable = [
         'deliver_id',
         'area_id',
-        
-
     ];
 
     public function User()

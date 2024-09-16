@@ -36,6 +36,12 @@ class User extends Authenticatable
         'area_id',
     ];
 
+    protected static function booted()
+    {
+        static::creating(function ($user) {
+            $user->uuid = (string) \Str::uuid();
+        });
+    }
 
     /**
      * The attributes that should be hidden for serialization.

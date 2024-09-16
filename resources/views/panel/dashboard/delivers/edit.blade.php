@@ -9,7 +9,7 @@
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
             <div class="col-12">
                 <br><br>
-                <h1>تعديل المشرف {{$deliver->name}}</h1>
+                <h1>تعديل عامل التوصيل {{$deliver->name}}</h1>
             </div>
         </div>
         <script>

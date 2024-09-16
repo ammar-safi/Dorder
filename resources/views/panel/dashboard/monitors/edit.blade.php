@@ -193,26 +193,26 @@
                     <div style="display: flex;gap:10px  ;flex-direction:initial;">
                         <div style="width: 50%">
                             <label for="nameInput">تعديل الاسم </label>
+                            <input type="text" oninput="sendName()" id="nameInput" name='name' value="{{old('name')?old('name'):($name?$name:$monitor->name)}}" style="padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
                             @error('name')
                             <p style="color: red" > * {{$message}}</p>
                             @enderror
-                            <input type="text" oninput="sendName()" id="nameInput" name='name' value="{{old('name')?old('name'):($name?$name:$monitor->name)}}" style="padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
                         </div>
                         <div style="width: 50%">
                             <label for="mobileInput">تعديل رقم الهاتف </label>
+                            <input type="text" oninput="sendMobile()" id="mobileInput" name='mobile' value="{{old('mobile')?old("mobile"):($mobile?$mobile:$monitor->mobile)}}" style="padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
                             @error('mobile')
                             <p style="color: red" > * {{$message}}</p>
                             @enderror
-                            <input type="text" oninput="sendMobile()" id="mobileInput" name='mobile' value="{{old('mobile')?old("mobile"):($mobile?$mobile:$monitor->mobile)}}" style="padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
                         </div>
                     </div>
                     <div>
 
                         <label for="emailInput">تعديل البريد الالكتروني </label>
+                        <input type="text" oninput="sendEmail()" id="emailInput" name='email' value="{{old("email")?old("email"):($email?$email:$monitor->email)}}" style="padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
                         @error('email')
                         <p style="color: red" > * {{$message}}</p>
                         @enderror
-                        <input type="text" oninput="sendEmail()" id="emailInput" name='email' value="{{old("email")?old("email"):($email?$email:$monitor->email)}}" style="padding: 10px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
                     </div>
                 </form><br><br>
                 <h5>المدن التي بعمل بها المشرف</h5>

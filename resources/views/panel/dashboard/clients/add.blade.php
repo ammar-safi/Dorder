@@ -10,17 +10,15 @@
             <div class="col-12">
                 <br><br>
                 <div style="display: flex; gap: inherit; align-items: center;">
-                    <h1>تعديل العميل {{$client->name}}</h1>
+                    <h1>اضافة عميل</h1>
                     <!-- تعديل الصورة -->
 
                     <div style="display: grid; justify-items: center; align-items: center; margin-right: 400px;">
                         @php
-                            $image = $client->image?Storage::url($client->image->url):'../../../../app-assets/images/portrait/small/images.png'  ;
+                            // $image = $client->image?Storage::url($client->image->url):'../../../../app-assets/images/portrait/small/images.png'  ;
                         @endphp
-                        <a  id="clientShowImage" href="{{ $image }}">
-                            <!-- صورة العميل -->
-                            
-                            <img id="clientImage" src="{{ $image }}" alt="صورة العميل" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                        <a id="clientShowImage" href="../../../../app-assets/images/portrait/small/images.png">                            
+                            <img id="clientImage" src="../../../../app-assets/images/portrait/small/images.png" alt="صورة العميل" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
                         </a>
                         <label for="imageUpload" style="cursor: pointer; margin-top: 10px;">تعديل</label>
                     </div>
@@ -55,6 +53,14 @@
                     reader.readAsDataURL(event.target.files[0]);
                 }
 
+                function togglePasswordVisibility(inputId) {
+                    var passwordInput = document.getElementById(inputId);
+                    if (passwordInput.type === "password") {
+                        passwordInput.type = "text";
+                    } else {
+                        passwordInput.type = "password";
+                    }
+                }
             </script>
         </div>
         <div class="content-body">
@@ -83,7 +89,7 @@
             
             <div class="row">
                 <div class="col-12"> 
-                    <form action="{{ route('clients.update' , ['id'=>$client->id]) }}" method="POST"  enctype="multipart/form-data"> 
+                    <form action="{{ route('clients.store') }}" method="POST"  enctype="multipart/form-data"> 
                         @csrf
                         <input type="file" id="imageUpload" name="profile_image" accept="image/*" style="display: none;" onchange="previewImage(event)">
 
@@ -95,7 +101,7 @@
                                 <br><br>
                             </div>
                             @enderror
-                            <input type="text" class="form-control" id="name" name="name" placeholder="أدخل الاسم" value="{{old('name')?old('name'):$client->name}}">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="أدخل الاسم" value="{{old('name')}}">
                         </div>
                         <div class="form-group">
                             <label for="email">البريد الإلكتروني:</label>
@@ -105,7 +111,7 @@
                                 <br><br>
                             </div>
                             @enderror
-                            <input type="email" class="form-control" id="email" name="email" placeholder="أدخل البريد الإلكتروني" value="{{old('email')?old('email'):$client->email}}">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="أدخل البريد الإلكتروني" value="{{old('email')}}">
                         </div>
                      
                           
@@ -118,7 +124,37 @@
                                 <br><br>
                             </div>
                             @enderror
-                            <input type="text" class="form-control" id="mobile" name="mobile" placeholder="أدخل رقم الهاتف"value="{{old('mobile')?old('mobile'):$client->mobile}}">
+                            <input type="text" class="form-control" id="mobile" name="mobile" placeholder="أدخل رقم الهاتف"value="{{old('mobile')}}">
+                        </div>
+                        <div class="form-group" >
+                            <label for="password"> كلمة المرور:</label>
+                            @error('password')
+                            <div style="color: #c20c0c" >    
+                                * {{$message}}
+                                <br><br>
+                            </div>
+                            @enderror
+                            <div class="password-input">
+                                <input type="password" class="form-control" id="password" name="password" placeholder=" كلمة المرور" value="{{old('password')}}">
+                                <span class="password-toggle" onclick="togglePasswordVisibility('password')">
+                                    <i class="fa fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password_confirmation">تأكيد كلمة المرور:</label>
+                            @error('password_confirmation')
+                            <div style="color: #c20c0c" >    
+                                * {{$message}}
+                                <br><br>
+                            </div>
+                            @enderror
+                            <div class="password-input">
+                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="تأكيد كلمة المرور" value="{{old('password_confirmation')}}">
+                            <span class="password-toggle" onclick="togglePasswordVisibility('password_confirmation')">
+                                <i class="fa fa-eye"></i>
+                            </span>
+                            </div>
                         </div>
                         
                         <div class="form-group">
@@ -129,7 +165,7 @@
                                 <br><br>
                             </div>
                             @enderror
-                            <input type="text" class="form-control" id="subscription_fees" name="subscription_fees" placeholder="أدخل عدد الطلبات "value="{{old('subscription_fees')?old('subscription_fees'):$client->subscription_fees}}">
+                            <input type="text" class="form-control" id="subscription_fees" name="subscription_fees" placeholder="أدخل عدد الطلبات"value="{{old('subscription_fees')}}">
                         </div>
                         <div class="form-group">
                             <label for="expire">تاريخ انتهاء صلاحية الحساب :</label>
@@ -139,7 +175,7 @@
                                 <br><br>
                             </div>
                             @enderror
-                            <input type="date" class="form-control" id="expire" name="expire" placeholder="أدخل رقم الهاتف"value="{{old('expire')?old('expire'):$client->expire}}">
+                            <input type="date" class="form-control" id="expire" name="expire" placeholder="أدخل رقم "value="{{old('expire')}}">
                         </div>
 
                         <div>
@@ -156,7 +192,7 @@
                                     <optgroup label="{{ $cityName }}">
                                         @foreach ($areas as $area)
                                             @php
-                                                $Area = old('area_id')?old('area_id'):$client->area_id
+                                                $Area = old('area_id')
                                             @endphp
                                             <option value="{{ $area->id }}" {{($Area==$area->id)?'selected':''}} >{{ $area->title }} </option>
                                         @endforeach
@@ -164,13 +200,10 @@
                                 @endforeach
                             </select>
                         </div>                  
-                        {{-- <div>
-                            <input id='active' type="checkbox" name="active" value="1">
-                            <label for='active'><h6>حساب نشط</h6></label>
-                        </div> --}}
+ 
                         <div>
                             <br>
-                            <button type="submit" class="btn btn-primary">تعديل</button>
+                            <button type="submit" class="btn btn-primary">اضافة</button>
                         </div>
                     </form>
                 </div>

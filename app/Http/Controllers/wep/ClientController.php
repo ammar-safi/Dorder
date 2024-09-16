@@ -30,36 +30,43 @@ class ClientController extends Controller
         $validate = Validator::make(
             $request->all(),
             [
+                'id' => [
+                    'nullable',
+                    Rule::exists("users", 'id')->where("type", "client"),
+                ],
                 "city_id" => "nullable|exists:cities,id",
                 'area_id' => [
-                    Rule::exists('areas', 'id')->where(function (Builder $query) use ($request) {
-                        return $query->where('city_id', $request->city_id);
-                    }),
+                    'nullable',
+                    Rule::exists('areas', 'id')->where('city_id', $request->city_id),
 
                 ]
             ],
             [
+                "id.exists" => "حدث حطأ , حاول مرا اخرى",
                 "city_id.exists" => "حدث حطأ , حاول مرا اخرى",
                 "area_id.exists" => "حدث حطأ , حاول مرا اخرى",
             ]
         );
         if ($validate->fails()) {
-            return redirect()->back()->with("error", 'حدث خطأ اثناء البحث, حاول مرا اخرى')->withErrors($validate->errors());
+            return redirect()->back()->with("error", 'حدث خطأ اثناء البحث, حاول مرا اخرى')->withErrors($validate->errors()->first());
         }
 
         try {
             $flag = 'clients-show';
             $cities = City::all();
             $query = User::query()->where("type", 'client');
-
+            $id = $request->input("id");
             $show = $request->input('show', 'show');
             $searchName = $request->input('search_name');
             $selectedCityId = $request->input("city_id");
             $selectedAreaId = $request->input("area_id");
             $areas = $selectedCityId ? Area::where('city_id', $selectedCityId)->get() : '';
-
             if ($show == "deleted") {
                 $query->onlyTrashed();
+            } elseif ($show == "active") {
+                $query->where("expire", ">", Carbon::now());
+            } elseif ($show == "not_active") {
+                $query->whereNull("package_id")->orWhere("expire", '<', Carbon::now());
             }
             if ($selectedAreaId) {
                 $query->where("area_id", $selectedAreaId);
@@ -69,12 +76,126 @@ class ClientController extends Controller
             if ($searchName) {
                 $query->where("name", "like", "%" . $searchName . "%");
             }
-            if ($selectedAreaId || $selectedCityId || $searchName || $show == "deleted") {
+            if ($request->has('id')) {
+                $query->withTrashed()->find($request->id);
+            }
+            if ($selectedAreaId || $selectedCityId || $searchName || $show != "show" || $request->hasAny('id')) {
                 $clients = $query->get();
             } else {
                 $clients = null;
             }
-            return view('panel.dashboard.clients.clients', compact('clients', 'cities', 'areas', 'flag', 'selectedCityId', 'selectedAreaId', 'searchName' , "show"));
+            return view('panel.dashboard.clients.clients', compact('clients', 'cities', 'areas', 'flag', 'selectedCityId', 'selectedAreaId', 'searchName', "show", 'id'));
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function create(Request $request)
+    {
+        try {
+            $collection = [];
+
+            $areas = Area::distinct()->pluck("city_id");
+
+            foreach ($areas as $cityId) {
+                $city = City::find($cityId);
+
+                if ($city) {
+                    $collection[$city->title] = Area::where("city_id", $cityId)->get();
+                }
+            }
+            // dd($client);
+            $flag = "clients-show";
+            return view('panel.dashboard.clients.add', compact('flag', 'collection'));
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        try {
+
+            $validate = Validator::make(
+                $request->all(),
+                [
+                    'name' => 'required|string|max:255',
+                    'email' => ['required', 'email', 'max:255', Rule::unique("users", "email")->where('type', "client")],
+                    'mobile' => ['required', 'string', 'regex:/^09[0-9]{8}$/',  Rule::unique("users", "mobile")->where('type', "client")],
+                    'subscription_fees' => 'nullable|required_with:expire|numeric',
+                    'password' => 'required|string|min:8|confirmed',
+                    'expire' => 'nullable|date_format:Y-m-d',
+                    'area_id' => 'nullable|exists:areas,id',
+                    'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                ],
+                [
+                    'name.required' => "اسم العميل مطلوب",
+
+                    'mobile.required' => 'رقم الهاتف مطلوب',
+                    'mobile.unique' => 'رقم الهاتف موجود مسبقا',
+                    'mobile.regex' => 'الرقم غير صحيح',
+
+                    'email.required' => 'البريد الالكتروني مطلوب',
+                    'email.email' => 'يرجى ادخال بريد الكتروني صالح',
+                    'email.unique' => 'البريد الالكتروني موجود مسبقا',
+
+                    'area_id.exists' => 'المنطقة غير صحيحة , حاول مرة اخرة',
+
+                    'subscription_fees.numeric' => 'عدد الطلبات يجب ان يكون رقم ',
+                    'subscription_fees.required_with' => "يجب اختيار عدد الطلبات",
+
+                    'password.required' => 'الرجاء إدخال كلمة المرور.',
+                    'password.string' => 'يجب أن تكون كلمة المرور نصًا.',
+                    'password.min' => 'يجب أن تكون كلمة المرور 8 أحرف على الأقل.',
+                    'password.confirmed' => 'كلمتين السر غير متطابقتين',
+    
+                    'expire.date_format' => 'تاريخ انتهاء الصلاحية يجب ان يكون من الشكل : YYYY-MM-DD',
+
+                    'profile_image.image' => 'يجب ان يكون صورة',
+                    'profile_image.mimes' => 'صيغة الصورة غير صالحة',
+                    'profile_image.max' => 'حجم الصورة كبير',
+                ]
+            );
+            if ($validate->fails()) {
+                return redirect()->back()->withInput($request->all())->withErrors($validate);
+            }
+            $client = User::create([
+                'name' => $request->name,
+                'mobile' => $request->mobile,
+                'email' => $request->email,
+                'password' => $request->password ,
+                'type' => 'client',
+                'area_id' => $request->area_id,
+                'active' => Carbon::parse($request->expire)->isFuture(),
+                'subscription_fees' =>  $request->subscription_fees,
+                'expire' => $request->expire,
+            ]);
+
+            if ($client) {
+                if ($request->file('profile_image')) {
+                    // if ($client->image && Storage::exists('public/' . $client->image->url)) {
+                    //     Storage::delete('public/' . $client->image->url);
+                    //     $client->image->delete();
+                    // }
+                    $file = $request->file('profile_image');
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    $path = $file->storeAs('clients', $filename, 'public');
+
+                    $image = new Image();
+                    $image->url = $path;
+                    if ($client->image()->save($image)) {
+                        return redirect()->route("clients.show")->with("success", 'تم اضافة العميل بنجاح');
+                    } else {
+                        return redirect()->back()->with("error", 'تمت اضافة العميل لكن حدث خطأ اثناء اضافة الصورة');
+                    }
+                }
+                return redirect()->route("clients.show")->with("success", 'تم تعديل العميل بنجاح');
+            } else {
+                return redirect()->back()->with("error", 'حدث خطأ, حاول مرا اخرى');
+            }
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -180,7 +301,7 @@ class ClientController extends Controller
                 $client->mobile = $request->mobile;
                 $client->email = $request->email;
                 $client->area_id = $request->area_id;
-                $client->active = Carbon::parse($request->expire)->isFuture() ? true : false;
+                $client->active = Carbon::parse($request->expire)->isFuture();
                 $client->subscription_fees = $request->subscription_fees;
                 $client->expire = $request->expire;
                 if ($client->save()) {

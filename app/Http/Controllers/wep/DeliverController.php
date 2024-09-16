@@ -284,11 +284,11 @@ class DeliverController extends Controller
                     "regex:/^09[0-9]{8}$/",
                     "string",
                     "max:20",
-                    Rule::unique("users", "mobile")->where("type", "deliver")->ignore($request->mobile, 'mobile'),
+                    Rule::unique("users", "mobile")->where("type", "deliver")->ignore($request->id),
                 ],
                 "email" => [
                     "email",
-                    Rule::unique("users", "email")->where("type", "deliver")->ignore($request->email, 'email'),
+                    Rule::unique("users", "email")->where("type",'deliver')->ignore($request->id),
                 ],
 
             ],
