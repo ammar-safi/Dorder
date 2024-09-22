@@ -174,28 +174,33 @@
             @if (isset($validate))                        
             <br><br>
             <div style="background-color: #ffb3b3; border-right: 6px solid #c20c0c; padding: 20px; border-radius: 10px;">
-                <p style="font-size: 20px; margin: 0;">
-                    @error('id')
-                        {{$message}}
-                    @enderror
-                </p>
+                {{-- <p style="font-size: 20px; margin: 0;"> --}}
+                    <strong>
+                        @error('id')
+                            {{$message}}
+                        @enderror
+                    </strong>
+                {{-- </p> --}}
             </div>
                                
             @elseif(session()->has("error"))
                 <br><br>
                 <div style="background-color: #ffb3b3; border-right: 6px solid #c20c0c; padding: 20px; border-radius: 10px;">
-                    <p style="font-size: 20px; margin: 0;">
-                            {{session("error")}}
-                    </p>
+                    {{-- <p style="font-size: 20px; margin: 0;"> --}}
+                            <strong>
+                                {{session("error")}}
+                            </strong>
+                            
+                    {{-- </p> --}}
                 </div>                    
             @elseif(session()->has("success"))
             <br><br>
                 <div style="background-color: #c4f8d4; border-right: 6px solid #0d9135; padding: 20px; border-radius: 10px;">
-                    <p style="font-size: 20px; margin: 0;">
+                    {{-- <p style="font-size: 20px; margin: 0;"> --}}
                         <strong>
                             {{session("success")}}
                         </strong> 
-                    </p>
+                    {{-- </p> --}}
                 </div>                    
                 <br><br>
             @endif
@@ -219,7 +224,8 @@
                 <hr>
                 <br>
 
-
+                {{-- فلترة البحث --}}
+               
                 <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
                     <form method="GET" action="{{ route('clients.show') }}" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
                         @if($selectedAreaId)
@@ -289,7 +295,7 @@
                     </form>
                 </div>
             </div>
-                
+            {{-- الصفحة الرئيسية --}}
             @if (($selectedCityId || $selectedAreaId || $searchName || $clients ) && !$id)
                 <div class="container"><div class="container">
                     <div class="row">
@@ -326,9 +332,19 @@
                         @endforeach
                     </div>
                 </div>                  
+
+            {{--
+                 الصفحة الخاصة بعميل محدد
+                 اي عن الضغط على كارد محدد
+            --}}
             @elseif($id) 
                 @foreach ($clients as $client)
-                    {{-- جدول العميل --}}
+                    {{---
+                        ----------------------------------------------------------------
+                        -------------------  جدول العميل  ----------------------------- 
+                        ----------------------------------------------------------------
+                    --}}
+
                     <div class="table-container">
                         <h2 class="table-title">
                             <div style="display: flex;gap: 10px; align-items: center;">
@@ -406,21 +422,20 @@
                     </div>
                     <br><br><br>
                     <div style="display: flex;flex-direction: row; gap:10px">
-                        {{-- جدول العناوين --}}
+                        {{-- 
+                            ----------------------------------------------------------------                        
+                            -------------------  جدول العناوين  ---------------------------
+                            ----------------------------------------------------------------
+                        --}}
                         <div class="table-container" style="width: 50%">
                             <h2 class="table-title">
                                 <div style="display: flex;gap: 10px; align-items: center;">
                                     عناوين العميل 
                                 </div>
                                 <div>
-                                    {{-- Edit --}}
-                                    <form action="{{ route('addresses.edit')}}" method="GET" style="display: inline;">
-                                        <input type="hidden" name="id" value="{{$client->id}}">
-                                        <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-edit"></i></button>
-                                    </form>
-                                    {{-- Pan --}}
+                                    {{-- Pan All --}}
                                     @if($client->addresses()->exists())
-                                        <form action="#" method="POST" style="display: inline;">
+                                        <form action="{{Route("addresses.delete.all")}}" method="POST" style="display: inline;">
                                             @csrf
                                             <input type="hidden" name="id" value="{{$client->id}}">
                                             <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-trash"></i></button>
@@ -434,7 +449,6 @@
                                     </form>
                                 </div>
                             </h2>
-                            @if($client->addresses()->exists())
                                 <table class="data-table">
                                     <thead>
                                         <tr>
@@ -444,20 +458,52 @@
                                     </thead>
                                     <tbody>
 
-                                        @foreach ($client->addresses as $adresses)
+                                        {{-- @dd($client->Alladdresses()) --}}
+                                        @foreach ($client->Alladdresses() as $addresses)
                                         <tr>
-                                            <td style="text-align: right;">{{$adresses->title}}</td> 
+                                            <td style="text-align: right;">
+                                                @if($addresses->deleted_at)
+                                                    <del>
+                                                @endif
+                                                    {{$addresses->title}}
+                                                @if($addresses->deleted_at)
+                                                    </del>
+                                                @endif
+
+                                            </td> 
                                             <td style="justify-content:left">
                                                 <div style="position: relative; display: flex; justify-content:left">
                                                     <button onclick="toggleOptions(this)" style="background: none; border: none; cursor: pointer;">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
                                                     <div class="options-menu">
+                                                    @if(!$addresses->deleted_at)
+
+                                                        {{-- Edit --}}
                                                         <form action="{{ route('addresses.edit')}}" method="GET" style="display: inline;">
                                                             @csrf
-                                                            <input type="hidden" name="id" value="{{$client->id}}">
+                                                            <input type="hidden" name="address_id" value="{{$addresses->id}}">
+                                                            <input type="hidden" name="client_id" value="{{$client->id}}">
                                                             <button type="submit" id="edit"><i class="fas fa-edit"></i> تعديل</button>
+                                                        </form>       
+                                                        
+                                                        {{-- Delete --}}
+                                                        
+                                                        <form action="{{ route('addresses.delete')}}" method="POST" style="display: inline;">
+                                                            @csrf
+                                                            <input type="hidden" name="address_id" value="{{$addresses->id}}">
+                                                            <input type="hidden" name="client_id" value="{{$client->id}}">
+                                                            <button type="submit" id="edit"><i class="fas fa-trash"></i> حذف</button>
                                                         </form>                                                
+                                                    @else
+                                                        {{-- Restore --}}
+                                                        <form action="{{ route('addresses.restore')}}" method="POST" style="display: inline;">
+                                                            @csrf
+                                                            <input type="hidden" name="address_id" value="{{$addresses->id}}">
+                                                            <input type="hidden" name="client_id" value="{{$client->id}}">
+                                                            <button type="submit" id="edit"><i class="fas fa-undo-alt"></i> استعادة</button>
+                                                        </form>                                                
+                                                    @endif
                                                     </div>
                                                 </div>
                                             </td>
@@ -468,9 +514,13 @@
                                     </tbody>
                                 </table>
                                 <br><br><br>
-                            @endif
                         </div>
-                        {{-- جدول الطلبات --}}
+                        {{-- 
+                            ----------------------------------------------------------------                        
+                            -------------------  جدول الطلبات  ---------------------------
+                            ----------------------------------------------------------------
+                        --}}                        
+                        
                         <div class="table-container" style="width: 50%">
                             <h2 class="table-title">
                                 <div style="display: flex;gap: 10px; align-items: center;">
@@ -508,9 +558,9 @@
                                     </thead>
                                     <tbody>
 
-                                        @foreach ($client->addresses as $adresses)
+                                        @foreach ($client->addresses as $addresses)
                                         <tr>
-                                            <td style="text-align: right;">{{$adresses->title}}</td> 
+                                            <td style="text-align: right;">{{$addresses->title}}</td> 
                                             <td style="justify-content:left">
                                                 <div style="position: relative; display: flex; justify-content:left">
                                                     <button onclick="toggleOptions(this)" style="background: none; border: none; cursor: pointer;">

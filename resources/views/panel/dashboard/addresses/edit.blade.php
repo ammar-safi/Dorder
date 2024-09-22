@@ -39,25 +39,15 @@
             <div style="color: red;"> * {{ $message }}</div>
         @enderror
         <br>
-        <form action="{{ route('addresss.update.address') }}" method="POST" >
+        <form action="{{ route('addresses.update') }}" method="POST" style="display: flex; flex-direction: row">
             @csrf
-            <input type="hidden" name="id" value="{{$address->id}}">
-            {{-- <input type="hidden" name="route" value="{{$route}}"> --}}
+            <input type="hidden" name="address_id" value="{{$address->id}}">
+            <input type="hidden" name="client_id" value="{{$client_id}}">
             <div class="form-inline" >
-                
                 <input type="text" id="title" class="form-control rounded-input" name="title" placeholder="العنوان" value="{{ old('title') ? old('title') : $address->title }}" style="margin-left: 10px;">
-                
-                {{-- <select name="city_id" class="form-control rounded-input" style="margin-left: 10px;padding-left:5.0rem">
-                    <option value="">اختر المدينة</option>
-                    @foreach ($cities as $city)
-                    <option value='{{$city->id}}' {{ (old('city') == $city->title || $address->city->title == $city->title) ? 'selected' : '' }} > {{$city->title}} </option>
-                    @endforeach
-                </select> --}}
-                
             </div>
-            <br>
-            <button type="submit"  class="btn btn-primary rounded-button" style="color: black; padding: 7.0px 20px; margin-left: 10px;">تعديل</button>
-            <button type="button" class="btn btn-primary rounded-button" style="color: black; padding: 7.0px 20px;" onclick="history.back()">تراجع</button>
+            <button type="submit"  class="btn btn-primary rounded-button" style="color: rgb(255, 255, 255); padding: 7.0px 20px; margin-left: 10px;">تعديل</button>
+            <button type="button" class="btn btn-primary rounded-button" style="color: rgb(255, 255, 255); padding: 7.0px 20px;"  onclick="window.location.href='{{ route('clients.show' , ['id' => $client_id]) }}';">تراجع</button>
 
         </form>
         

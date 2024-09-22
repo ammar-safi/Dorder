@@ -110,6 +110,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Address::class, 'client_id');
     }
+    public function AllAddresses()
+    {
+        return Address::withTrashed()->where('client_id', $this->id)->get();
+    }
     public function customerToken()
     {
         return $this->hasOne(CustomerToken::class);

@@ -39,7 +39,7 @@ class AddressController extends Controller
             return redirect()->back()->with("error", "حصل خطا, حاول مرة اخرى");
         }
         try {
-            $client = User::where('type' , 'client')->where('id', $request->id)->first();
+            $client = User::where('type', 'client')->where('id', $request->id)->first();
             return view('panel.dashboard.addresses.add', compact('client'));
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
@@ -69,7 +69,7 @@ class AddressController extends Controller
             $address->client_id = $request->id;
             $address->title = $request->title;
             $address->save();
-            return redirect()->route("clients.show" , ['id'=>$request->id]);
+            return redirect()->route("clients.show", ['id' => $request->id]);
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -88,13 +88,29 @@ class AddressController extends Controller
      */
     public function edit(Request $request)
     {
-        $validation = Validator::make($request->id, ['id' => 'required|exists:addresses,id']);
-        if ($validation->fails()) return redirect()->back()->with("error", "حصل خطا , حاول مرة اخرى");
+        $validation = Validator::make(
+            [
+                'address_id' => $request->address_id,
+                'client_id' => $request->client_id
+            ],
+            [
+                'address_id' => 'required|exists:addresses,id',
+                'client_id' => [
+                    'required',
+                    Rule::exists('users', 'id')->where('type', 'client'),
+                ]
+            ]
+        );
+        if ($validation->fails()) {
+
+            return redirect()->back()->withErrors($validation);
+        }
 
         try {
-            $addresses = Address::find($request->id);
-            if ($addresses) {
-                return view('panel.dashboard.addresses.edit');
+            $client_id = $request->client_id;
+            $address = Address::find($request->address_id);
+            if ($address) {
+                return view('panel.dashboard.addresses.edit', compact("address", 'client_id'));
             } else {
                 return redirect()->back()->with('error', 'حصل خطأ , حاول مرة اخرى');
             }
@@ -106,9 +122,125 @@ class AddressController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        // dd($request->all());
+        $validation = Validator::make(
+            $request->all(),
+            [
+                'address_id' => [
+                    'required',
+                    Rule::exists('addresses', 'id'),
+                ],
+                'client_id' => [
+                    'required',
+                    Rule::exists('users', 'id')->where('type', 'client'),
+                ],
+                'title' => 'required|string',
+            ],
+            [
+                'address_id.required' => 'حصل خطا , حاول مرة اخرى',
+                'address_id.exists' => 'حصل خطا , حاول مرة اخرى',
+
+                'client_id.required' => 'حصل خطا , حاول مرة اخرى',
+                'client_id.exists' => 'حصل خطا , حاول مرة اخرى',
+
+                'title.required' => "العنوان مطلوب",
+                'title.string' => "العنوان خاطئ",
+            ]
+        );
+        if ($validation->fails()) {
+            return redirect()->back()->withErrors($validation)->withInput($request->all());
+        }
+        try {
+            $address = Address::find($request->address_id);
+            if ($address) {
+                $address->title = $request->title;
+                $address->save();
+                return redirect()->route("clients.show", ['id' => $request->client_id])->with('success', 'تم التعديل بنجاح');
+            } else {
+                return redirect()->back()->with('error', 'حصل خطأ, حاول مرة اخرى');
+            }
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function delete(Request $request)
+    {
+        $validation = Validator::make(
+            [
+                'address_id' => $request->address_id,
+                'client_id' => $request->client_id
+            ],
+            [
+                'address_id' => ['required', Rule::exists('addresses', 'id')],
+                'client_id' => ['required', Rule::exists('users', 'id')->where('type', 'client')]
+            ],
+
+        );
+        if ($validation->fails()) {
+            return redirect()->back()->with("error", "حصل خطا, حاول مرة اخرى");
+        }
+        try {
+            $address = Address::find($request->address_id);
+            $address->delete();
+            return redirect()->back()->with('success', 'تم الحذف بنجاح');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function deletedAll(Request $request)
+    {
+        $validation = Validator::make(
+            [
+                'id' => $request->id
+            ],
+            [
+                'id' => ['required', Rule::exists('users', 'id')->where('type', 'client')]
+            ],
+
+        );
+        if ($validation->fails()) {
+            return redirect()->back()->with("error", "حصل خطا, حاول مرة اخرى");
+        }
+        try {
+            $client = User::where('type', 'client')->where('id', $request->id)->first();
+            if ($client->addresses()->exists()) {
+                $client->addresses()->delete();
+                return redirect()->back()->with('success', 'تم الحذف بنجاح');
+            } else {
+                return redirect()->back()->with('error', 'لا يوجد عناوين');
+            }
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function restore(Request $request)
+    {
+        $validation = Validator::make(
+            [
+                'address_id' => $request->address_id,
+                'client_id' => $request->client_id
+            ],
+            [
+                'address_id' => ['required', Rule::exists('addresses', 'id')],
+                'client_id' => ['required', Rule::exists('users', 'id')->where('type', 'client')]
+            ],
+
+        );
+        if ($validation->fails()) {
+            return redirect()->back()->with("error", "حصل خطا, حاول مرة اخرى");
+        }
+        try {
+            $address = Address::onlyTrashed()->find($request->address_id);
+            $address->restore();
+            return redirect()->back()->with('success', 'تم الاستعادة بنجاح');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**

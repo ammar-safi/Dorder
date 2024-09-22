@@ -298,17 +298,32 @@ Route::group(['prefix' => "/settings", 'as' => 'settings.', 'namespace' => "App\
 Route::group(['prefix' => "/addresses", 'as' => 'addresses.', 'namespace' => "App\Http\Controllers\wep\AddressesController", "middleware" => ["auth", "hasAccess"]], function () {
 
    # Create
-   Route::get('/create', [AddressController::class, 'create'])->name("add");
-   Route::post('/store', [AddressController::class, 'store'])->name("store");
+   Route::get('/create', [AddressController::class, 'create'])->name("add"); // DONE
+   Route::post('/store', [AddressController::class, 'store'])->name("store"); // DONE 
 
    # Edit
-   Route::get('/edit', [AddressController::class, 'edit'])->name("edit");
-   Route::post('/update', [AddressController::class, 'update'])->name("update");
+   Route::get('/edit', [AddressController::class, 'edit'])->name("edit"); // DONE
+   Route::post('/update', [AddressController::class, 'update'])->name("update"); // DONE
 
    # Delete
-   Route::get('/deleted', [AddressController::class, 'deleted'])->name("deleted");
-   Route::post('/blocked', [AddressController::class, 'blocked'])->name("blocked");
+   Route::post('/delete', [AddressController::class, 'delete'])->name("delete");
+   Route::post('/delete/all', [AddressController::class, 'deletedAll'])->name("delete.all");
+   Route::post('/restore', [AddressController::class, 'restore'])->name("restore");
 });
+
+// /**
+//  * Custom Orders
+//  */
+// Route::group(['prefix' => "/orders", 'as' => 'orders.', 'namespace' => "App\Http\Controllers\wep\OrderController", "middleware" => ["auth", "hasAccess"]], function () {
+
+//    Route::get('/show', [OrderController::class, 'index'])->name("show");
+
+//    Route::get('/show/edit', [OrderController::class, 'edit'])->name("edit");
+//    Route::post('/update', [OrderController::class, 'update'])->name("update");
+
+//    Route::post('/delete', [OrderController::class, 'delete'])->name("soft.delete");
+//    Route::post('/restore', [OrderController::class, 'restore'])->name("restore");
+// });
 
 
 
