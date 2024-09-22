@@ -105,7 +105,7 @@ class ClientController extends Controller
                 }
             }
             // dd($client);
-            $flag = "clients-show";
+            $flag = "clients-add";
             return view('panel.dashboard.clients.add', compact('flag', 'collection'));
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());

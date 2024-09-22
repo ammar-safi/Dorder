@@ -56,7 +56,7 @@
                 <div class="col-12"> 
                     <form action="{{ route('monitors.store') }}" method="POST" style="width: 100%; gap:"> 
                         @csrf
-                        <div style="display: flex;gap:10px  ;flex-direction:initial;">
+                        <div style="display: flex;gap:10px  ;flex-direction:icnitial;">
                             <div class="form-group" style="width: 50%">
                                 <label for="name">الاسم:</label>
                                 @error('name')

@@ -17,18 +17,28 @@
                 }
 
                 function toggleOptions(button) {
+                    // إغلاق جميع القوائم المفتوحة
+                    document.querySelectorAll('.options-menu').forEach(function(menu) {
+                        menu.style.display = 'none';
+                    });
+
+                    // فتح القائمة الخاصة بالزر المضغوط
                     const optionsMenu = button.nextElementSibling;
                     optionsMenu.style.display = optionsMenu.style.display === 'block' ? 'none' : 'block';
-                }
-
-                document.addEventListener('click', function(event) {
-                    const isClickInside = event.target.closest('.options-menu') || event.target.closest('button');
-                    if (!isClickInside) {
-                        document.querySelectorAll('.options-menu').forEach(function(menu) {
-                            menu.style.display = 'none';
-                        });
                     }
-                });
+
+                    // إغلاق القوائم عند الضغط خارجها
+                    document.addEventListener('click', function(event) {
+                        const isClickInside = event.target.closest('.options-menu') || event.target.closest('button');
+                        if (!isClickInside) {
+                            document.querySelectorAll('.options-menu').forEach(function(menu) {
+                                menu.style.display = 'none';
+                            });
+                        }
+                    }
+                );
+
+                
 
                 /*
                     هي منشان لما بدي اكتب اسم بالبحث ينضاف عال select 
@@ -121,7 +131,7 @@
                     display: none;
                     position: absolute;
                     top: -60px;
-                    right: -150px;
+                    /* right: -150px; */
                     background-color: #fff;
                     border: 1px solid #ddd;
                     border-radius: 8px;
@@ -317,59 +327,59 @@
                     </div>
                 </div>                  
             @elseif($id) 
-            @foreach ($clients as $client)
-                <div class="table-container">
-                <h2 class="table-title">
-                    <div style="display: flex;gap: 10px; align-items: center;">
-                        @php
-                            $image = $client->image?Storage::url($client->image->url):'../../../../app-assets/images/portrait/small/images.png'  ;
-                        @endphp
-                        <a href="{{$image}}">
-                            <img src="{{$image}}" alt="صورة العميل" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
-                        </a>
-                        <div>
-                            {{$client->name}}
-                        </div>
-                    </div>
-                
-                    <div>
-                        @if(!$client->deleted_at)
-                            @if (Auth::user()->type=="admin")
-                            <form action="{{ route('clients.edit')}}" method="GET" style="display: inline;">
-                                <input type="hidden" name="id" value="{{$client->id}}">
-                                <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-edit"></i></button>
-                            </form>
-                            @endif
-                            <form action="{{ route('clients.soft.delete')}}" method="POST" style="display: inline;">
-                                @csrf
-                                <input type="hidden" name="id" value="{{$client->id}}">
-                                <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-user-minus"></i></button>
-                            </form>
-                        @else 
-                            <form action="{{ route('clients.restore')}}" method="POST" style="display: inline;">
-                                @csrf
-                                <input type="hidden" name="id" value="{{$client->id}}">
-                                <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-undo-alt"></i></button>
-                            </form>
-                        @endif    
-                    </div>
-                </h2>
-
-                <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>البريد الاكتروني</th>
-                                <th>رقم الهاتف</th>
-                                @if($client->area)
-                                    <th>المحافظة</th>
-                                    <th>المنطقة</th>
-                                    <th>الاشتراك</th>
-                                @endif
-                                <th>صلاحية الحساب</th>
-                                <th>الطلبات المتاحة</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                @foreach ($clients as $client)
+                    {{-- جدول العميل --}}
+                    <div class="table-container">
+                        <h2 class="table-title">
+                            <div style="display: flex;gap: 10px; align-items: center;">
+                                @php
+                                    $image = $client->image?Storage::url($client->image->url):'../../../../app-assets/images/portrait/small/images.png'  ;
+                                @endphp
+                                <a href="{{$image}}">
+                                    <img src="{{$image}}" alt="صورة العميل" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                                </a>
+                                <div>
+                                    {{$client->name}}
+                                </div>
+                            </div>
+                        
+                            <div>
+                                @if(!$client->deleted_at)
+                                    @if (Auth::user()->type=="admin")
+                                    <form action="{{ route('clients.edit')}}" method="GET" style="display: inline;">
+                                        <input type="hidden" name="id" value="{{$client->id}}">
+                                        <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-edit"></i></button>
+                                    </form>
+                                    @endif
+                                    <form action="{{ route('clients.soft.delete')}}" method="POST" style="display: inline;">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{$client->id}}">
+                                        <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-user-minus"></i></button>
+                                    </form>
+                                @else 
+                                    <form action="{{ route('clients.restore')}}" method="POST" style="display: inline;">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{$client->id}}">
+                                        <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-undo-alt"></i></button>
+                                    </form>
+                                @endif    
+                            </div>
+                        </h2>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>البريد الاكتروني</th>
+                                    <th>رقم الهاتف</th>
+                                    @if($client->area)
+                                        <th>المحافظة</th>
+                                        <th>المنطقة</th>
+                                        <th>الاشتراك</th>
+                                    @endif
+                                    <th>صلاحية الحساب</th>
+                                    <th>الطلبات المتاحة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
                             
                             {{-- @dd($Monitors) --}}
@@ -385,7 +395,7 @@
                                     <td>{{$client->expire}} <br> ({{$client->active?"نشط":"غير نشط"}})</td>
                                     <td>{{$client->subscription_fees}}  </td>
                                     <td>
-                                           
+                                            
                                     </td>
                                     
                                     
@@ -394,6 +404,137 @@
                             </tbody>
                         </table>
                     </div>
+                    <br><br><br>
+                    <div style="display: flex;flex-direction: row; gap:10px">
+                        {{-- جدول العناوين --}}
+                        <div class="table-container" style="width: 50%">
+                            <h2 class="table-title">
+                                <div style="display: flex;gap: 10px; align-items: center;">
+                                    عناوين العميل 
+                                </div>
+                                <div>
+                                    {{-- Edit --}}
+                                    <form action="{{ route('addresses.edit')}}" method="GET" style="display: inline;">
+                                        <input type="hidden" name="id" value="{{$client->id}}">
+                                        <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-edit"></i></button>
+                                    </form>
+                                    {{-- Pan --}}
+                                    @if($client->addresses()->exists())
+                                        <form action="#" method="POST" style="display: inline;">
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{$client->id}}">
+                                            <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    @endif
+                                    {{-- Add --}}
+                                    <form action="{{ route('addresses.add')}}" method="GET" style="display: inline;">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{$client->id}}">
+                                        <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-add"></i></button>
+                                    </form>
+                                </div>
+                            </h2>
+                            @if($client->addresses()->exists())
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th> </th>
+                                            <th> </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach ($client->addresses as $adresses)
+                                        <tr>
+                                            <td style="text-align: right;">{{$adresses->title}}</td> 
+                                            <td style="justify-content:left">
+                                                <div style="position: relative; display: flex; justify-content:left">
+                                                    <button onclick="toggleOptions(this)" style="background: none; border: none; cursor: pointer;">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <div class="options-menu">
+                                                        <form action="{{ route('addresses.edit')}}" method="GET" style="display: inline;">
+                                                            @csrf
+                                                            <input type="hidden" name="id" value="{{$client->id}}">
+                                                            <button type="submit" id="edit"><i class="fas fa-edit"></i> تعديل</button>
+                                                        </form>                                                
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
+                                        
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                <br><br><br>
+                            @endif
+                        </div>
+                        {{-- جدول الطلبات --}}
+                        <div class="table-container" style="width: 50%">
+                            <h2 class="table-title">
+                                <div style="display: flex;gap: 10px; align-items: center;">
+                                    طلبات العميل 
+                                </div>
+                                <div>
+                                    {{-- Edit --}}
+                                    <form action="{{ route('addresses.edit')}}" method="GET" style="display: inline;">
+                                        <input type="hidden" name="id" value="{{$client->id}}">
+                                        <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-edit"></i></button>
+                                    </form>
+                                    {{-- Pan --}}
+                                    @if($client->addresses()->exists())
+                                        <form action="#" method="POST" style="display: inline;">
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{$client->id}}">
+                                            <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    @endif
+                                    {{-- Add --}}
+                                    <form action="{{ route('addresses.add')}}" method="GET" style="display: inline;">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{$client->id}}">
+                                        <button type="submit" class="btn" style="background-color: rgb(255, 255, 255); color: rgb(94, 94, 94); padding: 8px 12px; text-decoration: none; border-radius: 5px;"><i class="fas fa-add"></i></button>
+                                    </form>
+                                </div>
+                            </h2>
+                            @if($client->addresses()->exists())
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th> </th>
+                                            <th> </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach ($client->addresses as $adresses)
+                                        <tr>
+                                            <td style="text-align: right;">{{$adresses->title}}</td> 
+                                            <td style="justify-content:left">
+                                                <div style="position: relative; display: flex; justify-content:left">
+                                                    <button onclick="toggleOptions(this)" style="background: none; border: none; cursor: pointer;">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <div class="options-menu">
+                                                        <form action="{{ route('addresses.edit')}}" method="GET" style="display: inline;">
+                                                            @csrf
+                                                            <input type="hidden" name="id" value="{{$client->id}}">
+                                                            <button type="submit" id="edit"><i class="fas fa-edit"></i> تعديل</button>
+                                                        </form>                                                
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                <br><br><br>
+                            @endif
+                        </div>
+                    </div>
+
                 @endforeach
             @endif 
         </div>

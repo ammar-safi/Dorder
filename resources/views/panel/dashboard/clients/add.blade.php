@@ -13,7 +13,11 @@
                     <h1>اضافة عميل</h1>
                     <!-- تعديل الصورة -->
 
-                    <div style="display: grid; justify-items: center; align-items: center; margin-right: 400px;">
+                    <div style="display: grid; justify-items: center; align-items: center;position: absolute;
+                    top: 79%;
+                    left: 30px;
+                    transform: translateY(-50%);
+                    cursor: pointer;">
                         @php
                             // $image = $client->image?Storage::url($client->image->url):'../../../../app-assets/images/portrait/small/images.png'  ;
                         @endphp
@@ -89,11 +93,12 @@
             
             <div class="row">
                 <div class="col-12"> 
-                    <form action="{{ route('clients.store') }}" method="POST"  enctype="multipart/form-data"> 
+                    <form action="{{ route('clients.store') }}" method="POST"  style="width: 100%;" enctype="multipart/form-data"> 
                         @csrf
                         <input type="file" id="imageUpload" name="profile_image" accept="image/*" style="display: none;" onchange="previewImage(event)">
 
-                        <div class="form-group">
+                        <div style="display: flex;gap:10px  ;flex-direction:icnitial;">
+                        <div class="form-group" style="width: 50%;">
                             <label for="name">الاسم:</label>
                             @error('name')
                             <div style="color: #c20c0c" >    
@@ -103,7 +108,7 @@
                             @enderror
                             <input type="text" class="form-control" id="name" name="name" placeholder="أدخل الاسم" value="{{old('name')}}">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="width: 50%;">
                             <label for="email">البريد الإلكتروني:</label>
                             @error('email')
                             <div style="color: #c20c0c" >    
@@ -113,10 +118,12 @@
                             @enderror
                             <input type="email" class="form-control" id="email" name="email" placeholder="أدخل البريد الإلكتروني" value="{{old('email')}}">
                         </div>
+                        </div>
                      
+                        <div style="display: flex;gap:10px  ;flex-direction:icnitial;">
                           
                         
-                        <div class="form-group">
+                        <div class="form-group" style="width: 40%;">
                             <label for="mobile">رقم الهاتف:</label>
                             @error('mobile')
                             <div style="color: #c20c0c" >    
@@ -126,7 +133,7 @@
                             @enderror
                             <input type="text" class="form-control" id="mobile" name="mobile" placeholder="أدخل رقم الهاتف"value="{{old('mobile')}}">
                         </div>
-                        <div class="form-group" >
+                        <div class="form-group" style="width: 30%;">
                             <label for="password"> كلمة المرور:</label>
                             @error('password')
                             <div style="color: #c20c0c" >    
@@ -141,7 +148,7 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="width: 30%">
                             <label for="password_confirmation">تأكيد كلمة المرور:</label>
                             @error('password_confirmation')
                             <div style="color: #c20c0c" >    
@@ -156,8 +163,10 @@
                             </span>
                             </div>
                         </div>
-                        
-                        <div class="form-group">
+                        </div>
+                        <div style="display: flex;gap:10px  ;flex-direction:icnitial;">
+
+                        <div class="form-group" style="width: 33%">
                             <label for="subscription_fees">عدد الطلبات المتاحة :</label>
                             @error('subscription_fees')
                             <div style="color: #c20c0c" >    
@@ -167,7 +176,7 @@
                             @enderror
                             <input type="text" class="form-control" id="subscription_fees" name="subscription_fees" placeholder="أدخل عدد الطلبات"value="{{old('subscription_fees')}}">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="width: 33%">
                             <label for="expire">تاريخ انتهاء صلاحية الحساب :</label>
                             @error('expire')
                             <div style="color: #c20c0c" >    
@@ -178,7 +187,7 @@
                             <input type="date" class="form-control" id="expire" name="expire" placeholder="أدخل رقم "value="{{old('expire')}}">
                         </div>
 
-                        <div>
+                        <div style="width: 33%">
                             @error('area_id')
                             <div style="color: #c20c0c" >    
                                 * {{$message}}
@@ -200,7 +209,7 @@
                                 @endforeach
                             </select>
                         </div>                  
- 
+                        </div>
                         <div>
                             <br>
                             <button type="submit" class="btn btn-primary">اضافة</button>

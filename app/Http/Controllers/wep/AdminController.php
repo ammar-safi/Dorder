@@ -27,13 +27,17 @@ class AdminController extends Controller
     {
         try {
             $flag = "show-admins";
-            $query = User::query();
-            $deleted = request()->deleted ;
+            $query = User::query()->where("type", "admin");
+            $deleted = request()->deleted;
+            $searchName = request()->search_name ;
             if ($deleted) {
                 $query->onlyTrashed();
-            } 
-            $admins = $query->where("type", "admin")->get();
-            return view("panel.dashboard.admins.admins", compact("flag", "admins" , "deleted"));
+            }
+            if ($searchName) {
+                $query->where('name', 'LIKE', '%' . $searchName . '%');
+            }
+            $admins = $query->get();
+            return view("panel.dashboard.admins.admins", compact("flag", "admins", "deleted" , "searchName"));
         } catch (Exception $e) {
             Log::error("حدث خطأ: " . $e->getMessage(), [
                 'exception' => $e
@@ -142,18 +146,22 @@ class AdminController extends Controller
                 [
                     'id' => [
                         "required",
-                        "not_in:1",
+                        // "not_in:1",
                         Rule::exists("users", "id")->where('type', 'admin')
                     ]
                 ],
                 [
                     'id.required' => "حصل خطأ غير متوقع",
                     'id.exists' => "حصل خطأ غير متوقع",
-                    "id.not_in" => "لا يمكنك تعديل هذا المدير"
+                    // "id.not_in" => "لا يمكنك تعديل هذا المدير"
                 ]
             );
 
             if ($validate->fails()) {
+                return redirect()->back()->with("error", "حصل خطأ غير متوقع, الرجاء المحاولة لاحقا");
+            }
+
+            if ($request->id == '1' && Auth::User()->id != 1) {
                 return redirect()->back()->with("error", "حصل خطأ غير متوقع, الرجاء المحاولة لاحقا");
             }
 
@@ -278,7 +286,8 @@ class AdminController extends Controller
             return redirect()->back()->with("error", "حصل خطأ غير معروف, الرجاء إعادة المحاولة");
         }
     }
-    public function restore (Request $request) {
+    public function restore(Request $request)
+    {
         try {
             $validate = Validator::make(['id' => $request->id], ['id' => "required|not_in:1"], [
                 'id.required' => "حصل خطأ غير معروف , الرجاء اعادة المحاولة",
@@ -290,7 +299,7 @@ class AdminController extends Controller
             }
 
 
-            $is_exist = user::where("type" , "admin")->onlyTrashed()->find($request->id);
+            $is_exist = user::where("type", "admin")->onlyTrashed()->find($request->id);
             if ($is_exist && $is_exist->restore()) {
                 return redirect()->back()->with("success", "تمت الاستعادة بنجاح");
             }

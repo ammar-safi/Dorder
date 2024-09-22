@@ -106,7 +106,8 @@
                 <ul class="menu-content">
                     {{-- <li class={{$flag? NULL : "active"}}></li> --}}
                     <li class={{$flag == "clients-show"?'active':NULL}}><a href="{{Route("clients.show")}}"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">ادارة العملاء</span></a>    
-                    <li class={{$flag == "a"?'active':NULL}}><a href="#"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">ادارة عناويين العملاء</span></a>    
+                    <li class={{$flag == "clients-add"?'active':NULL}}><a href="{{route('clients.add')}}"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">اضافة عميل</span></a>    
+                    {{-- <li class={{$flag == "a"?'active':NULL}}><a href="#"><i class="bx bx-right-arrow-alt"></i></i><span class="menu-item" data-i18n="eCommerce">ادارة عناويين العملاء</span></a>     --}}
 
                 </ul>
             </li>

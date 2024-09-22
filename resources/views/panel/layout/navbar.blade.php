@@ -225,20 +225,15 @@
                             <span><img class="round" src="../../../app-assets/images/portrait/small/images.png"
                                        alt="avatar" height="40" width="40"></span>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-right pb-0"><a class="dropdown-item"
-                                                                               href="page-user-profile.html"><i
-                                    class="bx bx-user mr-50"></i> Edit Profile</a><a class="dropdown-item"
-                                                                                     href="app-email.html"><i
-                                    class="bx bx-envelope mr-50"></i> My Inbox</a><a class="dropdown-item"
-                                                                                     href="app-todo.html"><i
-                                    class="bx bx-check-square mr-50"></i> Task</a><a class="dropdown-item"
-                                                                                     href="app-chat.html"><i
-                                    class="bx bx-message mr-50"></i> Chats</a>
-                            <div class="dropdown-divider mb-0"></div>
+                        <div class="dropdown-menu dropdown-menu-right pb-0">
+                            <a class="dropdown-item" href={{Route("admins.edit" , ['id'=>auth::user()->id])}}>
+                                <i class="bx bx-user mr-50"></i> Edit Profile</a>
+                            </a> 
+                            {{-- <div class="dropdown-divider mb-0"></div> --}}
                             <form action="{{ Route('logout') }}" method="post" style="display: inline;">
                                 @csrf
-                                {{-- <i class="bx bx-power-off mr-50"></i> --}}
-                                <input type="submit" value="Logout" class="dropdown-item" style="color: red">
+                                <button type="submit" class="btn"> <i class="bx bx-exit mr-50"></i> Logout</button>
+                                {{-- <input type="submit" value="Logout" class="dropdown-item" style="color: red"> --}}
                             </form>
                             
                             

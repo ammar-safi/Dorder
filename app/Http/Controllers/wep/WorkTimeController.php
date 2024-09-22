@@ -69,7 +69,7 @@ class WorkTimeController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'حصل خطا , حاول مرة اخرى');
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
@@ -96,7 +96,7 @@ class WorkTimeController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'حصل خطا, حاول مرة اخرى');
+            return redirect()->back()->with('error', $e->getMessage());
         }
     } 
     

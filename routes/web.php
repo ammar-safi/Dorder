@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\wep\AddressController;
 use App\Http\Controllers\wep\MonitorController;
 use App\Http\Controllers\wep\AdminController;
 use App\Http\Controllers\wep\CityController;
@@ -167,8 +168,8 @@ Route::group(['prefix' => "/monitors", 'as' => 'monitors.', 'namespace' => "App\
       Route::post("/store", [MonitorController::class, 'store'])->name('store');
 
       // Employ a monitor 
-      Route::get("employ" , [MonitorController::class , 'employ'])->name('employ');
-      Route::post("employ" , [MonitorController::class , 'setEmploy'])->name('set.employ');
+      Route::get("employ", [MonitorController::class, 'employ'])->name('employ');
+      Route::post("employ", [MonitorController::class, 'setEmploy'])->name('set.employ');
       /**
        * Soft Delete 
        */
@@ -203,7 +204,7 @@ Route::group(['prefix' => "/delivers", 'as' => 'delivers.', 'namespace' => "App\
       // Soft Delete 
       Route::post("/delete", [DeliverController::class, "delete"])->name("soft.delete");
       Route::post("/ban", [DeliverController::class, "ban"])->name("ban");
-      Route::post("/restore" , [DeliverController::class , "restore"])->name("restore");
+      Route::post("/restore", [DeliverController::class, "restore"])->name("restore");
    });
 });
 
@@ -249,25 +250,29 @@ Route::group(['prefix' => "/packages", 'as' => 'packages.', 'namespace' => "App\
 Route::group(['prefix' => "/clients", 'as' => 'clients.', 'namespace' => "App\Http\Controllers\wep\ClientController", "middleware" => ["auth", "hasAccess"]], function () {
    Route::get('/show', [ClientController::class, "index"])->name('show');
 
-   Route::middleware('isAdmin')->group(function () {
+   // Route::middleware('isAdmin')->group(function () {
 
-      // Edit package
-      Route::get('/show/edit', [ClientController::class, "edit"])->name("edit");
-      Route::post('/update', [ClientController::class, "update"])->name("update");
+   # Edit Client
+   Route::get('/show/edit', [ClientController::class, "edit"])->name("edit");
+   Route::post('/update', [ClientController::class, "update"])->name("update");
 
-      // Add package
-      Route::get("/form/add", [ClientController::class, 'create'])->name("add");
-      Route::post("/store", [ClientController::class, 'store'])->name('store');
-      
+   # Add package
+   Route::get("/form/add", [ClientController::class, 'create'])->name("add");
+   Route::post("/store", [ClientController::class, 'store'])->name('store');
 
-      /**
-       * Soft Delete
-       */
-      Route::post("/delete", [ClientController::class, "delete"])->name("soft.delete");
-      Route::post("/restore", [ClientController::class, "restore"])->name("restore");
-   });
+
+   /**
+    * Soft Delete
+    */
+   Route::post("/delete", [ClientController::class, "delete"])->name("soft.delete");
+   Route::post("/restore", [ClientController::class, "restore"])->name("restore");
+   // });
 });
 
+
+/**
+ * Custom settings && Work Time
+ */
 Route::group(['prefix' => "/work-times", 'as' => 'work.times.', 'namespace' => "App\Http\Controllers\wep\WorkTimeController", "middleware" => ["auth", "hasAccess"]], function () {
 
    Route::get('/show', [WorkTimeController::class, 'index'])->name("show");
@@ -287,6 +292,24 @@ Route::group(['prefix' => "/settings", 'as' => 'settings.', 'namespace' => "App\
    });
 });
 
+/**
+ * Custom Addresses
+ */
+Route::group(['prefix' => "/addresses", 'as' => 'addresses.', 'namespace' => "App\Http\Controllers\wep\AddressesController", "middleware" => ["auth", "hasAccess"]], function () {
+
+   # Create
+   Route::get('/create', [AddressController::class, 'create'])->name("add");
+   Route::post('/store', [AddressController::class, 'store'])->name("store");
+
+   # Edit
+   Route::get('/edit', [AddressController::class, 'edit'])->name("edit");
+   Route::post('/update', [AddressController::class, 'update'])->name("update");
+
+   # Delete
+   Route::get('/deleted', [AddressController::class, 'deleted'])->name("deleted");
+   Route::post('/blocked', [AddressController::class, 'blocked'])->name("blocked");
+});
+
 
 
 
@@ -294,7 +317,7 @@ Route::group(['prefix' => "/settings", 'as' => 'settings.', 'namespace' => "App\
 Route::get("/email", function () {
    $subjectTitle =  "test 🙄";
    $description =   "";
-   $imageUrl = "" ;
+   $imageUrl = "";
    // dd($imageUrl);
    Mail::to('reem.georges1@gmail.com')->send(new SendEmail($subjectTitle, $imageUrl, $description));
 });

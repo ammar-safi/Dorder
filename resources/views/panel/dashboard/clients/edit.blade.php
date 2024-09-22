@@ -13,8 +13,11 @@
                     <h1>تعديل العميل {{$client->name}}</h1>
                     <!-- تعديل الصورة -->
 
-                    <div style="display: grid; justify-items: center; align-items: center; margin-right: 400px;">
-                        @php
+                    <div style="display: grid; justify-items: center; align-items: center;position: absolute;
+                    top: 79%;
+                    left: 30px;
+                    transform: translateY(-50%);
+                    cursor: pointer;">                        @php
                             $image = $client->image?Storage::url($client->image->url):'../../../../app-assets/images/portrait/small/images.png'  ;
                         @endphp
                         <a  id="clientShowImage" href="{{ $image }}">
@@ -83,21 +86,23 @@
             
             <div class="row">
                 <div class="col-12"> 
-                    <form action="{{ route('clients.update' , ['id'=>$client->id]) }}" method="POST"  enctype="multipart/form-data"> 
+                    <form action="{{ route('clients.update' , ['id'=>$client->id]) }}" method="POST" style="width:100%;" enctype="multipart/form-data"> 
                         @csrf
                         <input type="file" id="imageUpload" name="profile_image" accept="image/*" style="display: none;" onchange="previewImage(event)">
-
-                        <div class="form-group">
+                        
+                        
+                        <div style="display: flex;gap:10px  ;flex-direction:initial;">
+                        <div class="form-group" style="width: 50%">
                             <label for="name">الاسم:</label>
                             @error('name')
                             <div style="color: #c20c0c" >    
                                 * {{$message}}
                                 <br><br>
-                            </div>
+                            </div>ئ
                             @enderror
                             <input type="text" class="form-control" id="name" name="name" placeholder="أدخل الاسم" value="{{old('name')?old('name'):$client->name}}">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="width: 50%">
                             <label for="email">البريد الإلكتروني:</label>
                             @error('email')
                             <div style="color: #c20c0c" >    
@@ -108,9 +113,10 @@
                             <input type="email" class="form-control" id="email" name="email" placeholder="أدخل البريد الإلكتروني" value="{{old('email')?old('email'):$client->email}}">
                         </div>
                      
-                          
+                        </div>
+                        <div style="display: flex;gap:10px  ;flex-direction:initial;">
                         
-                        <div class="form-group">
+                        <div class="form-group" style="width: 30%" >
                             <label for="mobile">رقم الهاتف:</label>
                             @error('mobile')
                             <div style="color: #c20c0c" >    
@@ -121,7 +127,7 @@
                             <input type="text" class="form-control" id="mobile" name="mobile" placeholder="أدخل رقم الهاتف"value="{{old('mobile')?old('mobile'):$client->mobile}}">
                         </div>
                         
-                        <div class="form-group">
+                        <div class="form-group" style="width: 20%">
                             <label for="subscription_fees">عدد الطلبات المتاحة :</label>
                             @error('subscription_fees')
                             <div style="color: #c20c0c" >    
@@ -131,7 +137,7 @@
                             @enderror
                             <input type="text" class="form-control" id="subscription_fees" name="subscription_fees" placeholder="أدخل عدد الطلبات "value="{{old('subscription_fees')?old('subscription_fees'):$client->subscription_fees}}">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="width: 50%">
                             <label for="expire">تاريخ انتهاء صلاحية الحساب :</label>
                             @error('expire')
                             <div style="color: #c20c0c" >    
@@ -141,6 +147,7 @@
                             @enderror
                             <input type="date" class="form-control" id="expire" name="expire" placeholder="أدخل رقم الهاتف"value="{{old('expire')?old('expire'):$client->expire}}">
                         </div>
+                    </div>
 
                         <div>
                             @error('area_id')
@@ -164,10 +171,6 @@
                                 @endforeach
                             </select>
                         </div>                  
-                        {{-- <div>
-                            <input id='active' type="checkbox" name="active" value="1">
-                            <label for='active'><h6>حساب نشط</h6></label>
-                        </div> --}}
                         <div>
                             <br>
                             <button type="submit" class="btn btn-primary">تعديل</button>

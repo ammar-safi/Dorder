@@ -24,25 +24,26 @@
                     }
                 }
                 function toggleOptions(button) {
-                // إغلاق جميع القوائم المفتوحة
-                document.querySelectorAll('.options-menu').forEach(function(menu) {
-                    menu.style.display = 'none';
-                });
+                    // إغلاق جميع القوائم المفتوحة
+                    document.querySelectorAll('.options-menu').forEach(function(menu) {
+                        menu.style.display = 'none';
+                    });
 
-                // فتح القائمة الخاصة بالزر المضغوط
-                const optionsMenu = button.nextElementSibling;
-                optionsMenu.style.display = optionsMenu.style.display === 'block' ? 'none' : 'block';
-                }
-
-                // إغلاق القوائم عند الضغط خارجها
-                document.addEventListener('click', function(event) {
-                    const isClickInside = event.target.closest('.options-menu') || event.target.closest('button');
-                    if (!isClickInside) {
-                        document.querySelectorAll('.options-menu').forEach(function(menu) {
-                            menu.style.display = 'none';
-                        });
+                    // فتح القائمة الخاصة بالزر المضغوط
+                    const optionsMenu = button.nextElementSibling;
+                    optionsMenu.style.display = optionsMenu.style.display === 'block' ? 'none' : 'block';
                     }
-                });
+
+                    // إغلاق القوائم عند الضغط خارجها
+                    document.addEventListener('click', function(event) {
+                        const isClickInside = event.target.closest('.options-menu') || event.target.closest('button');
+                        if (!isClickInside) {
+                            document.querySelectorAll('.options-menu').forEach(function(menu) {
+                                menu.style.display = 'none';
+                            });
+                        }
+                    }
+                );
 
             </script>
 
